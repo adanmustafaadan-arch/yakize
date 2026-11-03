@@ -34,7 +34,7 @@ The setup command creates a local `SESSION_SECRET` in `.env` if it is absent. In
 
 ## Free Render deployment
 
-The root `render.yaml` defines one free Node web service for the API, public site, and admin site. In Render, create a new Blueprint from this repository and select the `senatelink-render` branch. When prompted, provide `MONGO_URI` as a secret using the existing Atlas database; Render generates a separate production `SESSION_SECRET`. Do not add `.env` to GitHub or paste database credentials into source files.
+The root `render.yaml` defines one free Node web service for the API, public site, and admin site. In Render, create a new Blueprint from this repository and select the `senatelink-render` branch. Set the Render environment variable key to `MONGO_URI`; its secret value must be only the MongoDB connection string beginning with `mongodb+srv://` or `mongodb://`. Do not include `MONGO_URI=`, quotation marks, or other `.env` lines in the value. Render generates a separate production `SESSION_SECRET`. Do not add `.env` to GitHub or paste database credentials into source files.
 
 In Atlas Network Access, allow the outbound IP ranges shown for the Render service, and use a dedicated database user with only the required database permissions. Avoid allowing all IP addresses if the service's outbound IP ranges can be allowlisted. Render's free service may sleep when idle, so the first request after inactivity can take longer. The service health check is `/healthz`; the public page is `/publicSENATE/complaints.html`, and the admin login is `/admin/`.
 

@@ -1,5 +1,5 @@
  const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '.env') });
+ require('dotenv').config({ path: path.join(__dirname, '.env'), quiet: true });
 const crypto = require('crypto');
 const express = require('express');
 const cors = require('cors');
@@ -11,7 +11,11 @@ const multer = require('multer');
 const app = express();
 const isProduction = process.env.NODE_ENV === 'production';
 const sessionSecret = process.env.SESSION_SECRET;
-if (!process.env.MONGO_URI) throw new Error('MONGO_URI is required');
+const mongoUri = process.env.MONGO_URI?.trim();
+if (!mongoUri) throw new Error('MONGO_URI is required');
+if (!/^mongodb(?:\+srv)?:\/\//i.test(mongoUri)) {
+  throw new Error('Invalid MONGO_URI format. Set its value to only the mongodb:// or mongodb+srv:// connection string, without quotes, a MONGO_URI= prefix, or other .env lines.');
+}
 if (!sessionSecret || sessionSecret.length < 32) throw new Error('SESSION_SECRET must be at least 32 characters');
 const allowedOrigins = (process.env.CORS_ORIGINS || '').split(',').map(value => value.trim()).filter(Boolean);
 app.use(helmet({ contentSecurityPolicy: false }));
@@ -842,7 +846,7 @@ app.use((error, req, res, next) => {
 });
 
 async function start() {
-  await mongoose.connect(process.env.MONGO_URI);
+  await mongoose.connect(mongoUri);
   uploadsBucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, { bucketName: 'senatelinkFiles' });
   const port = Number(process.env.PORT) || 8080;
   app.listen(port, () => console.log(`SenateLink server listening on port ${port}`));
