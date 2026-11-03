@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SenateLink Admin — Bursaries</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0d2b5e;--navy-dark:#091e45;--navy-mid:#1a3d78;--navy-light:#2a5298;
+  --gold:#c9a227;--gold-light:#e8b93a;--gold-pale:#f5e8c0;--gold-dark:#a07c15;
+  --white:#ffffff;--off-white:#f7f8fc;--surface:#eef1f8;--surface2:#e4e9f4;
+  --text:#1a1d2e;--text2:#4a5270;--text3:#8892b0;
+  --success:#1a7a4a;--success-bg:#e6f4ec;
+  --warn:#b35c00;--warn-bg:#fff3e0;
+  --danger:#c0392b;--danger-bg:#fdecea;
+  --info:#1565c0;--info-bg:#e3f0ff;
+  --radius:10px;--radius-lg:16px;--radius-xl:22px;
+  --shadow:0 2px 12px rgba(13,43,94,.10);
+  --shadow-lg:0 6px 28px rgba(13,43,94,.16);
+  --sidebar-w:260px;--topbar-h:64px;
+  --transition:all .22s cubic-bezier(.4,0,.2,1);
+}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--text);font-size:15px}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:99px}
+
+/* ── SIDEBAR ── */
+.sidebar{position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;background:var(--navy);z-index:200;display:flex;flex-direction:column;transition:var(--transition);overflow:hidden}
+.sidebar-brand{padding:0 20px;height:var(--topbar-h);display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.brand-icon{width:38px;height:38px;border-radius:10px;background:var(--gold);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.brand-icon svg{width:22px;height:22px;fill:var(--navy)}
+.brand-text{display:flex;flex-direction:column;line-height:1.2}
+.brand-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--white)}
+.brand-sub{font-size:10px;color:rgba(201,162,39,.85);font-weight:500;text-transform:uppercase;letter-spacing:1px}
+.sidebar-scroll{flex:1;overflow-y:auto;padding:16px 0 24px}
+.nav-section-label{font-size:10px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:rgba(255,255,255,.35);padding:16px 20px 6px}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 20px;margin:1px 10px;border-radius:var(--radius);color:rgba(255,255,255,.7);font-size:14px;cursor:pointer;transition:var(--transition)}
+.nav-item:hover{background:rgba(255,255,255,.07);color:var(--white)}
+.nav-item.active{background:linear-gradient(90deg,var(--gold),var(--gold-light));color:var(--navy);font-weight:600}
+.nav-icon{width:18px;height:18px;flex-shrink:0;opacity:.7}
+.nav-item.active .nav-icon{opacity:1}
+.nav-badge{margin-left:auto;background:var(--danger);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px}
+.nav-item.active .nav-badge{background:var(--navy)}
+.sidebar-footer{padding:16px;border-top:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.user-card{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--radius);background:rgba(255,255,255,.06);cursor:pointer;transition:var(--transition)}
+.user-card:hover{background:rgba(255,255,255,.10)}
+.user-avatar{width:34px;height:34px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--navy);flex-shrink:0}
+.user-info{flex:1;overflow:hidden}
+.user-name{font-size:13px;font-weight:600;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-role{font-size:11px;color:rgba(255,255,255,.45)}
+.logout-btn{margin-top:8px;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:9px;border-radius:var(--radius);color:rgba(255,100,100,.8);font-size:13px;font-weight:500;transition:var(--transition)}
+.logout-btn:hover{background:rgba(255,100,100,.1);color:#ff6b6b}
+
+/* ── TOPBAR ── */
+.topbar{position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--topbar-h);background:var(--white);border-bottom:1px solid var(--surface2);display:flex;align-items:center;padding:0 28px;gap:16px;z-index:100;transition:var(--transition)}
+.topbar-hamburger{display:none;width:36px;height:36px;border-radius:8px;align-items:center;justify-content:center;background:var(--surface);cursor:pointer;transition:var(--transition)}
+.topbar-hamburger:hover{background:var(--surface2)}
+.topbar-title{flex:1}
+.topbar-title h1{font-size:18px;font-weight:600;color:var(--text)}
+.topbar-title p{font-size:12px;color:var(--text3)}
+.topbar-actions{display:flex;align-items:center;gap:8px}
+.icon-btn{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:var(--surface);color:var(--text2);transition:var(--transition);position:relative;cursor:pointer}
+.icon-btn:hover{background:var(--navy);color:var(--white)}
+.notif-dot{position:absolute;top:7px;right:7px;width:8px;height:8px;background:var(--danger);border-radius:50%;border:2px solid var(--white)}
+.topbar-divider{width:1px;height:28px;background:var(--surface2);margin:0 4px}
+.topbar-user{display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 8px;border-radius:9px;transition:var(--transition)}
+.topbar-user:hover{background:var(--surface)}
+.topbar-user-avatar{width:34px;height:34px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--gold)}
+.topbar-user-name{font-size:13px;font-weight:600;color:var(--text)}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar-w);margin-top:var(--topbar-h);padding:28px;min-height:calc(100vh - var(--topbar-h));transition:var(--transition)}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px}
+.page-header-left h2{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--navy)}
+.page-header-left p{font-size:13px;color:var(--text3);margin-top:2px}
+
+/* ── STATS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:16px;margin-bottom:28px}
+.stat-card{background:var(--white);border-radius:var(--radius-lg);padding:20px 22px;box-shadow:var(--shadow);border:1px solid var(--surface2);position:relative;overflow:hidden;transition:var(--transition)}
+.stat-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.stat-card[data-color="navy"]::before{background:var(--navy)}
+.stat-card[data-color="gold"]::before{background:var(--gold)}
+.stat-card[data-color="success"]::before{background:var(--success)}
+.stat-card[data-color="warn"]::before{background:var(--warn)}
+.stat-card[data-color="danger"]::before{background:var(--danger)}
+.stat-card[data-color="info"]::before{background:var(--info)}
+.stat-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
+.stat-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text3)}
+.stat-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.stat-icon svg{width:19px;height:19px}
+.stat-card[data-color="navy"] .stat-icon{background:rgba(13,43,94,.1);color:var(--navy)}
+.stat-card[data-color="gold"] .stat-icon{background:var(--gold-pale);color:var(--gold-dark)}
+.stat-card[data-color="success"] .stat-icon{background:var(--success-bg);color:var(--success)}
+.stat-card[data-color="warn"] .stat-icon{background:var(--warn-bg);color:var(--warn)}
+.stat-card[data-color="danger"] .stat-icon{background:var(--danger-bg);color:var(--danger)}
+.stat-card[data-color="info"] .stat-icon{background:var(--info-bg);color:var(--info)}
+.stat-value{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--text);line-height:1}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:6px}
+
+/* ── SUMMARY BANNER ── */
+.summary-banner{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:28px}
+.summary-item{background:var(--white);border-radius:var(--radius-lg);padding:18px 22px;box-shadow:var(--shadow);border:1px solid var(--surface2);display:flex;align-items:center;gap:16px}
+.summary-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.summary-icon svg{width:22px;height:22px}
+.summary-label{font-size:12px;color:var(--text3);font-weight:500}
+.summary-val{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--text);line-height:1.2}
+.summary-note{font-size:11px;color:var(--text3);margin-top:2px}
+
+/* ── CARD ── */
+.card{background:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow);border:1px solid var(--surface2);overflow:hidden;margin-bottom:22px}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--surface);flex-wrap:wrap;gap:10px}
+.card-title{font-size:15px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px}
+.card-title-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0}
+
+/* ── FILTERS ── */
+.filters-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.filter-search{position:relative}
+.filter-search input{background:var(--surface);border:1.5px solid transparent;border-radius:9px;padding:8px 14px 8px 36px;font-size:13px;color:var(--text);width:220px;transition:var(--transition);font-family:inherit;outline:none}
+.filter-search input:focus{border-color:var(--gold);background:var(--white)}
+.search-ico{position:absolute;left:11px;top:50%;transform:translateY(-50%);opacity:.4;pointer-events:none}
+.filter-select{font-size:12px;padding:8px 12px;border:1.5px solid var(--surface2);border-radius:9px;background:var(--surface);color:var(--text);font-family:inherit;cursor:pointer;outline:none;transition:var(--transition)}
+.filter-select:focus{border-color:var(--gold)}
+.filter-tab{padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--surface2);background:var(--white);color:var(--text2);transition:var(--transition)}
+.filter-tab:hover{border-color:var(--navy);color:var(--navy)}
+.filter-tab.active{background:var(--navy);color:var(--white);border-color:var(--navy)}
+
+/* ── TABLE ── */
+.table-wrap{overflow-x:auto}
+.data-table{width:100%;border-collapse:collapse}
+.data-table th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);padding:12px 18px;background:var(--surface);text-align:left;white-space:nowrap}
+.data-table th:last-child{text-align:right}
+.data-table td{padding:14px 18px;border-bottom:1px solid var(--surface);font-size:13px;color:var(--text2);vertical-align:middle}
+.data-table td:last-child{text-align:right}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover td{background:var(--off-white)}
+.sortable{cursor:pointer;user-select:none}
+.sortable:hover{color:var(--navy)}
+
+/* ── APPLICANT CELL ── */
+.appl-cell{display:flex;align-items:center;gap:10px}
+.a-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.a-name{font-weight:500;color:var(--text);font-size:13px}
+.a-detail{font-size:11px;color:var(--text3)}
+
+/* ── PROGRESS BAR ── */
+.progress-wrap{min-width:100px}
+.progress-label{font-size:10px;color:var(--text3);margin-bottom:3px;display:flex;justify-content:space-between}
+.progress-track{height:6px;background:var(--surface);border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;border-radius:99px;transition:width 1s ease}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
+.badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.7}
+.badge-pending{background:var(--warn-bg);color:var(--warn)}
+.badge-approved{background:var(--success-bg);color:var(--success)}
+.badge-rejected{background:var(--danger-bg);color:var(--danger)}
+.badge-hold{background:var(--info-bg);color:var(--info)}
+.badge-review{background:var(--gold-pale);color:var(--gold-dark)}
+.level-badge{display:inline-block;font-size:10px;font-weight:600;padding:2px 9px;border-radius:99px}
+.level-primary{background:rgba(13,43,94,.08);color:var(--navy)}
+.level-secondary{background:var(--info-bg);color:var(--info)}
+.level-university{background:var(--gold-pale);color:var(--gold-dark)}
+.level-college{background:var(--success-bg);color:var(--success)}
+
+/* ── ACTION BUTTONS ── */
+.action-group{display:flex;gap:5px;justify-content:flex-end;flex-wrap:wrap}
+.act-btn{font-size:11px;font-weight:600;padding:5px 10px;border-radius:6px;cursor:pointer;border:none;font-family:inherit;transition:var(--transition);white-space:nowrap}
+.act-btn-approve{background:var(--success-bg);color:var(--success)}
+.act-btn-approve:hover{background:var(--success);color:#fff}
+.act-btn-reject{background:var(--danger-bg);color:var(--danger)}
+.act-btn-reject:hover{background:var(--danger);color:#fff}
+.act-btn-hold{background:var(--info-bg);color:var(--info)}
+.act-btn-hold:hover{background:var(--info);color:#fff}
+.act-btn-view{background:var(--gold-pale);color:var(--gold-dark)}
+.act-btn-view:hover{background:var(--gold);color:var(--navy)}
+
+/* ── PAGINATION ── */
+.pagination-row{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-top:1px solid var(--surface);flex-wrap:wrap;gap:10px}
+.pagin-info{font-size:12px;color:var(--text3)}
+.pagin-btns{display:flex;gap:5px}
+.pagin-btn{font-size:12px;font-weight:600;padding:5px 11px;border-radius:6px;cursor:pointer;border:1.5px solid var(--surface2);background:var(--white);color:var(--text2);font-family:inherit;transition:var(--transition)}
+.pagin-btn:hover{border-color:var(--navy);color:var(--navy)}
+.pagin-btn.active{background:var(--navy);color:var(--white);border-color:var(--navy)}
+
+/* ── BUTTONS ── */
+.btn{padding:9px 20px;border-radius:9px;font-size:13px;font-weight:600;transition:var(--transition);cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:7px}
+.btn-navy{background:var(--navy);color:var(--white);border:none}
+.btn-navy:hover{background:var(--navy-mid)}
+.btn-gold{background:var(--gold);color:var(--navy);border:none}
+.btn-gold:hover{background:var(--gold-light)}
+.btn-outline{background:transparent;color:var(--text2);border:1.5px solid var(--surface2)}
+.btn-outline:hover{border-color:var(--navy);color:var(--navy)}
+.btn-success{background:var(--success);color:#fff;border:none}
+.btn-success:hover{background:#14633b}
+.btn-danger{background:var(--danger);color:#fff;border:none}
+.btn-danger:hover{background:#a93226}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(13,43,94,.55);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(3px);padding:20px}
+.modal-overlay.open{display:flex;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:var(--white);border-radius:var(--radius-xl);width:100%;max-width:580px;box-shadow:0 20px 60px rgba(13,43,94,.3);animation:slideUp .3s cubic-bezier(.4,0,.2,1);max-height:92vh;overflow-y:auto}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:22px 26px;border-bottom:1px solid var(--surface);position:sticky;top:0;background:var(--white);z-index:1}
+.modal-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--navy)}
+.modal-close{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--surface);color:var(--text3);cursor:pointer;transition:var(--transition);border:none}
+.modal-close:hover{background:var(--danger-bg);color:var(--danger)}
+.modal-body{padding:26px}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;padding:18px 26px;border-top:1px solid var(--surface)}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:6px}
+.form-input,.form-select,.form-textarea{width:100%;padding:10px 14px;border:1.5px solid var(--surface2);border-radius:var(--radius);font-size:14px;color:var(--text);font-family:inherit;transition:var(--transition);background:var(--off-white);outline:none}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--gold);background:var(--white)}
+.form-textarea{resize:vertical}
+.detail-row{display:flex;gap:16px;margin-bottom:14px;flex-wrap:wrap}
+.detail-field{flex:1;min-width:130px}
+.detail-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text3);margin-bottom:4px}
+.detail-value{font-size:14px;color:var(--text);font-weight:500}
+.detail-divider{height:1px;background:var(--surface);margin:14px 0}
+.doc-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1.5px solid var(--surface2);border-radius:var(--radius);margin-bottom:8px;transition:var(--transition)}
+.doc-item:hover{border-color:var(--navy);background:var(--off-white)}
+.doc-icon{width:34px;height:34px;border-radius:8px;background:var(--info-bg);color:var(--info);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.doc-icon svg{width:16px;height:16px}
+.doc-name{font-size:13px;font-weight:500;color:var(--text);flex:1}
+.doc-size{font-size:11px;color:var(--text3)}
+.doc-download{font-size:11px;font-weight:600;color:var(--navy);padding:4px 10px;border-radius:6px;background:var(--surface);border:none;cursor:pointer;transition:var(--transition)}
+.doc-download:hover{background:var(--navy);color:#fff}
+
+/* ── APPROVAL STEPS ── */
+.approval-steps{display:flex;align-items:center;gap:0;margin-bottom:24px}
+.step{display:flex;flex-direction:column;align-items:center;flex:1;position:relative}
+.step:not(:last-child)::after{content:'';position:absolute;top:15px;left:60%;width:80%;height:2px;background:var(--surface2)}
+.step.done:not(:last-child)::after{background:var(--success)}
+.step-circle{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:2px solid var(--surface2);background:var(--white);color:var(--text3);z-index:1;transition:var(--transition)}
+.step.done .step-circle{background:var(--success);border-color:var(--success);color:#fff}
+.step.active .step-circle{background:var(--navy);border-color:var(--navy);color:#fff}
+.step-label{font-size:10px;color:var(--text3);margin-top:5px;text-align:center;font-weight:500}
+.step.done .step-label,.step.active .step-label{color:var(--text2)}
+
+/* ── TOAST ── */
+.toast-container{position:fixed;bottom:28px;right:28px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none}
+.toast{background:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);border:1px solid var(--surface2);padding:14px 18px;display:flex;align-items:flex-start;gap:12px;min-width:300px;max-width:360px;pointer-events:all;animation:toastIn .4s cubic-bezier(.4,0,.2,1) forwards}
+.toast.success{border-left:4px solid var(--success)}
+.toast.warning{border-left:4px solid var(--gold)}
+.toast.error{border-left:4px solid var(--danger)}
+.toast.info{border-left:4px solid var(--navy)}
+@keyframes toastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+@keyframes toastOut{from{opacity:1}to{opacity:0;transform:translateX(40px)}}
+.toast-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.toast-icon svg{width:16px;height:16px}
+.toast.success .toast-icon{background:var(--success-bg);color:var(--success)}
+.toast.warning .toast-icon{background:var(--warn-bg);color:var(--warn)}
+.toast.error .toast-icon{background:var(--danger-bg);color:var(--danger)}
+.toast.info .toast-icon{background:var(--info-bg);color:var(--info)}
+.toast-body{flex:1}
+.toast-title{font-size:13px;font-weight:700;color:var(--text)}
+.toast-msg{font-size:12px;color:var(--text3);margin-top:2px}
+.toast-x{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);background:none;border:none;transition:var(--transition)}
+.toast-x:hover{background:var(--surface);color:var(--text)}
+
+/* ── SIDEBAR OVERLAY ── */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:190}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-overlay.open{display:block}
+  .topbar{left:0;padding:0 16px;gap:10px}
+  .topbar-hamburger{display:flex}
+  .main{margin-left:0;padding:16px}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .topbar-user-name{display:none}
+  .filter-search input{width:160px}
+}
+@media(max-width:480px){
+  .stats-grid{grid-template-columns:1fr}
+  .summary-banner{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<script src="/admin/admin-auth.js"></script>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><polyline points="9 22 9 12 15 12 15 22" fill="none" stroke="#0d2b5e" stroke-width="2"/></svg>
+    </div>
+    <div class="brand-text">
+      <span class="brand-title">SenateLink</span>
+      <span class="brand-sub">Marsabit County</span>
+    </div>
+  </div>
+  <div class="sidebar-scroll">
+    <div class="nav-section-label">Main Menu</div>
+    <div class="nav-item" onclick="go('admin-dashboard.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard
+    </div>
+    <div class="nav-item" onclick="go('admin-complaints.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Complaints
+      <span class="nav-badge" id="sidebarPendingComplaints">0</span>
+    </div>
+    <div class="nav-item active">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>Bursaries
+      <span class="nav-badge" id="sidebarPendingBursaries">0</span>
+    </div>
+    <div class="nav-item" onclick="go('admin-proposals.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Proposals
+    </div>
+    <div class="nav-item" onclick="go('admin-projects.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Projects
+    </div>
+    <div class="nav-section-label">Content</div>
+    <div class="nav-item" onclick="go('admin-news.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2v-9c0-1.1.9-2 2-2h2"/></svg>News
+    </div>
+    <div class="nav-section-label">Administration</div>
+    <div class="nav-item" onclick="go('admin-users.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Users
+    </div>
+    <div class="nav-item" onclick="go('admin-reports.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Reports
+    </div>
+    <div class="nav-item" onclick="go('admin-settings.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 19.07a10 10 0 010-14.14"/></svg>Settings
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">JM</div>
+      <div class="user-info">
+        <div class="user-name">James Mureithi</div>
+        <div class="user-role">Super Admin</div>
+      </div>
+    </div>
+    <button class="logout-btn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout
+    </button>
+  </div>
+</aside>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-hamburger" onclick="toggleSidebar()">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </div>
+  <div class="topbar-title">
+    <h1>Bursary Management</h1>
+    <p>Dashboard › Bursaries</p>
+  </div>
+  <div class="topbar-actions">
+    <div class="icon-btn" title="Notifications">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <span class="notif-dot"></span>
+    </div>
+    <div class="topbar-divider"></div>
+    <div class="topbar-user">
+      <div class="topbar-user-avatar">JM</div>
+      <span class="topbar-user-name">James Mureithi</span>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="main">
+
+  <div class="page-header">
+    <div class="page-header-left">
+      <h2>Bursary Management</h2>
+      <p>Review, approve and manage student bursary applications across all wards</p>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-outline" onclick="exportCSV()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export CSV
+      </button>
+      <button class="btn btn-navy" onclick="openModal('bulkModal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/></svg>
+        Bulk Action
+      </button>
+      <button class="btn btn-gold" onclick="openModal('addBursaryModal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Application
+      </button>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card" data-color="navy">
+      <div class="stat-header">
+        <span class="stat-label">Total Applications</span>
+        <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+      </div>
+      <div class="stat-value">0</div>
+      <div class="stat-sub">This academic year</div>
+    </div>
+    <div class="stat-card" data-color="warn">
+      <div class="stat-header">
+        <span class="stat-label">Pending Review</span>
+        <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+      </div>
+      <div class="stat-value">0</div>
+      <div class="stat-sub">Awaiting decision</div>
+    </div>
+    <div class="stat-card" data-color="success">
+      <div class="stat-header">
+        <span class="stat-label">Approved</span>
+        <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+      </div>
+      <div class="stat-value">0</div>
+      <div class="stat-sub">Successfully funded</div>
+    </div>
+    <div class="stat-card" data-color="danger">
+      <div class="stat-header">
+        <span class="stat-label">Rejected</span>
+        <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>
+      </div>
+      <div class="stat-value">0</div>
+      <div class="stat-sub">Did not qualify</div>
+    </div>
+    <div class="stat-card" data-color="info">
+      <div class="stat-header">
+        <span class="stat-label">On Hold</span>
+        <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg></div>
+      </div>
+      <div class="stat-value">0</div>
+      <div class="stat-sub">More info required</div>
+    </div>
+    <div class="stat-card" data-color="gold">
+      <div class="stat-header">
+        <span class="stat-label">Total Disbursed</span>
+        <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+      </div>
+      <div class="stat-value">KES 0</div>
+      <div class="stat-sub">This financial year</div>
+    </div>
+  </div>
+
+  <!-- SUMMARY BANNER -->
+  <div class="summary-banner">
+    <div class="summary-item">
+      <div class="summary-icon" style="background:rgba(13,43,94,.08);color:var(--navy)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      </div>
+      <div>
+        <div class="summary-label">University Level</div>
+        <div class="summary-val">142</div>
+        <div class="summary-note">Avg KES 52,000 each</div>
+      </div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-icon" style="background:var(--info-bg);color:var(--info)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+      </div>
+      <div>
+        <div class="summary-label">Secondary Level</div>
+        <div class="summary-val">118</div>
+        <div class="summary-note">Avg KES 28,000 each</div>
+      </div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-icon" style="background:var(--success-bg);color:var(--success)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+      </div>
+      <div>
+        <div class="summary-label">College / TVET</div>
+        <div class="summary-val">87</div>
+        <div class="summary-note">Avg KES 35,000 each</div>
+      </div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-icon" style="background:var(--gold-pale);color:var(--gold-dark)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+      </div>
+      <div>
+        <div class="summary-label">Approval Rate</div>
+        <div class="summary-val">52.7%</div>
+        <div class="summary-note">Of all submitted</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLE CARD -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title"><span class="card-title-dot"></span>Bursary Applications</span>
+      <div class="filters-row">
+        <div class="filter-search">
+          <svg class="search-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input type="text" placeholder="Search applicants…" oninput="applyFilters()" id="searchInput">
+        </div>
+        <select class="filter-select" id="statusFilter" onchange="applyFilters()">
+          <option value="">All Status</option>
+          <option value="Pending">Pending</option>
+          <option value="Approved">Approved</option>
+          <option value="Rejected">Rejected</option>
+          <option value="On Hold">On Hold</option>
+          <option value="Under Review">Under Review</option>
+        </select>
+        <select class="filter-select" id="levelFilter" onchange="applyFilters()">
+          <option value="">All Levels</option>
+          <option value="University">University</option>
+          <option value="Secondary">Secondary</option>
+          <option value="College">College</option>
+          <option value="TVET">TVET</option>
+        </select>
+        <select class="filter-select" id="wardFilter" onchange="applyFilters()">
+          <option value="">All Wards</option>
+          <option value="Marsabit Central">Marsabit Central</option>
+          <option value="Saku Ward">Saku Ward</option>
+          <option value="North Horr">North Horr</option>
+          <option value="Laisamis">Laisamis</option>
+          <option value="Moyale">Moyale</option>
+          <option value="Sololo">Sololo</option>
+        </select>
+        <div style="display:flex;gap:5px">
+          <button class="filter-tab active" onclick="setTab('all',this)">All</button>
+          <button class="filter-tab" onclick="setTab('Pending',this)">Pending</button>
+          <button class="filter-tab" onclick="setTab('Approved',this)">Approved</button>
+          <button class="filter-tab" onclick="setTab('Rejected',this)">Rejected</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Applicant</th>
+            <th class="sortable" onclick="sortTable('school')">School ↕</th>
+            <th class="sortable" onclick="sortTable('ward')">Ward ↕</th>
+            <th>Level</th>
+            <th class="sortable" onclick="sortTable('amount')">Amount (KES) ↕</th>
+            <th>Documents</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="bursaryTbody"></tbody>
+      </table>
+    </div>
+
+    <div class="pagination-row">
+      <span class="pagin-info" id="paginInfo">Showing 1–10 of 20</span>
+      <div class="pagin-btns" id="paginBtns"></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ── MODAL: VIEW DOCUMENTS ── -->
+<div class="modal-overlay" id="docsModal">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-header">
+      <span class="modal-title" id="docsModalTitle">Application Documents</span>
+      <button class="modal-close" onclick="closeModal('docsModal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom:16px">
+        <div class="approval-steps">
+          <div class="step done"><div class="step-circle">✓</div><div class="step-label">Submitted</div></div>
+          <div class="step done"><div class="step-circle">✓</div><div class="step-label">Verified</div></div>
+          <div class="step active"><div class="step-circle">3</div><div class="step-label">Review</div></div>
+          <div class="step"><div class="step-circle">4</div><div class="step-label">Decision</div></div>
+          <div class="step"><div class="step-circle">5</div><div class="step-label">Disbursed</div></div>
+        </div>
+      </div>
+      <div id="docsList"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('docsModal')">Close</button>
+      <button class="btn btn-navy" onclick="closeModal('docsModal')">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL: APPROVE BURSARY ── -->
+<div class="modal-overlay" id="approveModal">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-header">
+      <span class="modal-title">Approve Bursary Application</span>
+      <button class="modal-close" onclick="closeModal('approveModal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="approveModalBody">
+      <div style="background:var(--success-bg);border:1px solid rgba(26,122,74,.2);border-radius:var(--radius);padding:14px 16px;margin-bottom:20px;display:flex;gap:10px;align-items:flex-start">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2" style="flex-shrink:0;margin-top:1px"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <div style="font-size:13px;color:var(--success);line-height:1.5">You are about to <strong>approve</strong> this bursary application. The applicant will be notified and funds will be queued for disbursement.</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Approved Amount (KES)</label>
+        <input type="number" class="form-input" id="approvedAmount" placeholder="Enter approved amount">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Disbursement Method</label>
+        <select class="form-select">
+          <option>Direct to School Account</option>
+          <option>M-Pesa to Guardian</option>
+          <option>Cheque to Institution</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Academic Year / Term</label>
+        <select class="form-select">
+          <option>2025 — Term 1</option>
+          <option>2025 — Term 2</option>
+          <option>2025 — Term 3</option>
+          <option>2025/2026 — Semester 1</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Approval Notes</label>
+        <textarea class="form-textarea" rows="3" placeholder="Optional notes on approval decision…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('approveModal')">Cancel</button>
+      <button class="btn btn-success" onclick="confirmApprove()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+        Confirm Approval
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL: REJECT BURSARY ── -->
+<div class="modal-overlay" id="rejectModal">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-header">
+      <span class="modal-title">Reject Application</span>
+      <button class="modal-close" onclick="closeModal('rejectModal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div style="background:var(--danger-bg);border:1px solid rgba(192,57,43,.2);border-radius:var(--radius);padding:14px 16px;margin-bottom:20px;font-size:13px;color:var(--danger);line-height:1.5">
+        You are about to <strong>reject</strong> this application. The applicant will receive a notification with the reason provided.
+      </div>
+      <div class="form-group">
+        <label class="form-label">Rejection Reason</label>
+        <select class="form-select">
+          <option>— Select a reason —</option>
+          <option>Incomplete documentation</option>
+          <option>Does not meet eligibility criteria</option>
+          <option>Duplicate application</option>
+          <option>Ward quota exceeded</option>
+          <option>Income threshold exceeded</option>
+          <option>Other (specify below)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Additional Comments</label>
+        <textarea class="form-textarea" rows="3" placeholder="Provide specific feedback to the applicant…"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Allow Reapplication?</label>
+        <select class="form-select">
+          <option>Yes — next cycle</option>
+          <option>No — permanently disqualified</option>
+          <option>Yes — after resubmitting documents</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('rejectModal')">Cancel</button>
+      <button class="btn btn-danger" onclick="confirmReject()">Confirm Rejection</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL: ADD APPLICATION ── -->
+<div class="modal-overlay" id="addBursaryModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Add Bursary Application</span>
+      <button class="modal-close" onclick="closeModal('addBursaryModal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="form-group">
+          <label class="form-label">Student Full Name</label>
+          <input type="text" class="form-input" placeholder="e.g. Amina Hassan Roba">
+        </div>
+        <div class="form-group">
+          <label class="form-label">ID / Admission No.</label>
+          <input type="text" class="form-input" placeholder="e.g. 38271234">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="form-group">
+          <label class="form-label">School / Institution</label>
+          <input type="text" class="form-input" placeholder="e.g. University of Nairobi">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Level of Study</label>
+          <select class="form-select">
+            <option>University</option>
+            <option>Secondary</option>
+            <option>College</option>
+            <option>TVET</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="form-group">
+          <label class="form-label">Ward</label>
+          <select class="form-select">
+            <option>Marsabit Central</option>
+            <option>Saku Ward</option>
+            <option>North Horr</option>
+            <option>Laisamis</option>
+            <option>Moyale</option>
+            <option>Sololo</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Amount Requested (KES)</label>
+          <input type="number" class="form-input" placeholder="e.g. 50000">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="form-group">
+          <label class="form-label">Guardian Name</label>
+          <input type="text" class="form-input" placeholder="Parent / Guardian full name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Guardian Phone</label>
+          <input type="tel" class="form-input" placeholder="07XX XXX XXX">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Supporting Notes</label>
+        <textarea class="form-textarea" rows="3" placeholder="Any special circumstances or notes…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('addBursaryModal')">Cancel</button>
+      <button class="btn btn-gold" onclick="submitNewBursary()">Submit Application</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL: BULK ACTION ── -->
+<div class="modal-overlay" id="bulkModal">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <span class="modal-title">Bulk Action</span>
+      <button class="modal-close" onclick="closeModal('bulkModal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--text3);margin-bottom:18px">Apply an action to multiple applications at once based on filter criteria.</p>
+      <div class="form-group">
+        <label class="form-label">Target Group</label>
+        <select class="form-select">
+          <option>All Pending Applications</option>
+          <option>All Under Review</option>
+          <option>All On Hold — Documents Complete</option>
+          <option>Specific Ward</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Bulk Action</label>
+        <select class="form-select">
+          <option>Move to Under Review</option>
+          <option>Approve All</option>
+          <option>Put On Hold</option>
+          <option>Send Reminder Notification</option>
+          <option>Export Selected</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notes / Reason</label>
+        <textarea class="form-textarea" rows="2" placeholder="Optional notes for this bulk action…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('bulkModal')">Cancel</button>
+      <button class="btn btn-navy" onclick="submitBulk()">Apply Action</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ── DATA ──
+let BURSARIES=[];
+
+let filtered=[...BURSARIES];
+let currentPage=1;
+const PER_PAGE=10;
+let activeTab='all';
+let actionTarget=null;
+let sortCol='';let sortDir=1;
+
+// ── HELPERS ──
+function getInitials(n){return n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}
+function getAvatarBg(n){const c=['rgba(13,43,94,.1)','rgba(201,162,39,.15)','rgba(26,122,74,.1)','rgba(21,101,192,.1)','rgba(179,92,0,.1)'];let h=0;for(let i=0;i<n.length;i++)h=(h*31+n.charCodeAt(i))%c.length;return c[h]}
+function getAvatarColor(n){const c=['var(--navy)','var(--gold-dark)','var(--success)','var(--info)','var(--warn)'];let h=0;for(let i=0;i<n.length;i++)h=(h*31+n.charCodeAt(i))%c.length;return c[h]}
+function getBadge(s){const m={Pending:'badge-pending',Approved:'badge-approved',Rejected:'badge-rejected','On Hold':'badge-hold','Under Review':'badge-review'};return `<span class="badge ${m[s]||''}">${s}</span>`}
+function escapeHTML(value){return String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]))}
+async function loadBursaries(){
+  const response=await adminFetch('/api/bursary');
+  const records=await response.json();
+  BURSARIES=records.map(record=>{
+    const level=String(record.institutionType||'').toLowerCase();
+    const status={submitted:'Pending',under_review:'Under Review',approved:'Approved',rejected:'Rejected',on_hold:'On Hold'}[record.status]||'Pending';
+    return {dbId:record._id,id:escapeHTML(record.applicationId),name:escapeHTML(record.studentName),school:escapeHTML(record.schoolName),ward:escapeHTML(record.ward),level:level.includes('university')||level.includes('undergraduate')?'University':level.includes('secondary')?'Secondary':level.includes('tvet')?'TVET':'College',amount:Number(record.amountRequested)||0,docs:record.attachments?.length||0,status,guardian:escapeHTML(`${record.guardianName||''} — ${record.guardianPhone||''}`),attachments:record.attachments||[]};
+  });
+  const byStatus=status=>BURSARIES.filter(record=>record.status===status).length;
+  const stats=[BURSARIES.length,byStatus('Pending')+byStatus('Under Review'),byStatus('Approved'),byStatus('Rejected'),byStatus('On Hold'),'KES '+BURSARIES.reduce((sum,record)=>sum+(Number(record.approvedAmount)||0),0).toLocaleString()];
+  document.querySelectorAll('.stats-grid .stat-value').forEach((element,index)=>{element.textContent=stats[index]??'0';});
+  applyFilters();
+}
+function getLevelBadge(l){const m={University:'level-university',Secondary:'level-primary',College:'level-college',TVET:'level-secondary'};return `<span class="level-badge ${m[l]||''}">${l}</span>`}
+function getDocsBadge(n){const c=n>=5?'var(--success)':n>=3?'var(--warn)':'var(--danger)';return `<span style="font-size:11px;font-weight:600;color:${c}">${n}/5 docs</span>`}
+function go(url){window.location.href=url}
+function fmtAmt(n){return 'KES '+n.toLocaleString()}
+function go(page) {
+    window.location.href = page;
+}
+
+// ── FILTER ──
+function applyFilters(){
+  const search=document.getElementById('searchInput').value.toLowerCase();
+  const status=document.getElementById('statusFilter').value;
+  const level=document.getElementById('levelFilter').value;
+  const ward=document.getElementById('wardFilter').value;
+  filtered=BURSARIES.filter(r=>{
+    const matchTab=activeTab==='all'||r.status===activeTab;
+    const matchSearch=!search||r.name.toLowerCase().includes(search)||r.id.toLowerCase().includes(search)||r.school.toLowerCase().includes(search)||r.ward.toLowerCase().includes(search);
+    const matchStatus=!status||r.status===status;
+    const matchLevel=!level||r.level===level;
+    const matchWard=!ward||r.ward===ward;
+    return matchTab&&matchSearch&&matchStatus&&matchLevel&&matchWard;
+  });
+  if(sortCol)filtered.sort((a,b)=>(a[sortCol]>b[sortCol]?1:-1)*sortDir);
+  currentPage=1;renderTable();
+}
+function setTab(val,el){
+  activeTab=val;
+  document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('statusFilter').value=val==='all'?'':val;
+  applyFilters();
+}
+function sortTable(col){if(sortCol===col)sortDir*=-1;else{sortCol=col;sortDir=1;}applyFilters()}
+
+// ── RENDER ──
+function renderTable(){
+  const tbody=document.getElementById('bursaryTbody');
+  const start=(currentPage-1)*PER_PAGE;
+  const slice=filtered.slice(start,start+PER_PAGE);
+  if(!slice.length){
+    tbody.innerHTML=`<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text3);font-size:13px">No applications match your filters.</td></tr>`;
+    document.getElementById('paginInfo').textContent='No results';
+    document.getElementById('paginBtns').innerHTML='';return;
+  }
+  tbody.innerHTML=slice.map(r=>`
+    <tr>
+      <td><span style="font-size:11px;font-weight:700;color:var(--text3);font-family:monospace">${r.id}</span></td>
+      <td>
+        <div class="appl-cell">
+          <div class="a-avatar" style="background:${getAvatarBg(r.name)};color:${getAvatarColor(r.name)}">${getInitials(r.name)}</div>
+          <div><div class="a-name">${r.name}</div><div class="a-detail">${r.guardian}</div></div>
+        </div>
+      </td>
+      <td style="font-size:12px;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.school}</td>
+      <td style="font-size:12px">${r.ward}</td>
+      <td>${getLevelBadge(r.level)}</td>
+      <td><span style="font-size:13px;font-weight:600;color:var(--text)">${fmtAmt(r.amount)}</span></td>
+      <td>${getDocsBadge(r.docs)}</td>
+      <td>${getBadge(r.status)}</td>
+      <td>
+        <div class="action-group">
+          <button class="act-btn act-btn-approve" onclick="promptApprove('${r.id}')">Approve</button>
+          <button class="act-btn act-btn-reject" onclick="promptReject('${r.id}')">Reject</button>
+          <button class="act-btn act-btn-hold" onclick="putOnHold('${r.id}')">Hold</button>
+          <button class="act-btn act-btn-view" onclick="viewDocs('${r.id}')">Docs</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+  renderPagination();
+  document.getElementById('paginInfo').textContent=`Showing ${start+1}–${Math.min(start+PER_PAGE,filtered.length)} of ${filtered.length} entries`;
+}
+
+function renderPagination(){
+  const total=Math.ceil(filtered.length/PER_PAGE);
+  const c=document.getElementById('paginBtns');c.innerHTML='';
+  const mk=(label,page,active)=>{const b=document.createElement('button');b.className='pagin-btn'+(active?' active':'');b.textContent=label;b.onclick=()=>{currentPage=page;renderTable()};return b};
+  c.appendChild(mk('←',Math.max(1,currentPage-1)));
+  for(let i=1;i<=Math.min(total,5);i++)c.appendChild(mk(i,i,i===currentPage));
+  c.appendChild(mk('→',Math.min(total,currentPage+1)));
+}
+
+// ── ACTIONS ──
+function promptApprove(id){
+  actionTarget=id;
+  const r=BURSARIES.find(b=>b.id===id);
+  document.getElementById('approvedAmount').value=r?r.amount:'';
+  openModal('approveModal');
+}
+async function confirmApprove(){
+  if(!actionTarget)return;
+  const r=BURSARIES.find(b=>b.id===actionTarget);
+  if(!r)return;
+  try{
+    const approvedAmount=Number(document.getElementById('approvedAmount').value);
+    const response=await adminFetch(`/api/bursary/${r.dbId}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:'approved',approvedAmount})});
+    if(!response.ok)throw new Error('Unable to approve application');
+    closeModal('approveModal');await loadBursaries();showToast(`Application ${actionTarget} approved successfully.`,'success','Approved');actionTarget=null;
+  }catch(error){showToast(error.message,'error','Update Failed')}
+}
+function promptReject(id){actionTarget=id;openModal('rejectModal')}
+async function confirmReject(){
+  if(!actionTarget)return;
+  const r=BURSARIES.find(b=>b.id===actionTarget);
+  if(!r)return;
+  try{
+    const response=await adminFetch(`/api/bursary/${r.dbId}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:'rejected'})});
+    if(!response.ok)throw new Error('Unable to reject application');
+    closeModal('rejectModal');await loadBursaries();showToast(`Application ${actionTarget} has been rejected.`,'error','Rejected');actionTarget=null;
+  }catch(error){showToast(error.message,'error','Update Failed')}
+}
+async function putOnHold(id){
+  const r=BURSARIES.find(b=>b.id===id);
+  if(!r)return;
+  try{
+    const response=await adminFetch(`/api/bursary/${r.dbId}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:'on_hold'})});
+    if(!response.ok)throw new Error('Unable to place application on hold');
+    await loadBursaries();showToast(`Application ${id} placed on hold.`,'warning','On Hold');
+  }catch(error){showToast(error.message,'error','Update Failed')}
+}
+function viewDocs(id){
+  const r=BURSARIES.find(b=>b.id===id);
+  document.getElementById('docsModalTitle').textContent=`Documents — ${r?r.name:id}`;
+  document.getElementById('docsList').innerHTML=(r?.attachments||[]).map(file=>`<div class="doc-item"><div class="doc-name">${escapeHTML(file.filename)}</div><div class="doc-size">${Math.ceil(file.size/1024)} KB</div><a class="doc-download" href="/api/files/${encodeURIComponent(file.fileId)}" title="Download document">↓</a></div>`).join('')||'<p>No documents attached.</p>';
+  openModal('docsModal');
+}
+function submitNewBursary(){
+  closeModal('addBursaryModal');showToast('Applications are created by citizens through the public portal.','info','No Record Created');
+}
+function submitBulk(){closeModal('bulkModal');showToast('Bulk updates are not available.','info','No Changes Made')}
+function exportCSV(){
+  const rows=[['ID','Applicant','School','Ward','Level','Amount','Status'],...filtered.map(r=>[r.id,r.name,r.school,r.ward,r.level,r.amount,r.status])];
+  const csv=rows.map(r=>r.join(',')).join('\n');
+  const a=document.createElement('a');a.href='data:text/csv,'+encodeURIComponent(csv);a.download='bursaries.csv';a.click();
+  showToast('CSV exported successfully.','success','Export Complete');
+}
+
+
+// ── MODAL ──
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open')}));
+
+// ── TOAST ──
+function showToast(msg,type='info',title=''){
+  const icons={success:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',warning:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>',error:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'};
+  const t=document.createElement('div');t.className=`toast ${type}`;
+  t.innerHTML=`<div class="toast-icon">${icons[type]||icons.info}</div><div class="toast-body"><div class="toast-title">${title}</div><div class="toast-msg">${msg}</div></div><button class="toast-x" onclick="removeToast(this.parentElement)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
+  document.getElementById('toastContainer').appendChild(t);
+  setTimeout(()=>removeToast(t),4500);
+}
+function removeToast(el){if(!el||!el.parentElement)return;el.style.animation='toastOut .35s ease forwards';setTimeout(()=>el.remove(),340)}
+
+// ── SIDEBAR ──
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('open')}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('open')}
+
+// ── INIT ──
+window.addEventListener('load',()=>loadBursaries().catch(error=>showToast(error.message,'error','Could Not Load Applications')));
+</script>
+</body>
+</html>

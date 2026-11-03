@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Proposal – SenateLink Marsabit</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0d2b5e;
+  --navy-dark:#091d42;
+  --navy-light:#1a3f7a;
+  --gold:#c9a227;
+  --gold-light:#e8c14a;
+  --white:#ffffff;
+  --gray-50:#f8f9fc;
+  --gray-100:#eef0f5;
+  --gray-200:#d8dce8;
+  --gray-400:#8a93aa;
+  --gray-600:#4a5168;
+  --gray-800:#1e2235;
+  --success:#0f6e56;
+  --success-bg:#e1f5ee;
+  --danger:#c0392b;
+  --danger-bg:#faece7;
+  --radius-sm:6px;
+  --radius-md:10px;
+  --radius-lg:16px;
+  --shadow-sm:0 2px 8px rgba(13,43,94,0.08);
+  --shadow-md:0 4px 24px rgba(13,43,94,0.12);
+  --shadow-lg:0 8px 40px rgba(13,43,94,0.18);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Poppins',sans-serif;background:var(--gray-50);color:var(--gray-800);line-height:1.6}
+a{text-decoration:none;color:inherit}
+.container{max-width:1100px;margin:0 auto;padding:0 1.5rem}
+
+/* NAVBAR */
+.navbar{position:sticky;top:0;z-index:1000;background:var(--navy-dark);border-bottom:2px solid var(--gold)}
+.nav-container{max-width:1100px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:68px}
+.nav-brand{display:flex;align-items:center;gap:10px}
+.brand-logo{width:38px;height:38px;background:var(--gold);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:var(--navy-dark)}
+.brand-text{display:flex;flex-direction:column;line-height:1.1}
+.brand-name{font-size:18px;font-weight:700;color:var(--white)}
+.brand-county{font-size:10px;color:var(--gold-light);letter-spacing:1px;text-transform:uppercase}
+.nav-links{display:flex;gap:4px;list-style:none;align-items:center}
+.nav-link{color:rgba(255,255,255,0.75);font-size:13.5px;font-weight:500;padding:7px 14px;border-radius:var(--radius-sm);transition:all 0.2s}
+.nav-link:hover,.nav-link.active{background:rgba(255,255,255,0.1);color:var(--white)}
+.nav-link.active{color:var(--gold-light)}
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
+.hamburger span{display:block;width:22px;height:2px;background:var(--white);border-radius:2px}
+
+/* PAGE HERO */
+.page-hero{background:linear-gradient(135deg,var(--navy-dark) 0%,var(--navy) 60%,var(--navy-light) 100%);padding:3.5rem 1.5rem;text-align:center;position:relative;overflow:hidden;border-bottom:3px solid var(--gold)}
+.page-hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.025'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")}
+.page-hero-inner{position:relative;z-index:1;max-width:720px;margin:0 auto}
+.hero-badge{display:inline-block;background:rgba(201,162,39,0.15);border:1px solid rgba(201,162,39,0.4);color:var(--gold-light);font-size:12px;font-weight:600;padding:6px 16px;border-radius:20px;margin-bottom:1rem;letter-spacing:0.5px}
+.page-hero h1{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;color:var(--white);margin-bottom:1rem;letter-spacing:-0.5px}
+.page-hero h1 span{color:var(--gold-light)}
+.page-hero p{font-size:15px;color:rgba(255,255,255,0.75);line-height:1.75}
+.breadcrumb{display:flex;align-items:center;gap:6px;justify-content:center;margin-bottom:1rem;font-size:12px;color:rgba(255,255,255,0.5)}
+.breadcrumb a{color:rgba(255,255,255,0.5);transition:color 0.2s}
+.breadcrumb a:hover{color:var(--gold-light)}
+.breadcrumb span{color:var(--gold-light)}
+
+/* PROCESS STEPS */
+.process-strip{background:var(--white);border-bottom:1px solid var(--gray-200);padding:1.5rem}
+.process-inner{max-width:860px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:0}
+.process-step{display:flex;align-items:center;gap:8px;flex:1}
+.process-step-circle{width:34px;height:34px;border-radius:50%;background:var(--navy-dark);color:var(--white);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.process-step-text{font-size:12px;font-weight:600;color:var(--gray-600)}
+.process-step-text small{display:block;font-size:10px;color:var(--gray-400);font-weight:400}
+.process-arrow{font-size:16px;color:var(--gray-200);margin:0 6px;flex-shrink:0}
+
+/* MAIN LAYOUT */
+.main{max-width:1060px;margin:0 auto;padding:2.5rem 1.5rem 4rem}
+.layout-grid{display:grid;grid-template-columns:1fr 300px;gap:1.5rem;align-items:start}
+
+/* CARD */
+.card{background:var(--white);border-radius:var(--radius-lg);border:1px solid var(--gray-200);box-shadow:var(--shadow-md);margin-bottom:1.5rem;overflow:hidden}
+.card-header{background:var(--navy-dark);padding:1.25rem 1.75rem;display:flex;align-items:center;gap:12px;border-bottom:2px solid var(--gold)}
+.card-header-icon{width:40px;height:40px;background:rgba(201,162,39,0.2);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.card-header h2{color:var(--white);font-size:16px;font-weight:700}
+.card-header p{color:rgba(255,255,255,0.55);font-size:12px;margin-top:1px}
+.card-body{padding:1.75rem}
+
+/* FORM */
+.section-label{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;margin-top:1.5rem;padding-bottom:6px;border-bottom:1.5px solid var(--gray-100)}
+.section-label:first-child{margin-top:0}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.form-group{margin-bottom:1rem}
+.form-group:last-child{margin-bottom:0}
+label{display:block;font-size:13px;font-weight:600;color:var(--gray-600);margin-bottom:5px}
+label .req{color:var(--danger);margin-left:2px}
+label .opt{font-weight:400;color:var(--gray-400);font-size:11px;margin-left:4px}
+input[type=text],input[type=tel],input[type=email],input[type=number],select,textarea{width:100%;border:1.5px solid var(--gray-200);border-radius:var(--radius-md);padding:10px 14px;font-size:14px;color:var(--gray-800);background:var(--gray-50);transition:all 0.18s;font-family:'Poppins',sans-serif;outline:none;appearance:none;-webkit-appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--navy-light);background:var(--white);box-shadow:0 0 0 3px rgba(13,43,94,0.1)}
+input.error,select.error,textarea.error{border-color:var(--danger);box-shadow:0 0 0 3px rgba(192,57,43,0.1)}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238a93aa' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+textarea{resize:vertical;min-height:120px;line-height:1.65}
+.char-count{font-size:11px;color:var(--gray-400);text-align:right;margin-top:4px}
+.err-msg{font-size:11px;color:var(--danger);margin-top:4px;display:none}
+.err-msg.visible{display:block}
+.input-prefix{position:relative}
+.input-prefix span{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:13px;font-weight:600;color:var(--gray-400)}
+.input-prefix input{padding-left:52px}
+
+/* IMPACT TAGS */
+.impact-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.impact-tag{display:flex;align-items:center;gap:6px;padding:6px 12px;border:1.5px solid var(--gray-200);border-radius:20px;cursor:pointer;font-size:12px;font-weight:600;color:var(--gray-600);background:var(--gray-50);transition:all 0.2s;user-select:none}
+.impact-tag:hover{border-color:var(--navy-light);color:var(--navy)}
+.impact-tag.selected{background:rgba(13,43,94,0.08);border-color:var(--navy);color:var(--navy-dark)}
+.impact-tag input{display:none}
+
+/* FILE UPLOAD */
+.file-wrap{border:2px dashed var(--gray-200);border-radius:var(--radius-md);padding:1.5rem;text-align:center;cursor:pointer;transition:all 0.2s;position:relative}
+.file-wrap:hover{border-color:var(--navy-light);background:rgba(13,43,94,0.02)}
+.file-wrap.has-file{border-color:var(--success);background:var(--success-bg)}
+.file-wrap input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;border:none;box-shadow:none;padding:0;background:none}
+.file-wrap input[type=file]:focus{box-shadow:none}
+.file-icon-big{font-size:28px;margin-bottom:6px}
+.file-wrap p{font-size:13px;color:var(--gray-600)}
+.file-wrap p span{color:var(--navy-light);font-weight:600}
+.file-wrap small{font-size:11px;color:var(--gray-400)}
+.file-preview{display:none;align-items:center;gap:8px;margin-top:10px;padding:8px 12px;background:rgba(15,110,86,0.08);border-radius:var(--radius-sm);font-size:12px;color:var(--success);font-weight:600}
+.file-preview.visible{display:flex}
+
+/* BUDGET ESTIMATOR */
+.budget-estimator{background:rgba(201,162,39,0.06);border:1.5px solid rgba(201,162,39,0.2);border-radius:var(--radius-md);padding:1.25rem;margin-top:8px}
+.budget-estimator h4{font-size:12px;font-weight:700;color:var(--navy-dark);margin-bottom:10px}
+.budget-row-item{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:5px 0;border-bottom:1px solid rgba(201,162,39,0.15)}
+.budget-row-item:last-child{border-bottom:none;font-weight:700;color:var(--navy-dark);margin-top:4px;padding-top:8px}
+.budget-row-item span:last-child{font-weight:600;color:var(--gold)}
+
+/* DECLARATION */
+.declaration{background:var(--gray-50);border:1.5px solid var(--gray-200);border-radius:var(--radius-md);padding:1.25rem 1.5rem;margin-top:1.5rem}
+.declaration p{font-size:13px;color:var(--gray-600);line-height:1.7;margin-bottom:10px}
+.checkbox-row{display:flex;align-items:flex-start;gap:10px}
+.checkbox-row input[type=checkbox]{width:18px;height:18px;margin-top:2px;cursor:pointer;flex-shrink:0;accent-color:var(--navy)}
+.checkbox-row label{font-size:13px;color:var(--gray-700);font-weight:500;cursor:pointer}
+.err-msg-check{font-size:11px;color:var(--danger);margin-top:6px;display:none}
+.err-msg-check.visible{display:block}
+
+/* SUBMIT */
+.btn-submit{width:100%;padding:14px;background:var(--navy-dark);color:var(--white);border:none;border-radius:var(--radius-md);font-size:15px;font-weight:700;font-family:'Poppins',sans-serif;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:1.5rem}
+.btn-submit:hover{background:var(--navy-light);transform:translateY(-1px);box-shadow:var(--shadow-md)}
+.btn-submit:active{transform:scale(0.99)}
+
+/* SIDEBAR */
+.sidebar-card{background:var(--white);border-radius:var(--radius-lg);border:1px solid var(--gray-200);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:1.5rem;position:sticky;top:88px}
+.sidebar-header{padding:1rem 1.25rem;border-bottom:1px solid var(--gray-100)}
+.sidebar-header h3{font-size:14px;font-weight:700;color:var(--navy-dark)}
+.sidebar-header p{font-size:11px;color:var(--gray-400);margin-top:2px}
+.sidebar-body{padding:1.25rem}
+.tip-item{display:flex;gap:10px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--gray-100)}
+.tip-item:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
+.tip-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+.tip-item h4{font-size:13px;font-weight:700;color:var(--navy-dark);margin-bottom:3px}
+.tip-item p{font-size:12px;color:var(--gray-600);line-height:1.55}
+.criteria-list{list-style:none}
+.criteria-list li{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--gray-600);margin-bottom:10px;line-height:1.5}
+.criteria-list li::before{content:'✓';color:var(--success);font-weight:700;font-size:12px;margin-top:2px;flex-shrink:0}
+.past-proposals{display:flex;flex-direction:column;gap:8px}
+.past-pill{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-100)}
+.past-pill-name{font-size:12px;font-weight:600;color:var(--navy-dark)}
+.past-pill-status{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+.pps-approved{background:var(--success-bg);color:var(--success)}
+.pps-review{background:#dbeafe;color:#1e40af}
+.pps-pending{background:#fef3c7;color:#92400e}
+
+/* SUCCESS POPUP */
+.popup-overlay{display:none;position:fixed;inset:0;background:rgba(9,29,66,0.65);z-index:9999;align-items:center;justify-content:center;padding:1.5rem}
+.popup-overlay.visible{display:flex}
+.popup{background:var(--white);border-radius:var(--radius-lg);padding:2.5rem 2rem;max-width:500px;width:100%;text-align:center;box-shadow:var(--shadow-lg);animation:popIn 0.35s ease}
+@keyframes popIn{from{opacity:0;transform:scale(0.9)}to{opacity:1;transform:scale(1)}}
+.popup-icon{font-size:56px;margin-bottom:1rem}
+.popup h2{font-size:20px;font-weight:800;color:var(--navy-dark);margin-bottom:8px}
+.popup p{font-size:14px;color:var(--gray-600);line-height:1.7;margin-bottom:6px}
+.proposal-id-display{display:inline-block;background:rgba(201,162,39,0.1);border:2px solid var(--gold);color:var(--navy-dark);font-size:20px;font-weight:800;padding:10px 28px;border-radius:var(--radius-md);margin:14px 0;letter-spacing:2px;font-family:'Courier New',monospace}
+.popup-timeline{display:flex;flex-direction:column;gap:8px;margin:16px 0;text-align:left}
+.popup-tl-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--gray-50);border-radius:var(--radius-sm);font-size:13px;color:var(--gray-700)}
+.popup-tl-item .tl-dot{width:10px;height:10px;border-radius:50%;background:var(--navy-dark);flex-shrink:0}
+.popup-tl-item .tl-date{font-size:11px;color:var(--gray-400);margin-left:auto;white-space:nowrap}
+.btn-close-popup{margin-top:1rem;padding:12px 32px;background:var(--navy-dark);color:var(--white);border:none;border-radius:var(--radius-md);font-size:14px;font-weight:700;font-family:'Poppins',sans-serif;cursor:pointer;transition:background 0.2s}
+.btn-close-popup:hover{background:var(--navy-light)}
+
+/* FOOTER */
+.footer{background:var(--navy-dark)}
+.footer-top{padding:3rem 0}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2rem}
+.footer-logo{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.footer-brand p{font-size:13px;color:rgba(255,255,255,0.5);line-height:1.7;max-width:260px;margin-top:8px}
+.footer-col h4{font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold-light);margin-bottom:14px}
+.footer-col ul{list-style:none}
+.footer-col ul li{margin-bottom:8px;font-size:13px;color:rgba(255,255,255,0.5)}
+.footer-col ul li a{color:rgba(255,255,255,0.5);transition:color 0.2s}
+.footer-col ul li a:hover{color:var(--white)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,0.08);padding:1.25rem 0;text-align:center;font-size:12px;color:rgba(255,255,255,0.3)}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .layout-grid{grid-template-columns:1fr}
+  .sidebar-card{position:static}
+  .process-inner{flex-wrap:wrap;gap:12px}
+  .process-arrow{display:none}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .footer-brand{grid-column:span 2}
+}
+@media(max-width:660px){
+  .nav-links{display:none;position:absolute;top:68px;left:0;right:0;background:var(--navy);flex-direction:column;padding:1rem 1.5rem;gap:4px;border-bottom:2px solid var(--gold)}
+  .nav-links.open{display:flex}
+  .hamburger{display:flex}
+  .form-row{grid-template-columns:1fr}
+  .card-body{padding:1.25rem}
+  .footer-grid{grid-template-columns:1fr}
+  .footer-brand{grid-column:span 1}
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-brand">
+      <div class="brand-logo">SL</div>
+      <div class="brand-text">
+        <span class="brand-name">SenateLink</span>
+        <span class="brand-county">Marsabit County</span>
+      </div>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="complaints.html" class="nav-link">Public Services</a></li>
+      <li><a href="transparency.html" class="nav-link">Projects</a></li>
+      <li><a href="transparency.html" class="nav-link">Transparency</a></li>
+      <li><a href="#contact" class="nav-link">Contact</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <div class="breadcrumb">
+      <a href="index.html">Home</a> › <span>Project Proposal</span>
+    </div>
+    <div class="hero-badge">💡 Community Development Initiative</div>
+    <h1>Submit a <span>Project Proposal</span></h1>
+    <p>Have an idea that can transform your community? Submit a project proposal for review by the Marsabit County Senate office. Every proposal is considered during the annual development budget planning cycle.</p>
+  </div>
+</section>
+
+<div class="process-strip">
+  <div class="process-inner">
+    <div class="process-step">
+      <div class="process-step-circle">1</div>
+      <div class="process-step-text">Submit Proposal<small>Online form</small></div>
+    </div>
+    <div class="process-arrow">→</div>
+    <div class="process-step">
+      <div class="process-step-circle">2</div>
+      <div class="process-step-text">Initial Review<small>7–14 days</small></div>
+    </div>
+    <div class="process-arrow">→</div>
+    <div class="process-step">
+      <div class="process-step-circle">3</div>
+      <div class="process-step-text">Ward Verification<small>Field assessment</small></div>
+    </div>
+    <div class="process-arrow">→</div>
+    <div class="process-step">
+      <div class="process-step-circle">4</div>
+      <div class="process-step-text">Committee Review<small>Senate committee</small></div>
+    </div>
+    <div class="process-arrow">→</div>
+    <div class="process-step">
+      <div class="process-step-circle">5</div>
+      <div class="process-step-text">Decision<small>Approved / Deferred</small></div>
+    </div>
+  </div>
+</div>
+
+<main class="main">
+  <div class="layout-grid">
+
+    <!-- FORM COLUMN -->
+    <div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-icon">💡</div>
+          <div>
+            <h2>Project Proposal Form</h2>
+            <p>Fields marked * are required</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <form id="proposalForm" novalidate>
+
+            <div class="section-label">👤 Proposer Information</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="proposerName">Full Name <span class="req">*</span></label>
+                <input type="text" id="proposerName" placeholder="e.g. Hassan Wario Guyo">
+                <div class="err-msg" id="err-proposerName">Please enter your full name.</div>
+              </div>
+              <div class="form-group">
+                <label for="proposerPhone">Phone Number <span class="req">*</span></label>
+                <input type="tel" id="proposerPhone" placeholder="e.g. 0712 345 678">
+                <div class="err-msg" id="err-proposerPhone">Please enter a valid phone number.</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="proposerEmail">Email Address <span class="opt">(optional)</span></label>
+                <input type="email" id="proposerEmail" placeholder="yourname@example.com">
+                <div class="err-msg" id="err-proposerEmail">Please enter a valid email address.</div>
+              </div>
+              <div class="form-group">
+                <label for="proposerRole">Your Role / Capacity <span class="req">*</span></label>
+                <select id="proposerRole">
+                  <option value="">— Select Role —</option>
+                  <option>Individual Citizen</option>
+                  <option>Community Group Leader</option>
+                  <option>CBO / NGO Representative</option>
+                  <option>Religious Leader</option>
+                  <option>Business Owner</option>
+                  <option>Ward Representative</option>
+                  <option>Other</option>
+                </select>
+                <div class="err-msg" id="err-proposerRole">Please select your role.</div>
+              </div>
+            </div>
+
+            <div class="section-label">📋 Proposal Details</div>
+            <div class="form-group">
+              <label for="proposalTitle">Proposal Title <span class="req">*</span></label>
+              <input type="text" id="proposalTitle" placeholder="e.g. Construction of Footbridge at Marsabit River Crossing">
+              <div class="err-msg" id="err-proposalTitle">Please enter a proposal title (minimum 10 characters).</div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="category">Project Category <span class="req">*</span></label>
+                <select id="category">
+                  <option value="">— Select Category —</option>
+                  <option>🛣️ Roads & Infrastructure</option>
+                  <option>💧 Water & Sanitation</option>
+                  <option>⚡ Energy & Electricity</option>
+                  <option>📚 Education</option>
+                  <option>🏥 Health Services</option>
+                  <option>🌾 Agriculture & Food Security</option>
+                  <option>🌿 Environment & Conservation</option>
+                  <option>🏛️ Public Facilities</option>
+                  <option>💼 Economic Empowerment</option>
+                  <option>📡 ICT & Connectivity</option>
+                  <option>🛡️ Security & Safety</option>
+                  <option>📋 Other</option>
+                </select>
+                <div class="err-msg" id="err-category">Please select a project category.</div>
+              </div>
+              <div class="form-group">
+                <label for="ward">Target Ward <span class="req">*</span></label>
+                <select id="ward">
+                  <option value="">— Select Ward —</option>
+                  <optgroup label="Moyale Constituency">
+                    <option>Moyale Township</option>
+                    <option>Sololo</option>
+                    <option>Heillu / Manyatta</option>
+                    <option>Golbo</option>
+                    <option>Uran</option>
+                    <option>Obbu</option>
+                  </optgroup>
+                  <optgroup label="Saku Constituency">
+                    <option>Marsabit Township</option>
+                    <option>Kambi Samaki</option>
+                    <option>Sagante / Jaldesa</option>
+                    <option>Are / Logo</option>
+                    <option>Kargi South</option>
+                  </optgroup>
+                  <optgroup label="North Horr Constituency">
+                    <option>North Horr</option>
+                    <option>Dukana</option>
+                    <option>Maikona</option>
+                    <option>Turbi</option>
+                    <option>Illeret</option>
+                  </optgroup>
+                  <optgroup label="Laisamis Constituency">
+                    <option>Laisamis</option>
+                    <option>Loiyangalani</option>
+                    <option>Mount Kulal</option>
+                    <option>Kargi</option>
+                  </optgroup>
+                </select>
+                <div class="err-msg" id="err-ward">Please select target ward.</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="priority">Priority Level <span class="req">*</span></label>
+                <select id="priority">
+                  <option value="">— Select Priority —</option>
+                  <option value="low">Low – Nice to have</option>
+                  <option value="medium">Medium – Important</option>
+                  <option value="high">High – Urgent need</option>
+                  <option value="critical">Critical – Emergency</option>
+                </select>
+                <div class="err-msg" id="err-priority">Please select a priority level.</div>
+              </div>
+              <div class="form-group">
+                <label for="timeline">Expected Timeline <span class="req">*</span></label>
+                <select id="timeline">
+                  <option value="">— Select Duration —</option>
+                  <option>Less than 3 months</option>
+                  <option>3 – 6 months</option>
+                  <option>6 – 12 months</option>
+                  <option>1 – 2 years</option>
+                  <option>More than 2 years</option>
+                </select>
+                <div class="err-msg" id="err-timeline">Please select expected timeline.</div>
+              </div>
+            </div>
+
+            <div class="section-label">💰 Budget Estimation</div>
+            <div class="form-group">
+              <label for="estimatedBudget">Estimated Total Budget (KES) <span class="req">*</span></label>
+              <div class="input-prefix">
+                <span>KES</span>
+                <input type="number" id="estimatedBudget" placeholder="e.g. 5000000" min="10000" max="500000000">
+              </div>
+              <div class="err-msg" id="err-budget">Please enter a valid budget amount (min KES 10,000).</div>
+            </div>
+            <div class="budget-estimator" id="budgetBreakdown" style="display:none">
+              <h4>📊 Estimated Budget Breakdown</h4>
+              <div class="budget-row-item"><span>Materials & Construction (60%)</span><span id="b-materials">—</span></div>
+              <div class="budget-row-item"><span>Labour (25%)</span><span id="b-labour">—</span></div>
+              <div class="budget-row-item"><span>Supervision & Admin (10%)</span><span id="b-admin">—</span></div>
+              <div class="budget-row-item"><span>Contingency (5%)</span><span id="b-contingency">—</span></div>
+              <div class="budget-row-item"><span>Total Estimated</span><span id="b-total">—</span></div>
+            </div>
+
+            <div class="section-label">📝 Project Description</div>
+            <div class="form-group">
+              <label for="description">Project Description <span class="req">*</span></label>
+              <textarea id="description" maxlength="1200" placeholder="Describe the project in detail. What will be built or done? Where exactly is it located? What problem does it solve?"></textarea>
+              <div class="char-count"><span id="descCount">0</span> / 1200</div>
+              <div class="err-msg" id="err-description">Please describe the project (minimum 80 characters).</div>
+            </div>
+            <div class="form-group">
+              <label for="problemStatement">Problem Statement <span class="req">*</span></label>
+              <textarea id="problemStatement" maxlength="800" placeholder="What is the current problem or gap this project addresses? How does it affect the community now?"></textarea>
+              <div class="char-count"><span id="probCount">0</span> / 800</div>
+              <div class="err-msg" id="err-problem">Please describe the problem (minimum 50 characters).</div>
+            </div>
+
+            <div class="section-label">🌍 Expected Community Impact</div>
+            <div class="form-group">
+              <label for="beneficiaries">Number of Direct Beneficiaries <span class="req">*</span></label>
+              <input type="number" id="beneficiaries" placeholder="e.g. 2500" min="1">
+              <div class="err-msg" id="err-beneficiaries">Please enter the number of beneficiaries.</div>
+            </div>
+            <div class="form-group">
+              <label>Select Expected Impact Areas <span class="req">*</span></label>
+              <div class="impact-tags" id="impactTags">
+                <label class="impact-tag"><input type="checkbox" value="Economic Growth">💼 Economic Growth</label>
+                <label class="impact-tag"><input type="checkbox" value="Employment">👷 Employment</label>
+                <label class="impact-tag"><input type="checkbox" value="Health Improvement">🏥 Health Improvement</label>
+                <label class="impact-tag"><input type="checkbox" value="Education Access">📚 Education Access</label>
+                <label class="impact-tag"><input type="checkbox" value="Food Security">🌾 Food Security</label>
+                <label class="impact-tag"><input type="checkbox" value="Water Access">💧 Water Access</label>
+                <label class="impact-tag"><input type="checkbox" value="Road Connectivity">🛣️ Road Connectivity</label>
+                <label class="impact-tag"><input type="checkbox" value="Environmental">🌿 Environmental</label>
+                <label class="impact-tag"><input type="checkbox" value="Women Empowerment">👩 Women Empowerment</label>
+                <label class="impact-tag"><input type="checkbox" value="Youth Empowerment">🧑 Youth Empowerment</label>
+              </div>
+              <div class="err-msg" id="err-impact">Please select at least one impact area.</div>
+            </div>
+            <div class="form-group">
+              <label for="impactDescription">Describe Expected Community Impact <span class="req">*</span></label>
+              <textarea id="impactDescription" maxlength="800" placeholder="How will this project change the lives of people in the community? What long-term benefits are expected?"></textarea>
+              <div class="char-count"><span id="impactCount">0</span> / 800</div>
+              <div class="err-msg" id="err-impactDesc">Please describe the expected impact (minimum 50 characters).</div>
+            </div>
+
+            <div class="section-label">📎 Supporting Documents</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Proposal Document <span class="opt">(optional)</span></label>
+                <div class="file-wrap" id="fileWrap1">
+                  <input type="file" id="proposalDoc" accept=".pdf,.doc,.docx">
+                  <div class="file-icon-big">📄</div>
+                  <p><span>Browse</span> or drop file</p>
+                  <small>PDF or Word · Max 10MB</small>
+                </div>
+                <div class="file-preview" id="preview1">✅ <span id="fname1"></span></div>
+              </div>
+              <div class="form-group">
+                <label>Site Map / Photos <span class="opt">(optional)</span></label>
+                <div class="file-wrap" id="fileWrap2">
+                  <input type="file" id="sitePhoto" accept="image/*,.pdf">
+                  <div class="file-icon-big">🗺️</div>
+                  <p><span>Browse</span> or drop file</p>
+                  <small>Image or PDF · Max 5MB</small>
+                </div>
+                <div class="file-preview" id="preview2">✅ <span id="fname2"></span></div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Community Support Letter <span class="opt">(optional – letter signed by community members)</span></label>
+              <div class="file-wrap" id="fileWrap3">
+                <input type="file" id="supportLetter" accept="image/*,.pdf,.doc,.docx">
+                <div class="file-icon-big">✍️</div>
+                <p><span>Browse</span> or drop file – community endorsement letter</p>
+                <small>PDF, Image, or Word · Max 5MB</small>
+              </div>
+              <div class="file-preview" id="preview3">✅ <span id="fname3"></span></div>
+            </div>
+
+            <div class="declaration">
+              <p>By submitting this proposal, I confirm that the information provided is accurate, the project is needed by the community, and I am authorised to submit this proposal on behalf of the community or organisation named above.</p>
+              <div class="checkbox-row">
+                <input type="checkbox" id="declare" name="declare">
+                <label for="declare">I confirm all information is accurate and I agree to the Marsabit County proposal submission terms and conditions.</label>
+              </div>
+              <div class="err-msg-check" id="err-declare">You must accept the declaration to proceed.</div>
+            </div>
+
+            <button type="submit" class="btn-submit">💡 Submit Project Proposal</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div>
+      <div class="sidebar-card">
+        <div class="sidebar-header">
+          <h3>✅ Review Criteria</h3>
+          <p>What makes a strong proposal</p>
+        </div>
+        <div class="sidebar-body">
+          <ul class="criteria-list">
+            <li>Clear problem statement with evidence</li>
+            <li>Realistic and itemised budget estimate</li>
+            <li>Measurable community benefits</li>
+            <li>Specific location with GPS or map reference</li>
+            <li>Identified number of direct beneficiaries</li>
+            <li>Community endorsement or support evidence</li>
+            <li>Feasible implementation timeline</li>
+            <li>Alignment with county development goals</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="sidebar-card">
+        <div class="sidebar-header">
+          <h3>💡 Tips for Success</h3>
+          <p>Improve your proposal quality</p>
+        </div>
+        <div class="sidebar-body">
+          <div class="tip-item">
+            <div class="tip-icon">📍</div>
+            <div>
+              <h4>Be Specific</h4>
+              <p>Include exact location, GPS coordinates if possible, and specific community names.</p>
+            </div>
+          </div>
+          <div class="tip-item">
+            <div class="tip-icon">👥</div>
+            <div>
+              <h4>Show Community Need</h4>
+              <p>Attach a support letter signed by community elders, group leaders, or ward rep.</p>
+            </div>
+          </div>
+          <div class="tip-item">
+            <div class="tip-icon">💰</div>
+            <div>
+              <h4>Justify Your Budget</h4>
+              <p>Break down estimated costs clearly. Vague budgets reduce proposal credibility.</p>
+            </div>
+          </div>
+          <div class="tip-item">
+            <div class="tip-icon">📸</div>
+            <div>
+              <h4>Attach Visuals</h4>
+              <p>Photos of the site or affected area strengthen the case for the project.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-card">
+        <div class="sidebar-header">
+          <h3>📋 Recent Proposals</h3>
+          <p>Community submitted projects</p>
+        </div>
+        <div class="sidebar-body">
+          <div class="past-proposals">
+            <div class="past-pill">
+              <div class="past-pill-name">Turbi Water Tank Repair</div>
+              <span class="past-pill-status pps-approved">Approved</span>
+            </div>
+            <div class="past-pill">
+              <div class="past-pill-name">Sololo Market Shade</div>
+              <span class="past-pill-status pps-review">In Review</span>
+            </div>
+            <div class="past-pill">
+              <div class="past-pill-name">North Horr Youth Centre</div>
+              <span class="past-pill-status pps-review">In Review</span>
+            </div>
+            <div class="past-pill">
+              <div class="past-pill-name">Kargi Road Grading</div>
+              <span class="past-pill-status pps-pending">Pending</span>
+            </div>
+            <div class="past-pill">
+              <div class="past-pill-name">Illeret Solar Panel</div>
+              <span class="past-pill-status pps-approved">Approved</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- SUCCESS POPUP -->
+<div class="popup-overlay" id="popupOverlay" role="dialog" aria-modal="true">
+  <div class="popup">
+    <div class="popup-icon">🎉</div>
+    <h2>Proposal Submitted!</h2>
+    <p>Your project proposal has been received by the SenateLink team.</p>
+    <div class="proposal-id-display" id="proposalIdDisplay">PRP-2026-000000</div>
+    <p style="font-size:12px;color:var(--gray-400)">Save this Proposal ID to track your submission status.</p>
+    <div class="popup-timeline">
+      <div class="popup-tl-item"><div class="tl-dot"></div>Proposal received & logged<span class="tl-date">Today</span></div>
+      <div class="popup-tl-item"><div class="tl-dot"></div>Initial screening by senate team<span class="tl-date">7–14 days</span></div>
+      <div class="popup-tl-item"><div class="tl-dot"></div>Ward-level field assessment<span class="tl-date">14–30 days</span></div>
+      <div class="popup-tl-item"><div class="tl-dot"></div>Senate committee review<span class="tl-date">30–60 days</span></div>
+      <div class="popup-tl-item"><div class="tl-dot"></div>Final decision communicated<span class="tl-date">60–90 days</span></div>
+    </div>
+    <p style="font-size:13px;color:var(--gray-600)">You will be contacted via phone or email once the review is complete.</p>
+    <button class="btn-close-popup" onclick="closePopup()">Done – Return to Home</button>
+  </div>
+</div>
+
+<footer class="footer" id="contact">
+  <div class="footer-top">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <div class="brand-logo">SL</div>
+          <div class="brand-text">
+            <span class="brand-name" style="color:#fff">SenateLink</span>
+            <span class="brand-county">Marsabit County</span>
+          </div>
+        </div>
+        <p>Connecting citizens of Marsabit County with their elected leadership through transparent digital governance.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="complaints.html">Submit Complaint</a></li>
+          <li><a href="bursary.html">Bursary Application</a></li>
+          <li><a href="transparency.html">Project Tracking</a></li>
+          <li><a href="proposal.html">Submit Proposal</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>County</h4>
+        <ul>
+          <li><a href="#">Marsabit County Govt</a></li>
+          <li><a href="#">Senate Office</a></li>
+          <li><a href="#">CDF Fund</a></li>
+          <li><a href="#">Public Participation</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li>📍 Senate Office, Marsabit Town</li>
+          <li>📞 +254 700 000 000</li>
+          <li>✉️ info@senatelink.go.ke</li>
+          <li>🕐 Mon–Fri: 8:00am – 5:00pm</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="container">
+      <p>© 2026 SenateLink · Marsabit County Government · All rights reserved</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+// NAVBAR
+const hamburger = document.getElementById('hamburger');
+const navLinks = document.getElementById('navLinks');
+hamburger.addEventListener('click', () => navLinks.classList.toggle('open'));
+document.querySelectorAll('.nav-link').forEach(l => l.addEventListener('click', () => navLinks.classList.remove('open')));
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').style.boxShadow = window.scrollY > 10 ? '0 4px 30px rgba(9,29,66,0.4)' : '';
+});
+
+// CHAR COUNTS
+function setupCount(textareaId, countId) {
+  document.getElementById(textareaId).addEventListener('input', function() {
+    document.getElementById(countId).textContent = this.value.length;
+  });
+}
+setupCount('description','descCount');
+setupCount('problemStatement','probCount');
+setupCount('impactDescription','impactCount');
+
+// IMPACT TAGS
+document.querySelectorAll('.impact-tag').forEach(tag => {
+  tag.addEventListener('click', () => tag.classList.toggle('selected'));
+});
+
+// BUDGET BREAKDOWN
+document.getElementById('estimatedBudget').addEventListener('input', function() {
+  const val = parseFloat(this.value);
+  const bd = document.getElementById('budgetBreakdown');
+  if (!val || val < 10000) { bd.style.display = 'none'; return; }
+  bd.style.display = 'block';
+  function fmt(n) {
+    if (n >= 1000000) return 'KES ' + (n/1000000).toFixed(2) + 'M';
+    return 'KES ' + Math.round(n).toLocaleString();
+  }
+  document.getElementById('b-materials').textContent = fmt(val * 0.60);
+  document.getElementById('b-labour').textContent = fmt(val * 0.25);
+  document.getElementById('b-admin').textContent = fmt(val * 0.10);
+  document.getElementById('b-contingency').textContent = fmt(val * 0.05);
+  document.getElementById('b-total').textContent = fmt(val);
+});
+
+// FILE UPLOADS
+function setupFile(inputId, wrapId, previewId, nameId, maxMB) {
+  document.getElementById(inputId).addEventListener('change', function() {
+    const file = this.files[0];
+    const wrap = document.getElementById(wrapId);
+    const preview = document.getElementById(previewId);
+    const nameEl = document.getElementById(nameId);
+    if (file) {
+      if (file.size > maxMB * 1024 * 1024) { alert('File too large. Max ' + maxMB + 'MB.'); this.value = ''; return; }
+      nameEl.textContent = file.name;
+      preview.classList.add('visible');
+      wrap.classList.add('has-file');
+    }
+  });
+}
+setupFile('proposalDoc','fileWrap1','preview1','fname1',10);
+setupFile('sitePhoto','fileWrap2','preview2','fname2',5);
+setupFile('supportLetter','fileWrap3','preview3','fname3',5);
+
+// VALIDATION
+function clearErrors() {
+  document.querySelectorAll('.err-msg,.err-msg-check').forEach(e => e.classList.remove('visible'));
+  document.querySelectorAll('input,select,textarea').forEach(e => e.classList.remove('error'));
+}
+function showErr(id, msgId) {
+  const f = document.getElementById(id);
+  const m = document.getElementById(msgId);
+  if (f) f.classList.add('error');
+  if (m) m.classList.add('visible');
+}
+function validPhone(p) { return /^[0-9+\s\-(]{7,15}$/.test(p.trim()); }
+function validEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+document.getElementById('proposalForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  clearErrors();
+  let valid = true;
+
+  const checks = [
+    ['proposerName','err-proposerName', v => v.length >= 2],
+    ['proposerPhone','err-proposerPhone', v => validPhone(v)],
+    ['proposerRole','err-proposerRole', v => v !== ''],
+    ['proposalTitle','err-proposalTitle', v => v.length >= 10],
+    ['category','err-category', v => v !== ''],
+    ['ward','err-ward', v => v !== ''],
+    ['priority','err-priority', v => v !== ''],
+    ['timeline','err-timeline', v => v !== ''],
+    ['estimatedBudget','err-budget', v => parseFloat(v) >= 10000],
+    ['description','err-description', v => v.length >= 80],
+    ['problemStatement','err-problem', v => v.length >= 50],
+    ['beneficiaries','err-beneficiaries', v => parseInt(v) >= 1],
+    ['impactDescription','err-impactDesc', v => v.length >= 50],
+  ];
+
+  checks.forEach(([id, msgId, validator]) => {
+    const el = document.getElementById(id);
+    if (!el || !validator(el.value.trim())) { showErr(id, msgId); valid = false; }
+  });
+
+  const email = document.getElementById('proposerEmail').value.trim();
+  if (email && !validEmail(email)) { showErr('proposerEmail','err-proposerEmail'); valid = false; }
+
+  const selectedImpacts = document.querySelectorAll('.impact-tag.selected');
+  if (selectedImpacts.length === 0) {
+    document.getElementById('err-impact').classList.add('visible');
+    valid = false;
+  }
+
+  if (!document.getElementById('declare').checked) {
+    document.getElementById('err-declare').classList.add('visible');
+    valid = false;
+  }
+
+  if (!valid) {
+    const firstErr = document.querySelector('.error,.err-msg.visible');
+    if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  const values = {
+    submittedBy: document.getElementById('proposerName').value.trim(),
+    phone: document.getElementById('proposerPhone').value.trim(),
+    proposerEmail: document.getElementById('proposerEmail').value.trim(),
+    proposerRole: document.getElementById('proposerRole').value,
+    title: document.getElementById('proposalTitle').value.trim(),
+    category: document.getElementById('category').value,
+    ward: document.getElementById('ward').value,
+    priority: document.getElementById('priority').value,
+    timeline: document.getElementById('timeline').value,
+    budget: document.getElementById('estimatedBudget').value,
+    description: document.getElementById('description').value.trim(),
+    problemStatement: document.getElementById('problemStatement').value.trim(),
+    beneficiaries: document.getElementById('beneficiaries').value,
+    impactAreas: Array.from(document.querySelectorAll('.impact-tag.selected input')).map(input => input.value),
+    impactDescription: document.getElementById('impactDescription').value.trim(),
+  };
+  const formData = new FormData();
+  Object.entries(values).forEach(([key, value]) => formData.append(key, Array.isArray(value) ? JSON.stringify(value) : value));
+  ['proposalDoc', 'sitePhoto', 'supportLetter'].forEach(id => {
+    const file = document.getElementById(id).files[0];
+    if (file) formData.append('documents', file);
+  });
+
+  try {
+    const response = await fetch('/api/proposals', { method: 'POST', body: formData });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'Unable to submit proposal');
+    document.getElementById('proposalIdDisplay').textContent = result.proposalId;
+  } catch (error) {
+    alert(error.message || 'Unable to submit proposal. Please try again.');
+    return;
+  }
+
+  document.getElementById('popupOverlay').classList.add('visible');
+  document.body.style.overflow = 'hidden';
+});
+
+function closePopup() {
+  document.getElementById('popupOverlay').classList.remove('visible');
+  document.body.style.overflow = '';
+  window.location.href = 'index.html';
+}
+
+document.getElementById('popupOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closePopup();
+});
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closePopup(); });
+</script>
+</body>
+</html>

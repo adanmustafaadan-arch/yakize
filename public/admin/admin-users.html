@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SenateLink Admin — Users</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0d2b5e;--navy-dark:#091e45;--navy-mid:#1a3d78;--navy-light:#2a5298;
+  --gold:#c9a227;--gold-light:#e8b93a;--gold-pale:#f5e8c0;--gold-dark:#a07c15;
+  --white:#ffffff;--off-white:#f7f8fc;--surface:#eef1f8;--surface2:#e4e9f4;
+  --text:#1a1d2e;--text2:#4a5270;--text3:#8892b0;
+  --success:#1a7a4a;--success-bg:#e6f4ec;
+  --warn:#b35c00;--warn-bg:#fff3e0;
+  --danger:#c0392b;--danger-bg:#fdecea;
+  --info:#1565c0;--info-bg:#e3f0ff;
+  --radius:10px;--radius-lg:16px;--radius-xl:22px;
+  --shadow:0 2px 12px rgba(13,43,94,.10);
+  --shadow-lg:0 6px 28px rgba(13,43,94,.16);
+  --sidebar-w:260px;--topbar-h:64px;
+  --transition:all .22s cubic-bezier(.4,0,.2,1);
+}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--text);font-size:15px}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:99px}
+
+/* ── SIDEBAR ── */
+.sidebar{position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;background:var(--navy);z-index:200;display:flex;flex-direction:column;transition:var(--transition);overflow:hidden}
+.sidebar-brand{padding:0 20px;height:var(--topbar-h);display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.brand-icon{width:38px;height:38px;border-radius:10px;background:var(--gold);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.brand-icon svg{width:22px;height:22px;fill:var(--navy)}
+.brand-text{display:flex;flex-direction:column;line-height:1.2}
+.brand-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--white)}
+.brand-sub{font-size:10px;color:rgba(201,162,39,.85);font-weight:500;text-transform:uppercase;letter-spacing:1px}
+.sidebar-scroll{flex:1;overflow-y:auto;padding:16px 0 24px}
+.nav-section-label{font-size:10px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:rgba(255,255,255,.35);padding:16px 20px 6px}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 20px;margin:1px 10px;border-radius:var(--radius);color:rgba(255,255,255,.7);font-size:14px;cursor:pointer;transition:var(--transition)}
+.nav-item:hover{background:rgba(255,255,255,.07);color:var(--white)}
+.nav-item.active{background:linear-gradient(90deg,var(--gold),var(--gold-light));color:var(--navy);font-weight:600}
+.nav-icon{width:18px;height:18px;flex-shrink:0;opacity:.7}
+.nav-item.active .nav-icon{opacity:1}
+.nav-badge{margin-left:auto;background:var(--danger);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px}
+.nav-item.active .nav-badge{background:var(--navy)}
+.sidebar-footer{padding:16px;border-top:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.user-card{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--radius);background:rgba(255,255,255,.06);cursor:pointer;transition:var(--transition)}
+.user-card:hover{background:rgba(255,255,255,.10)}
+.user-avatar{width:34px;height:34px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--navy);flex-shrink:0}
+.user-info{flex:1;overflow:hidden}
+.user-name{font-size:13px;font-weight:600;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-role{font-size:11px;color:rgba(255,255,255,.45)}
+.logout-btn{margin-top:8px;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:9px;border-radius:var(--radius);color:rgba(255,100,100,.8);font-size:13px;font-weight:500;transition:var(--transition)}
+.logout-btn:hover{background:rgba(255,100,100,.1);color:#ff6b6b}
+
+/* ── TOPBAR ── */
+.topbar{position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--topbar-h);background:var(--white);border-bottom:1px solid var(--surface2);display:flex;align-items:center;padding:0 28px;gap:16px;z-index:100;transition:var(--transition)}
+.topbar-hamburger{display:none;width:36px;height:36px;border-radius:8px;align-items:center;justify-content:center;background:var(--surface);cursor:pointer;transition:var(--transition)}
+.topbar-hamburger:hover{background:var(--surface2)}
+.topbar-title{flex:1}
+.topbar-title h1{font-size:18px;font-weight:600;color:var(--text)}
+.topbar-title p{font-size:12px;color:var(--text3)}
+.topbar-actions{display:flex;align-items:center;gap:8px}
+.icon-btn{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:var(--surface);color:var(--text2);transition:var(--transition);position:relative;cursor:pointer}
+.icon-btn:hover{background:var(--navy);color:var(--white)}
+.notif-dot{position:absolute;top:7px;right:7px;width:8px;height:8px;background:var(--danger);border-radius:50%;border:2px solid var(--white)}
+.topbar-divider{width:1px;height:28px;background:var(--surface2);margin:0 4px}
+.topbar-user{display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 8px;border-radius:9px;transition:var(--transition)}
+.topbar-user:hover{background:var(--surface)}
+.topbar-user-avatar{width:34px;height:34px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--gold)}
+.topbar-user-name{font-size:13px;font-weight:600;color:var(--text)}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar-w);margin-top:var(--topbar-h);padding:28px;min-height:calc(100vh - var(--topbar-h));transition:var(--transition)}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px}
+.page-header-left h2{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--navy)}
+.page-header-left p{font-size:13px;color:var(--text3);margin-top:2px}
+
+/* ── STATS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:16px;margin-bottom:28px}
+.stat-card{background:var(--white);border-radius:var(--radius-lg);padding:20px 22px;box-shadow:var(--shadow);border:1px solid var(--surface2);position:relative;overflow:hidden;transition:var(--transition)}
+.stat-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.stat-card[data-color="navy"]::before{background:var(--navy)}
+.stat-card[data-color="gold"]::before{background:var(--gold)}
+.stat-card[data-color="success"]::before{background:var(--success)}
+.stat-card[data-color="warn"]::before{background:var(--warn)}
+.stat-card[data-color="danger"]::before{background:var(--danger)}
+.stat-card[data-color="info"]::before{background:var(--info)}
+.stat-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
+.stat-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text3)}
+.stat-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.stat-icon svg{width:19px;height:19px}
+.stat-card[data-color="navy"] .stat-icon{background:rgba(13,43,94,.1);color:var(--navy)}
+.stat-card[data-color="gold"] .stat-icon{background:var(--gold-pale);color:var(--gold-dark)}
+.stat-card[data-color="success"] .stat-icon{background:var(--success-bg);color:var(--success)}
+.stat-card[data-color="warn"] .stat-icon{background:var(--warn-bg);color:var(--warn)}
+.stat-card[data-color="danger"] .stat-icon{background:var(--danger-bg);color:var(--danger)}
+.stat-card[data-color="info"] .stat-icon{background:var(--info-bg);color:var(--info)}
+.stat-value{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--text);line-height:1}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:6px}
+
+/* ── ROLE CARDS ── */
+.roles-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:28px}
+.role-card{background:var(--white);border-radius:var(--radius-lg);padding:20px 22px;box-shadow:var(--shadow);border:1.5px solid var(--surface2);display:flex;align-items:center;gap:16px;transition:var(--transition);cursor:pointer}
+.role-card:hover{border-color:var(--navy);transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.role-card.selected{border-color:var(--navy);background:rgba(13,43,94,.03)}
+.role-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.role-icon svg{width:22px;height:22px}
+.role-name{font-size:14px;font-weight:700;color:var(--text)}
+.role-count{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--navy);line-height:1}
+.role-perm{font-size:11px;color:var(--text3);margin-top:2px}
+
+/* ── CARD ── */
+.card{background:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow);border:1px solid var(--surface2);overflow:hidden;margin-bottom:22px}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--surface);flex-wrap:wrap;gap:10px}
+.card-title{font-size:15px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px}
+.card-title-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0}
+
+/* ── FILTERS ── */
+.filters-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.filter-search{position:relative}
+.filter-search input{background:var(--surface);border:1.5px solid transparent;border-radius:9px;padding:8px 14px 8px 36px;font-size:13px;color:var(--text);width:220px;transition:var(--transition);font-family:inherit;outline:none}
+.filter-search input:focus{border-color:var(--gold);background:var(--white)}
+.search-ico{position:absolute;left:11px;top:50%;transform:translateY(-50%);opacity:.4;pointer-events:none}
+.filter-select{font-size:12px;padding:8px 12px;border:1.5px solid var(--surface2);border-radius:9px;background:var(--surface);color:var(--text);font-family:inherit;cursor:pointer;outline:none;transition:var(--transition)}
+.filter-select:focus{border-color:var(--gold)}
+.filter-tab{padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--surface2);background:var(--white);color:var(--text2);transition:var(--transition)}
+.filter-tab:hover{border-color:var(--navy);color:var(--navy)}
+.filter-tab.active{background:var(--navy);color:var(--white);border-color:var(--navy)}
+
+/* ── TABLE ── */
+.table-wrap{overflow-x:auto}
+.data-table{width:100%;border-collapse:collapse}
+.data-table th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);padding:12px 18px;background:var(--surface);text-align:left;white-space:nowrap}
+.data-table th:last-child{text-align:right}
+.data-table td{padding:13px 18px;border-bottom:1px solid var(--surface);font-size:13px;color:var(--text2);vertical-align:middle}
+.data-table td:last-child{text-align:right}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover td{background:var(--off-white)}
+.sortable{cursor:pointer;user-select:none}
+.sortable:hover{color:var(--navy)}
+.data-table th input[type="checkbox"],.data-table td input[type="checkbox"]{accent-color:var(--navy);width:15px;height:15px;cursor:pointer}
+
+/* ── USER CELL ── */
+.user-cell{display:flex;align-items:center;gap:11px}
+.u-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;position:relative}
+.u-online{position:absolute;bottom:1px;right:1px;width:9px;height:9px;border-radius:50%;border:2px solid var(--white)}
+.u-online.on{background:var(--success)}
+.u-online.off{background:var(--text3)}
+.u-name{font-weight:600;color:var(--text);font-size:13px}
+.u-email{font-size:11px;color:var(--text3)}
+
+/* ── ROLE BADGE ── */
+.role-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+.role-badge svg{width:11px;height:11px}
+.role-super{background:rgba(13,43,94,.1);color:var(--navy)}
+.role-officer{background:var(--info-bg);color:var(--info)}
+.role-moderator{background:var(--gold-pale);color:var(--gold-dark)}
+.role-viewer{background:var(--surface);color:var(--text3)}
+.role-editor{background:var(--success-bg);color:var(--success)}
+
+/* ── STATUS BADGE ── */
+.status-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
+.status-badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.8}
+.status-active{background:var(--success-bg);color:var(--success)}
+.status-suspended{background:var(--danger-bg);color:var(--danger)}
+.status-inactive{background:var(--surface);color:var(--text3)}
+.status-pending{background:var(--warn-bg);color:var(--warn)}
+
+/* ── LAST ACTIVE ── */
+.last-active{font-size:11px;color:var(--text3);white-space:nowrap}
+.last-active.recent{color:var(--success);font-weight:500}
+
+/* ── ACTION BUTTONS ── */
+.action-group{display:flex;gap:5px;justify-content:flex-end;flex-wrap:wrap}
+.act-btn{font-size:11px;font-weight:600;padding:5px 10px;border-radius:6px;cursor:pointer;border:none;font-family:inherit;transition:var(--transition);white-space:nowrap}
+.act-btn-edit{background:var(--info-bg);color:var(--info)}
+.act-btn-edit:hover{background:var(--info);color:#fff}
+.act-btn-suspend{background:var(--warn-bg);color:var(--warn)}
+.act-btn-suspend:hover{background:var(--warn);color:#fff}
+.act-btn-delete{background:var(--danger-bg);color:var(--danger)}
+.act-btn-delete:hover{background:var(--danger);color:#fff}
+.act-btn-activate{background:var(--success-bg);color:var(--success)}
+.act-btn-activate:hover{background:var(--success);color:#fff}
+.act-btn-view{background:var(--gold-pale);color:var(--gold-dark)}
+.act-btn-view:hover{background:var(--gold);color:var(--navy)}
+
+/* ── PAGINATION ── */
+.pagination-row{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-top:1px solid var(--surface);flex-wrap:wrap;gap:10px}
+.pagin-info{font-size:12px;color:var(--text3)}
+.pagin-btns{display:flex;gap:5px}
+.pagin-btn{font-size:12px;font-weight:600;padding:5px 11px;border-radius:6px;cursor:pointer;border:1.5px solid var(--surface2);background:var(--white);color:var(--text2);font-family:inherit;transition:var(--transition)}
+.pagin-btn:hover{border-color:var(--navy);color:var(--navy)}
+.pagin-btn.active{background:var(--navy);color:var(--white);border-color:var(--navy)}
+
+/* ── BUTTONS ── */
+.btn{padding:9px 20px;border-radius:9px;font-size:13px;font-weight:600;transition:var(--transition);cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:7px}
+.btn-navy{background:var(--navy);color:var(--white);border:none}
+.btn-navy:hover{background:var(--navy-mid)}
+.btn-gold{background:var(--gold);color:var(--navy);border:none}
+.btn-gold:hover{background:var(--gold-light)}
+.btn-outline{background:transparent;color:var(--text2);border:1.5px solid var(--surface2)}
+.btn-outline:hover{border-color:var(--navy);color:var(--navy)}
+.btn-success{background:var(--success);color:#fff;border:none}
+.btn-success:hover{background:#14633b}
+.btn-danger{background:var(--danger);color:#fff;border:none}
+.btn-danger:hover{background:#a93226}
+.btn-warn{background:var(--warn);color:#fff;border:none}
+.btn-warn:hover{background:#8a4500}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(13,43,94,.55);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(3px);padding:20px}
+.modal-overlay.open{display:flex;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:var(--white);border-radius:var(--radius-xl);width:100%;max-width:560px;box-shadow:0 20px 60px rgba(13,43,94,.3);animation:slideUp .3s cubic-bezier(.4,0,.2,1);max-height:92vh;overflow-y:auto}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:22px 26px;border-bottom:1px solid var(--surface);position:sticky;top:0;background:var(--white);z-index:1}
+.modal-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--navy)}
+.modal-close{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--surface);color:var(--text3);cursor:pointer;transition:var(--transition);border:none}
+.modal-close:hover{background:var(--danger-bg);color:var(--danger)}
+.modal-body{padding:26px}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;padding:18px 26px;border-top:1px solid var(--surface)}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:6px}
+.form-input,.form-select,.form-textarea{width:100%;padding:10px 14px;border:1.5px solid var(--surface2);border-radius:var(--radius);font-size:14px;color:var(--text);font-family:inherit;transition:var(--transition);background:var(--off-white);outline:none}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--gold);background:var(--white)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.perm-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.perm-item{display:flex;align-items:center;gap:8px;padding:8px 12px;border:1.5px solid var(--surface2);border-radius:var(--radius);cursor:pointer;transition:var(--transition)}
+.perm-item:hover{border-color:var(--navy);background:var(--off-white)}
+.perm-item input[type="checkbox"]{accent-color:var(--navy);width:14px;height:14px;cursor:pointer;flex-shrink:0}
+.perm-label{font-size:12px;color:var(--text2);font-weight:500}
+.profile-avatar-lg{width:70px;height:70px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;margin:0 auto 16px;border:3px solid var(--surface2)}
+.detail-row{display:flex;gap:16px;margin-bottom:14px;flex-wrap:wrap}
+.detail-field{flex:1;min-width:130px}
+.detail-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text3);margin-bottom:4px}
+.detail-value{font-size:14px;color:var(--text);font-weight:500}
+.activity-log{display:flex;flex-direction:column;gap:1px}
+.log-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--surface)}
+.log-item:last-child{border-bottom:none}
+.log-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.log-text{font-size:12px;color:var(--text2);line-height:1.4;flex:1}
+.log-time{font-size:10px;color:var(--text3);white-space:nowrap;margin-top:1px}
+
+/* ── TOAST ── */
+.toast-container{position:fixed;bottom:28px;right:28px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none}
+.toast{background:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);border:1px solid var(--surface2);padding:14px 18px;display:flex;align-items:flex-start;gap:12px;min-width:300px;max-width:360px;pointer-events:all;animation:toastIn .4s cubic-bezier(.4,0,.2,1) forwards}
+.toast.success{border-left:4px solid var(--success)}
+.toast.warning{border-left:4px solid var(--gold)}
+.toast.error{border-left:4px solid var(--danger)}
+.toast.info{border-left:4px solid var(--navy)}
+@keyframes toastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+@keyframes toastOut{from{opacity:1}to{opacity:0;transform:translateX(40px)}}
+.toast-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.toast-icon svg{width:16px;height:16px}
+.toast.success .toast-icon{background:var(--success-bg);color:var(--success)}
+.toast.warning .toast-icon{background:var(--warn-bg);color:var(--warn)}
+.toast.error .toast-icon{background:var(--danger-bg);color:var(--danger)}
+.toast.info .toast-icon{background:var(--info-bg);color:var(--info)}
+.toast-body{flex:1}
+.toast-title{font-size:13px;font-weight:700;color:var(--text)}
+.toast-msg{font-size:12px;color:var(--text3);margin-top:2px}
+.toast-x{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);background:none;border:none;transition:var(--transition)}
+.toast-x:hover{background:var(--surface);color:var(--text)}
+
+/* ── SIDEBAR OVERLAY ── */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:190}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-overlay.open{display:block}
+  .topbar{left:0;padding:0 16px;gap:10px}
+  .topbar-hamburger{display:flex}
+  .main{margin-left:0;padding:16px}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .topbar-user-name{display:none}
+  .filter-search input{width:160px}
+  .form-row{grid-template-columns:1fr}
+  .perm-grid{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  .stats-grid{grid-template-columns:1fr}
+  .roles-row{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<script src="/admin/admin-auth.js"></script>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><polyline points="9 22 9 12 15 12 15 22" fill="none" stroke="#0d2b5e" stroke-width="2"/></svg>
+    </div>
+    <div class="brand-text"><span class="brand-title">SenateLink</span><span class="brand-sub">Marsabit County</span></div>
+  </div>
+  <div class="sidebar-scroll">
+    <div class="nav-section-label">Main Menu</div>
+    <div class="nav-item" onclick="go('admin-dashboard.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard
+    </div>
+    <div class="nav-item" onclick="go('admin-complaints.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Complaints<span class="nav-badge" id="sidebarPendingComplaints">0</span>
+    </div>
+    <div class="nav-item" onclick="go('admin-bursaries.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>Bursaries<span class="nav-badge" id="sidebarPendingBursaries">0</span>
+    </div>
+    <div class="nav-item" onclick="go('admin-proposals.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Proposals
+    </div>
+    <div class="nav-item" onclick="go('admin-projects.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Projects
+    </div>
+    <div class="nav-section-label">Content</div>
+    <div class="nav-item" onclick="go('admin-news.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2v-9c0-1.1.9-2 2-2h2"/></svg>News
+    </div>
+    <div class="nav-section-label">Administration</div>
+    <div class="nav-item active">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Users
+    </div>
+    <div class="nav-item" onclick="go('admin-reports.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Reports
+    </div>
+    <div class="nav-item" onclick="go('admin-settings.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 19.07a10 10 0 010-14.14"/></svg>Settings
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">JM</div>
+      <div class="user-info"><div class="user-name">James Mureithi</div><div class="user-role">Super Admin</div></div>
+    </div>
+    <button class="logout-btn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout
+    </button>
+  </div>
+</aside>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-hamburger" onclick="toggleSidebar()">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </div>
+  <div class="topbar-title">
+    <h1>User Management</h1>
+    <p>Dashboard › Users</p>
+  </div>
+  <div class="topbar-actions">
+    <div class="icon-btn" title="Notifications">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <span class="notif-dot"></span>
+    </div>
+    <div class="topbar-divider"></div>
+    <div class="topbar-user">
+      <div class="topbar-user-avatar">JM</div>
+      <span class="topbar-user-name">James Mureithi</span>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="main">
+
+  <div class="page-header">
+    <div class="page-header-left">
+      <h2>User Management</h2>
+      <p>Manage admin accounts, roles and access permissions for SenateLink</p>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-outline" onclick="exportCSV()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export
+      </button>
+      <button class="btn btn-navy" onclick="openModal('roleModal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Manage Roles
+      </button>
+      <button class="btn btn-gold" onclick="openModal('addUserModal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add User
+      </button>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card" data-color="navy">
+      <div class="stat-header"><span class="stat-label">Total Users</span>
+        <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
+      </div>
+      <div class="stat-value">0</div><div class="stat-sub">All staff accounts</div>
+    </div>
+    <div class="stat-card" data-color="success">
+      <div class="stat-header"><span class="stat-label">Active</span>
+        <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+      </div>
+      <div class="stat-value">0</div><div class="stat-sub">Currently active</div>
+    </div>
+    <div class="stat-card" data-color="danger">
+      <div class="stat-header"><span class="stat-label">Suspended</span>
+        <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg></div>
+      </div>
+      <div class="stat-value">0</div><div class="stat-sub">Access revoked</div>
+    </div>
+    <div class="stat-card" data-color="warn">
+      <div class="stat-header"><span class="stat-label">Pending</span>
+        <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+      </div>
+      <div class="stat-value">0</div><div class="stat-sub">Awaiting approval</div>
+    </div>
+    <div class="stat-card" data-color="info">
+      <div class="stat-header"><span class="stat-label">Online Now</span>
+        <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg></div>
+      </div>
+      <div class="stat-value">0</div><div class="stat-sub">Active sessions</div>
+    </div>
+    <div class="stat-card" data-color="gold">
+      <div class="stat-header"><span class="stat-label">Super Admins</span>
+        <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      </div>
+      <div class="stat-value">0</div><div class="stat-sub">Full system access</div>
+    </div>
+  </div>
+
+  <!-- ROLE CARDS -->
+  <div class="roles-row">
+    <div class="role-card selected" onclick="filterByRole('all',this)">
+      <div class="role-icon" style="background:rgba(13,43,94,.08);color:var(--navy)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      </div>
+      <div><div class="role-name">All Users</div><div class="role-count">24</div><div class="role-perm">All roles combined</div></div>
+    </div>
+    <div class="role-card" onclick="filterByRole('Super Admin',this)">
+      <div class="role-icon" style="background:rgba(13,43,94,.08);color:var(--navy)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div><div class="role-name">Super Admin</div><div class="role-count">3</div><div class="role-perm">Full access</div></div>
+    </div>
+    <div class="role-card" onclick="filterByRole('Officer',this)">
+      <div class="role-icon" style="background:var(--info-bg);color:var(--info)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+      </div>
+      <div><div class="role-name">Officer</div><div class="role-count">9</div><div class="role-perm">Field operations</div></div>
+    </div>
+    <div class="role-card" onclick="filterByRole('Moderator',this)">
+      <div class="role-icon" style="background:var(--gold-pale);color:var(--gold-dark)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      </div>
+      <div><div class="role-name">Moderator</div><div class="role-count">7</div><div class="role-perm">Content review</div></div>
+    </div>
+    <div class="role-card" onclick="filterByRole('Editor',this)">
+      <div class="role-icon" style="background:var(--success-bg);color:var(--success)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      </div>
+      <div><div class="role-name">Editor</div><div class="role-count">3</div><div class="role-perm">News & content</div></div>
+    </div>
+    <div class="role-card" onclick="filterByRole('Viewer',this)">
+      <div class="role-icon" style="background:var(--surface);color:var(--text3)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      </div>
+      <div><div class="role-name">Viewer</div><div class="role-count">2</div><div class="role-perm">Read only</div></div>
+    </div>
+  </div>
+
+  <!-- TABLE CARD -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title"><span class="card-title-dot"></span>All Users</span>
+      <div class="filters-row">
+        <div class="filter-search">
+          <svg class="search-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input type="text" placeholder="Search users…" oninput="applyFilters()" id="searchInput">
+        </div>
+        <select class="filter-select" id="roleFilter" onchange="applyFilters()">
+          <option value="">All Roles</option>
+          <option value="Super Admin">Super Admin</option>
+          <option value="Officer">Officer</option>
+          <option value="Moderator">Moderator</option>
+          <option value="Editor">Editor</option>
+          <option value="Viewer">Viewer</option>
+        </select>
+        <select class="filter-select" id="statusFilter" onchange="applyFilters()">
+          <option value="">All Status</option>
+          <option value="Active">Active</option>
+          <option value="Suspended">Suspended</option>
+          <option value="Inactive">Inactive</option>
+          <option value="Pending">Pending</option>
+        </select>
+        <div style="display:flex;gap:5px">
+          <button class="filter-tab active" onclick="setTab('all',this)">All</button>
+          <button class="filter-tab" onclick="setTab('Active',this)">Active</button>
+          <button class="filter-tab" onclick="setTab('Suspended',this)">Suspended</button>
+          <button class="filter-tab" onclick="setTab('Pending',this)">Pending</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)"></th>
+            <th class="sortable" onclick="sortTable('name')">User ↕</th>
+            <th class="sortable" onclick="sortTable('role')">Role ↕</th>
+            <th class="sortable" onclick="sortTable('dept')">Department ↕</th>
+            <th>Permissions</th>
+            <th class="sortable" onclick="sortTable('lastActive')">Last Active ↕</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="usersTbody"></tbody>
+      </table>
+    </div>
+
+    <div class="pagination-row">
+      <span class="pagin-info" id="paginInfo">Showing 1–10 of 24</span>
+      <div class="pagin-btns" id="paginBtns"></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ── MODAL: ADD / EDIT USER ── -->
+<div class="modal-overlay" id="addUserModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="userModalTitle">Add New User</span>
+      <button class="modal-close" onclick="closeModal('addUserModal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">First Name</label>
+          <input type="text" class="form-input" id="uFirstName" placeholder="First name">
+        </div>
+        <div class="form-group"><label class="form-label">Last Name</label>
+          <input type="text" class="form-input" id="uLastName" placeholder="Last name">
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Email Address</label>
+        <input type="email" class="form-input" id="uEmail" placeholder="user@marsabit.go.ke">
+      </div>
+      <div class="form-group"><label class="form-label">Phone Number</label>
+        <input type="tel" class="form-input" id="uPhone" placeholder="07XX XXX XXX">
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Role</label>
+          <select class="form-select" id="uRole" onchange="updatePermsByRole(this.value)">
+            <option value="Viewer">Viewer</option>
+            <option value="Editor">Editor</option>
+            <option value="Moderator">Moderator</option>
+            <option value="Officer">Officer</option>
+            <option value="Super Admin">Super Admin</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Department</label>
+          <select class="form-select" id="uDept">
+            <option>ICT</option>
+            <option>Health</option>
+            <option>Education</option>
+            <option>Infrastructure</option>
+            <option>Finance</option>
+            <option>Security</option>
+            <option>Planning</option>
+            <option>Senate Office</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Ward Assignment</label>
+          <select class="form-select" id="uWard">
+            <option>All Wards</option>
+            <option>Marsabit Central</option>
+            <option>Saku Ward</option>
+            <option>North Horr</option>
+            <option>Laisamis</option>
+            <option>Moyale</option>
+            <option>Sololo</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Status</label>
+          <select class="form-select" id="uStatus">
+            <option value="Active">Active</option>
+            <option value="Pending">Pending</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Temporary Password</label>
+        <input type="password" class="form-input" id="uPassword" placeholder="Min. 12 characters">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Permissions</label>
+        <div class="perm-grid" id="permGrid">
+          <label class="perm-item"><input type="checkbox" id="perm-complaints" checked><span class="perm-label">Manage Complaints</span></label>
+          <label class="perm-item"><input type="checkbox" id="perm-bursaries" checked><span class="perm-label">Manage Bursaries</span></label>
+          <label class="perm-item"><input type="checkbox" id="perm-proposals" checked><span class="perm-label">Manage Proposals</span></label>
+          <label class="perm-item"><input type="checkbox" id="perm-projects" checked><span class="perm-label">Manage Projects</span></label>
+          <label class="perm-item"><input type="checkbox" id="perm-news"><span class="perm-label">Publish News</span></label>
+          <label class="perm-item"><input type="checkbox" id="perm-users"><span class="perm-label">Manage Users</span></label>
+          <label class="perm-item"><input type="checkbox" id="perm-reports" checked><span class="perm-label">View Reports</span></label>
+          <label class="perm-item"><input type="checkbox" id="perm-settings"><span class="perm-label">System Settings</span></label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('addUserModal')">Cancel</button>
+      <button class="btn btn-gold" id="userModalSaveBtn" onclick="saveUser()">Create User</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL: VIEW USER ── -->
+<div class="modal-overlay" id="viewUserModal">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-header">
+      <span class="modal-title">User Profile</span>
+      <button class="modal-close" onclick="closeModal('viewUserModal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="viewUserBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('viewUserModal')">Close</button>
+      <button class="btn btn-gold" id="viewEditBtn">Edit User</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL: SUSPEND CONFIRM ── -->
+<div class="modal-overlay" id="suspendModal">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <span class="modal-title" id="suspendTitle">Suspend User</span>
+      <button class="modal-close" onclick="closeModal('suspendModal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div style="background:var(--warn-bg);border:1px solid rgba(179,92,0,.2);border-radius:var(--radius);padding:14px 16px;margin-bottom:18px;font-size:13px;color:var(--warn);line-height:1.5" id="suspendMsg">Suspending this user will immediately revoke their access.</div>
+      <div class="form-group"><label class="form-label">Reason for Suspension</label>
+        <select class="form-select">
+          <option>— Select reason —</option>
+          <option>Policy violation</option>
+          <option>Unauthorized access attempt</option>
+          <option>Data misuse</option>
+          <option>Disciplinary action</option>
+          <option>Account compromise</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Additional Notes</label>
+        <textarea class="form-input" rows="2" placeholder="Optional internal notes…"></textarea>
+      </div>
+      <div class="form-group"><label class="form-label">Suspension Duration</label>
+        <select class="form-select">
+          <option>Indefinite</option>
+          <option>7 days</option>
+          <option>14 days</option>
+          <option>30 days</option>
+          <option>90 days</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('suspendModal')">Cancel</button>
+      <button class="btn btn-warn" id="suspendConfirmBtn" onclick="confirmSuspend()">Confirm Suspension</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL: DELETE ── -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-header">
+      <span class="modal-title">Delete User</span>
+      <button class="modal-close" onclick="closeModal('deleteModal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" style="text-align:center;padding:30px 26px">
+      <div style="width:56px;height:56px;background:var(--danger-bg);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4h6v2"/></svg>
+      </div>
+      <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px">Delete User Account?</div>
+      <div style="font-size:13px;color:var(--text3);line-height:1.6" id="deleteText">This will permanently remove the user and all associated data.</div>
+    </div>
+    <div class="modal-footer" style="justify-content:center">
+      <button class="btn btn-outline" onclick="closeModal('deleteModal')">Cancel</button>
+      <button class="btn btn-danger" onclick="confirmDelete()">Delete User</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL: ROLE MANAGEMENT ── -->
+<div class="modal-overlay" id="roleModal">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-header">
+      <span class="modal-title">Role & Permission Matrix</span>
+      <button class="modal-close" onclick="closeModal('roleModal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" style="padding:0">
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <thead>
+            <tr style="background:var(--surface)">
+              <th style="padding:10px 16px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text3)">Permission</th>
+              <th style="padding:10px 12px;text-align:center;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text3)">Viewer</th>
+              <th style="padding:10px 12px;text-align:center;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text3)">Editor</th>
+              <th style="padding:10px 12px;text-align:center;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text3)">Moderator</th>
+              <th style="padding:10px 12px;text-align:center;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text3)">Officer</th>
+              <th style="padding:10px 12px;text-align:center;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text3)">Super</th>
+            </tr>
+          </thead>
+          <tbody id="roleMatrixBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('roleModal')">Close</button>
+      <button class="btn btn-navy" onclick="showToast('Role permissions are not persisted yet.','warning','Save Unavailable')">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ── DATA ──
+let USERS=[];
+
+const ROLE_PERMS={
+  'Viewer':['reports'],
+  'Editor':['news','reports'],
+  'Moderator':['complaints','proposals','news','reports'],
+  'Officer':['complaints','bursaries','proposals','projects','reports'],
+  'Super Admin':['complaints','bursaries','proposals','projects','news','users','reports','settings']
+};
+
+const ROLE_MATRIX=[
+  {name:'View Dashboard',viewer:true,editor:true,moderator:true,officer:true,super:true},
+  {name:'Manage Complaints',viewer:false,editor:false,moderator:true,officer:true,super:true},
+  {name:'Manage Bursaries',viewer:false,editor:false,moderator:false,officer:true,super:true},
+  {name:'Manage Proposals',viewer:false,editor:false,moderator:true,officer:true,super:true},
+  {name:'Manage Projects',viewer:false,editor:false,moderator:false,officer:true,super:true},
+  {name:'Publish News',viewer:false,editor:true,moderator:true,officer:false,super:true},
+  {name:'Manage Users',viewer:false,editor:false,moderator:false,officer:false,super:true},
+  {name:'View Reports',viewer:true,editor:true,moderator:true,officer:true,super:true},
+  {name:'System Settings',viewer:false,editor:false,moderator:false,officer:false,super:true},
+  {name:'Export Data',viewer:false,editor:false,moderator:true,officer:true,super:true},
+];
+
+let filtered=[...USERS];
+let currentPage=1;
+const PER_PAGE=10;
+let activeTab='all';
+let activeRoleFilter='all';
+let deleteTarget=null;
+let suspendTarget=null;
+let editTarget=null;
+let sortCol='';let sortDir=1;
+
+// ── HELPERS ──
+function go(url){window.location.href=url}
+function getInitials(n){return n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}
+function getAvatarBg(r){const m={'Super Admin':'rgba(13,43,94,.1)','Officer':'rgba(21,101,192,.1)','Moderator':'rgba(201,162,39,.15)','Editor':'rgba(26,122,74,.1)','Viewer':'rgba(136,146,176,.1)'};return m[r]||'var(--surface)'}
+function getAvatarColor(r){const m={'Super Admin':'var(--navy)','Officer':'var(--info)','Moderator':'var(--gold-dark)','Editor':'var(--success)','Viewer':'var(--text3)'};return m[r]||'var(--text3)'}
+function getRoleBadge(r){const m={'Super Admin':'role-super','Officer':'role-officer','Moderator':'role-moderator','Editor':'role-editor','Viewer':'role-viewer'};
+  const icons={'Super Admin':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>','Officer':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>','Moderator':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>','Editor':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4z"/></svg>','Viewer':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>'};
+  return `<span class="role-badge ${m[r]||''}">${icons[r]||''}${r}</span>`;
+}
+function escapeHTML(value){return String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]))}
+function getStatusBadge(s){const m={Active:'status-active',Suspended:'status-suspended',Inactive:'status-inactive',Pending:'status-pending'};return `<span class="status-badge ${m[s]||''}">${escapeHTML(s)}</span>`}
+function getPermCount(perms){return perms.length}
+async function loadUsers(){
+  const response=await adminFetch('/api/staff');
+  const records=await response.json();
+  USERS=records.map(record=>({dbId:record._id,id:escapeHTML(record.employeeId),name:escapeHTML(record.fullName),email:escapeHTML(record.email),phone:escapeHTML(record.phone||''),role:ROLE_PERMS[record.role]?record.role:'Officer',dept:escapeHTML(record.department||''),ward:'',status:(record.status||'active').replace(/^./,letter=>letter.toUpperCase()),online:false,lastActive:'Not available',joined:escapeHTML(record.createdAt?.slice(0,10)||''),perms:ROLE_PERMS[record.permission]||ROLE_PERMS[record.role]||[]}));
+  const stats=[USERS.length,USERS.filter(user=>user.status==='Active').length,USERS.filter(user=>user.status==='Suspended').length,USERS.filter(user=>user.status==='Pending').length,'N/A',USERS.filter(user=>user.role==='Super Admin').length];
+  document.querySelectorAll('.stats-grid .stat-value').forEach((element,index)=>{element.textContent=stats[index]??'0';});
+  applyFilters();
+}
+
+// ── FILTER ──
+function applyFilters(){
+  const search=document.getElementById('searchInput').value.toLowerCase();
+  const role=document.getElementById('roleFilter').value;
+  const status=document.getElementById('statusFilter').value;
+  filtered=USERS.filter(r=>{
+    const matchTab=activeTab==='all'||r.status===activeTab;
+    const matchRole=activeRoleFilter==='all'||r.role===activeRoleFilter;
+    const matchSearch=!search||r.name.toLowerCase().includes(search)||r.email.toLowerCase().includes(search)||r.dept.toLowerCase().includes(search)||r.id.toLowerCase().includes(search);
+    const matchRoleFilter=!role||r.role===role;
+    const matchStatus=!status||r.status===status;
+    return matchTab&&matchRole&&matchSearch&&matchRoleFilter&&matchStatus;
+  });
+  if(sortCol)filtered.sort((a,b)=>(a[sortCol]>b[sortCol]?1:-1)*sortDir);
+  currentPage=1;renderTable();
+}
+function setTab(val,el){
+  activeTab=val;
+  document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('statusFilter').value=val==='all'?'':val;
+  applyFilters();
+}
+function filterByRole(role,el){
+  activeRoleFilter=role;
+  document.querySelectorAll('.role-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('roleFilter').value=role==='all'?'':role;
+  applyFilters();
+}
+function sortTable(col){if(sortCol===col)sortDir*=-1;else{sortCol=col;sortDir=1;}applyFilters()}
+function toggleSelectAll(cb){document.querySelectorAll('.row-check').forEach(c=>c.checked=cb.checked)}
+
+// ── RENDER ──
+function renderTable(){
+  const tbody=document.getElementById('usersTbody');
+  const start=(currentPage-1)*PER_PAGE;
+  const slice=filtered.slice(start,start+PER_PAGE);
+  if(!slice.length){
+    tbody.innerHTML=`<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text3);font-size:13px">No users match your filters.</td></tr>`;
+    document.getElementById('paginInfo').textContent='No results';
+    document.getElementById('paginBtns').innerHTML='';return;
+  }
+  tbody.innerHTML=slice.map(r=>`
+    <tr>
+      <td><input type="checkbox" class="row-check"></td>
+      <td>
+        <div class="user-cell">
+          <div class="u-avatar" style="background:${getAvatarBg(r.role)};color:${getAvatarColor(r.role)}">
+            ${getInitials(r.name)}
+            <span class="u-online ${r.online?'on':'off'}"></span>
+          </div>
+          <div>
+            <div class="u-name">${r.name}</div>
+            <div class="u-email">${r.email}</div>
+          </div>
+        </div>
+      </td>
+      <td>${getRoleBadge(r.role)}</td>
+      <td style="font-size:12px">${r.dept}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:6px">
+          <div style="flex:1;height:5px;background:var(--surface);border-radius:99px;overflow:hidden;min-width:50px">
+            <div style="height:100%;background:var(--navy);border-radius:99px;width:${Math.round((r.perms.length/9)*100)}%"></div>
+          </div>
+          <span style="font-size:11px;font-weight:600;color:var(--text3)">${r.perms.length}/9</span>
+        </div>
+      </td>
+      <td><span class="last-active ${r.online?'recent':''}">${r.lastActive}</span></td>
+      <td>${getStatusBadge(r.status)}</td>
+      <td>
+        <div class="action-group">
+          <button class="act-btn act-btn-view" onclick="viewUser('${r.id}')">View</button>
+          <button class="act-btn act-btn-edit" onclick="editUser('${r.id}')">Edit</button>
+          ${r.status==='Suspended'
+            ?`<button class="act-btn act-btn-activate" onclick="activateUser('${r.id}')">Activate</button>`
+            :`<button class="act-btn act-btn-suspend" onclick="promptSuspend('${r.id}')">Suspend</button>`
+          }
+          <button class="act-btn act-btn-delete" onclick="promptDelete('${r.id}')">Delete</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+  renderPagination();
+  document.getElementById('paginInfo').textContent=`Showing ${start+1}–${Math.min(start+PER_PAGE,filtered.length)} of ${filtered.length} users`;
+}
+
+function renderPagination(){
+  const total=Math.ceil(filtered.length/PER_PAGE);
+  const c=document.getElementById('paginBtns');c.innerHTML='';
+  const mk=(label,page,active)=>{const b=document.createElement('button');b.className='pagin-btn'+(active?' active':'');b.textContent=label;b.onclick=()=>{currentPage=page;renderTable()};return b};
+  c.appendChild(mk('←',Math.max(1,currentPage-1)));
+  for(let i=1;i<=Math.min(total,5);i++)c.appendChild(mk(i,i,i===currentPage));
+  c.appendChild(mk('→',Math.min(total,currentPage+1)));
+}
+
+// ── VIEW USER ──
+function viewUser(id){
+  const r=USERS.find(u=>u.id===id);if(!r)return;
+  document.getElementById('viewUserBody').innerHTML=`
+    <div style="text-align:center;margin-bottom:22px">
+      <div class="profile-avatar-lg" style="background:${getAvatarBg(r.role)};color:${getAvatarColor(r.role)};border-color:${getAvatarColor(r.role)}20">${getInitials(r.name)}</div>
+      <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--navy)">${r.name}</div>
+      <div style="margin:8px 0;display:flex;justify-content:center;gap:8px;flex-wrap:wrap">${getRoleBadge(r.role)} ${getStatusBadge(r.status)}</div>
+      <div style="font-size:13px;color:var(--text3)">${r.email}</div>
+    </div>
+    <div style="margin-bottom:16px">
+      <div class="detail-row">
+        <div class="detail-field"><div class="detail-label">User ID</div><div class="detail-value" style="font-family:monospace;color:var(--navy)">${r.id}</div></div>
+        <div class="detail-field"><div class="detail-label">Phone</div><div class="detail-value">${r.phone}</div></div>
+        <div class="detail-field"><div class="detail-label">Joined</div><div class="detail-value">${r.joined}</div></div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-field"><div class="detail-label">Department</div><div class="detail-value">${r.dept}</div></div>
+        <div class="detail-field"><div class="detail-label">Ward</div><div class="detail-value">${r.ward}</div></div>
+        <div class="detail-field"><div class="detail-label">Last Active</div><div class="detail-value ${r.online?'recent':''}">${r.lastActive}</div></div>
+      </div>
+    </div>
+    <div style="margin-bottom:16px">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--surface)">Permissions (${r.perms.length}/9)</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        ${['complaints','bursaries','proposals','projects','news','users','reports','settings'].map(p=>`<span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:99px;background:${r.perms.includes(p)?'var(--navy)':'var(--surface)'};color:${r.perms.includes(p)?'var(--white)':'var(--text3)'}">${p.charAt(0).toUpperCase()+p.slice(1)}</span>`).join('')}
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--surface)">Recent Activity</div>
+      <div class="activity-log">
+        <div class="log-item"><div class="log-text">Audit activity is not available for this staff account.</div></div>
+      </div>
+    </div>
+  `;
+  document.getElementById('viewEditBtn').onclick=()=>{closeModal('viewUserModal');editUser(id)};
+  openModal('viewUserModal');
+}
+
+// ── EDIT USER ──
+function editUser(id){
+  const r=USERS.find(u=>u.id===id);if(!r)return;
+  editTarget=id;
+  const parts=r.name.split(' ');
+  document.getElementById('uFirstName').value=parts[0]||'';
+  document.getElementById('uLastName').value=parts.slice(1).join(' ')||'';
+  document.getElementById('uEmail').value=r.email;
+  document.getElementById('uPhone').value=r.phone;
+  document.getElementById('uRole').value=r.role;
+  document.getElementById('uDept').value=r.dept;
+  document.getElementById('uWard').value=r.ward;
+  document.getElementById('uStatus').value=r.status;
+  document.getElementById('uPassword').value='';
+  ['complaints','bursaries','proposals','projects','news','users','reports','settings'].forEach(p=>{
+    const el=document.getElementById('perm-'+p);if(el)el.checked=r.perms.includes(p);
+  });
+  document.getElementById('userModalTitle').textContent='Edit User';
+  document.getElementById('userModalSaveBtn').textContent='Save Changes';
+  openModal('addUserModal');
+}
+
+// ── SAVE USER ──
+async function saveUser(){
+  const first=document.getElementById('uFirstName').value.trim();
+  const last=document.getElementById('uLastName').value.trim();
+  if(!first){showToast('Please enter a first name.','warning','Missing');return;}
+  const email=document.getElementById('uEmail').value.trim();
+  if(!email){showToast('Please enter an email address.','warning','Missing');return;}
+  const perms=['complaints','bursaries','proposals','projects','news','users','reports','settings'].filter(p=>{const el=document.getElementById('perm-'+p);return el&&el.checked});
+  const password=document.getElementById('uPassword').value;
+  if(!editTarget&&password.length<12){showToast('Use a password of at least 12 characters.','warning','Password Required');return;}
+  const userData={fullName:`${first} ${last}`.trim(),email,phone:document.getElementById('uPhone').value,role:document.getElementById('uRole').value,department:document.getElementById('uDept').value,permission:document.getElementById('uRole').value,status:document.getElementById('uStatus').value.toLowerCase()};
+  if(password)userData.password=password;
+  const user=USERS.find(record=>record.id===editTarget);
+  try{
+    const response=await adminFetch(editTarget?`/api/staff/${user.dbId}`:'/api/staff',{method:editTarget?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(userData)});
+    const result=await response.json();
+    if(!response.ok)throw new Error(result.error||'Unable to save staff account');
+    showToast(`${userData.fullName} saved successfully.`,'success',editTarget?'User Updated':'User Created');editTarget=null;await loadUsers();
+  }catch(error){showToast(error.message,'error','Save Failed');return;}
+  document.getElementById('userModalTitle').textContent='Add New User';
+  document.getElementById('userModalSaveBtn').textContent='Create User';
+  applyFilters();closeModal('addUserModal');
+}
+
+// ── PERMISSIONS BY ROLE ──
+function updatePermsByRole(role){
+  const perms=ROLE_PERMS[role]||[];
+  ['complaints','bursaries','proposals','projects','news','users','reports','settings'].forEach(p=>{
+    const el=document.getElementById('perm-'+p);if(el)el.checked=perms.includes(p);
+  });
+}
+
+// ── SUSPEND ──
+function promptSuspend(id){
+  suspendTarget=id;
+  const r=USERS.find(u=>u.id===id);
+  document.getElementById('suspendTitle').textContent=`Suspend ${r?r.name:'User'}`;
+  document.getElementById('suspendMsg').textContent=`Suspending ${r?r.name:'this user'} will immediately revoke their access to all SenateLink systems.`;
+  openModal('suspendModal');
+}
+async function confirmSuspend(){
+  if(!suspendTarget)return;
+  const r=USERS.find(u=>u.id===suspendTarget);
+  if(!r)return;
+  try{
+    const response=await adminFetch(`/api/staff/${r.dbId}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:'suspended'})});
+    if(!response.ok)throw new Error('Unable to suspend staff account');
+    closeModal('suspendModal');await loadUsers();showToast(`${r.name} has been suspended.`,'warning','Suspended');suspendTarget=null;
+  }catch(error){showToast(error.message,'error','Update Failed')}
+}
+
+// ── ACTIVATE ──
+async function activateUser(id){
+  const r=USERS.find(u=>u.id===id);
+  if(!r)return;
+  try{
+    const response=await adminFetch(`/api/staff/${r.dbId}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:'active'})});
+    if(!response.ok)throw new Error('Unable to reactivate staff account');
+    await loadUsers();showToast(`${r.name} account reactivated.`,'success','Activated');
+  }catch(error){showToast(error.message,'error','Update Failed')}
+}
+
+// ── DELETE ──
+function promptDelete(id){
+  deleteTarget=id;
+  const r=USERS.find(u=>u.id===id);
+  document.getElementById('deleteText').textContent=`Deleting ${r?r.name+' ('+r.role+')':'this user'} is permanent and cannot be undone.`;
+  openModal('deleteModal');
+}
+async function confirmDelete(){
+  if(!deleteTarget)return;
+  const r=USERS.find(u=>u.id===deleteTarget);
+  if(!r)return;
+  try{
+    const response=await adminFetch(`/api/staff/${r.dbId}`,{method:'DELETE'});
+    if(!response.ok)throw new Error('Unable to delete staff account');
+    closeModal('deleteModal');await loadUsers();showToast(`${r.name} has been deleted.`,'error','Deleted');deleteTarget=null;
+  }catch(error){showToast(error.message,'error','Delete Failed')}
+}
+
+// ── ROLE MATRIX ──
+function buildRoleMatrix(){
+  const tbody=document.getElementById('roleMatrixBody');
+  const tick='<span style="color:var(--success);font-size:14px">✓</span>';
+  const cross='<span style="color:var(--surface2);font-size:14px">–</span>';
+  tbody.innerHTML=ROLE_MATRIX.map((row,i)=>`
+    <tr style="${i%2===0?'background:var(--off-white)':''}">
+      <td style="padding:10px 16px;font-size:12px;font-weight:500;color:var(--text2)">${row.name}</td>
+      <td style="padding:10px 12px;text-align:center">${row.viewer?tick:cross}</td>
+      <td style="padding:10px 12px;text-align:center">${row.editor?tick:cross}</td>
+      <td style="padding:10px 12px;text-align:center">${row.moderator?tick:cross}</td>
+      <td style="padding:10px 12px;text-align:center">${row.officer?tick:cross}</td>
+      <td style="padding:10px 12px;text-align:center">${row.super?tick:cross}</td>
+    </tr>
+  `).join('');
+}
+
+// ── EXPORT ──
+function exportCSV(){
+  const rows=[['ID','Name','Email','Role','Department','Ward','Status','Last Active'],...filtered.map(r=>[r.id,r.name,r.email,r.role,r.dept,r.ward,r.status,r.lastActive])];
+  const csv=rows.map(r=>r.join(',')).join('\n');
+  const a=document.createElement('a');a.href='data:text/csv,'+encodeURIComponent(csv);a.download='users.csv';a.click();
+  showToast('CSV exported successfully.','success','Export Complete');
+}
+
+// ── MODAL ──
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open');if(id==='addUserModal'){editTarget=null;document.getElementById('userModalTitle').textContent='Add New User';document.getElementById('userModalSaveBtn').textContent='Create User'}}
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open')}));
+
+// ── TOAST ──
+function showToast(msg,type='info',title=''){
+  const icons={success:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',warning:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>',error:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'};
+  const t=document.createElement('div');t.className=`toast ${type}`;
+  t.innerHTML=`<div class="toast-icon">${icons[type]||icons.info}</div><div class="toast-body"><div class="toast-title">${title}</div><div class="toast-msg">${msg}</div></div><button class="toast-x" onclick="removeToast(this.parentElement)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
+  document.getElementById('toastContainer').appendChild(t);
+  setTimeout(()=>removeToast(t),4500);
+}
+function removeToast(el){if(!el||!el.parentElement)return;el.style.animation='toastOut .35s ease forwards';setTimeout(()=>el.remove(),340)}
+
+// ── SIDEBAR ──
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('open')}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('open')}
+
+// ── INIT ──
+window.addEventListener('load',()=>{
+  loadUsers().catch(error=>showToast(error.message,'error','Could Not Load Staff'));
+  buildRoleMatrix();
+});
+</script>
+</body>
+</html>

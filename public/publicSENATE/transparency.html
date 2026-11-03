@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transparency Portal – SenateLink Marsabit</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0d2b5e;
+  --navy-dark:#091d42;
+  --navy-light:#1a3f7a;
+  --gold:#c9a227;
+  --gold-light:#e8c14a;
+  --white:#ffffff;
+  --gray-50:#f8f9fc;
+  --gray-100:#eef0f5;
+  --gray-200:#d8dce8;
+  --gray-400:#8a93aa;
+  --gray-600:#4a5168;
+  --gray-800:#1e2235;
+  --success:#0f6e56;
+  --success-bg:#e1f5ee;
+  --danger:#c0392b;
+  --danger-bg:#faece7;
+  --warning:#b45309;
+  --warning-bg:#fef3c7;
+  --info:#1e40af;
+  --info-bg:#dbeafe;
+  --radius-sm:6px;
+  --radius-md:10px;
+  --radius-lg:16px;
+  --shadow-sm:0 2px 8px rgba(13,43,94,0.08);
+  --shadow-md:0 4px 24px rgba(13,43,94,0.12);
+  --shadow-lg:0 8px 40px rgba(13,43,94,0.18);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Poppins',sans-serif;background:var(--gray-50);color:var(--gray-800);line-height:1.6}
+a{text-decoration:none;color:inherit}
+.container{max-width:1200px;margin:0 auto;padding:0 1.5rem}
+
+/* NAVBAR */
+.navbar{position:sticky;top:0;z-index:1000;background:var(--navy-dark);border-bottom:2px solid var(--gold)}
+.nav-container{max-width:1200px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:68px}
+.nav-brand{display:flex;align-items:center;gap:10px}
+.brand-logo{width:38px;height:38px;background:var(--gold);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:var(--navy-dark)}
+.brand-text{display:flex;flex-direction:column;line-height:1.1}
+.brand-name{font-size:18px;font-weight:700;color:var(--white)}
+.brand-county{font-size:10px;color:var(--gold-light);letter-spacing:1px;text-transform:uppercase}
+.nav-links{display:flex;gap:4px;list-style:none;align-items:center}
+.nav-link{color:rgba(255,255,255,0.75);font-size:13.5px;font-weight:500;padding:7px 14px;border-radius:var(--radius-sm);transition:all 0.2s}
+.nav-link:hover,.nav-link.active{background:rgba(255,255,255,0.1);color:var(--white)}
+.nav-link.active{color:var(--gold-light)}
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
+.hamburger span{display:block;width:22px;height:2px;background:var(--white);border-radius:2px}
+
+/* PAGE HERO */
+.page-hero{background:linear-gradient(135deg,var(--navy-dark) 0%,var(--navy) 60%,var(--navy-light) 100%);padding:3.5rem 1.5rem;text-align:center;position:relative;overflow:hidden;border-bottom:3px solid var(--gold)}
+.page-hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.025'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")}
+.page-hero-inner{position:relative;z-index:1;max-width:760px;margin:0 auto}
+.hero-badge{display:inline-block;background:rgba(201,162,39,0.15);border:1px solid rgba(201,162,39,0.4);color:var(--gold-light);font-size:12px;font-weight:600;padding:6px 16px;border-radius:20px;margin-bottom:1rem;letter-spacing:0.5px}
+.page-hero h1{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;color:var(--white);margin-bottom:1rem;letter-spacing:-0.5px}
+.page-hero h1 span{color:var(--gold-light)}
+.page-hero p{font-size:15px;color:rgba(255,255,255,0.75);line-height:1.75;margin-bottom:1.5rem}
+.breadcrumb{display:flex;align-items:center;gap:6px;justify-content:center;margin-bottom:1rem;font-size:12px;color:rgba(255,255,255,0.5)}
+.breadcrumb a{color:rgba(255,255,255,0.5)}
+.breadcrumb a:hover{color:var(--gold-light)}
+.breadcrumb span{color:var(--gold-light)}
+.hero-stats{display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;margin-top:1.5rem}
+.hero-stat{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:var(--radius-md);padding:12px 22px;text-align:center}
+.hero-stat strong{display:block;font-size:18px;font-weight:800;color:var(--gold-light)}
+.hero-stat span{font-size:11px;color:rgba(255,255,255,0.6)}
+
+/* MAIN */
+.main{max-width:1200px;margin:0 auto;padding:2.5rem 1.5rem 4rem}
+
+/* SUMMARY CARDS */
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:2.5rem}
+.summary-card{background:var(--white);border-radius:var(--radius-lg);border:1px solid var(--gray-200);box-shadow:var(--shadow-sm);padding:1.25rem 1.5rem;display:flex;align-items:center;gap:14px;transition:all 0.2s}
+.summary-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.summary-icon{width:48px;height:48px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.summary-info strong{display:block;font-size:20px;font-weight:800;color:var(--navy-dark)}
+.summary-info span{font-size:12px;color:var(--gray-600)}
+
+/* FILTERS */
+.filters-bar{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:1.25rem 1.5rem;margin-bottom:2rem;box-shadow:var(--shadow-sm)}
+.filters-top{display:flex;gap:1rem;align-items:center;flex-wrap:wrap;margin-bottom:1rem}
+.search-wrap{flex:1;min-width:220px;position:relative}
+.search-wrap input{width:100%;border:1.5px solid var(--gray-200);border-radius:var(--radius-md);padding:10px 14px 10px 40px;font-size:14px;color:var(--gray-800);background:var(--gray-50);font-family:'Poppins',sans-serif;outline:none;transition:all 0.18s}
+.search-wrap input:focus{border-color:var(--navy-light);background:var(--white);box-shadow:0 0 0 3px rgba(13,43,94,0.1)}
+.search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--gray-400)}
+.filters-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.filter-select{border:1.5px solid var(--gray-200);border-radius:var(--radius-md);padding:9px 32px 9px 12px;font-size:13px;color:var(--gray-700);background:var(--gray-50);font-family:'Poppins',sans-serif;outline:none;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238a93aa' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;transition:all 0.18s}
+.filter-select:focus{border-color:var(--navy-light);box-shadow:0 0 0 3px rgba(13,43,94,0.1)}
+.btn-reset{padding:9px 16px;background:transparent;border:1.5px solid var(--gray-200);border-radius:var(--radius-md);font-size:13px;font-weight:600;color:var(--gray-600);font-family:'Poppins',sans-serif;cursor:pointer;transition:all 0.2s}
+.btn-reset:hover{border-color:var(--danger);color:var(--danger)}
+.results-count{font-size:13px;color:var(--gray-600);margin-left:auto}
+.results-count strong{color:var(--navy-dark)}
+.view-toggle{display:flex;gap:4px}
+.view-btn{width:34px;height:34px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);background:var(--gray-50);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all 0.2s}
+.view-btn.active{background:var(--navy-dark);border-color:var(--navy-dark);color:var(--white)}
+
+/* PROJECTS GRID */
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.5rem}
+.projects-grid.list-view{grid-template-columns:1fr}
+
+/* PROJECT CARD */
+.project-card{background:var(--white);border-radius:var(--radius-lg);border:1px solid var(--gray-200);box-shadow:var(--shadow-sm);overflow:hidden;transition:all 0.25s;cursor:pointer}
+.project-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);border-color:var(--navy-light)}
+.project-card.list-view{display:grid;grid-template-columns:220px 1fr;border-radius:var(--radius-md)}
+.project-banner{height:150px;position:relative;display:flex;align-items:flex-end;justify-content:space-between;padding:12px}
+.project-card.list-view .project-banner{height:100%;border-radius:0}
+.project-banner-icon{position:absolute;top:50%;left:50%;transform:translate(-50%,-65%);font-size:40px}
+.ward-pill{background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);color:var(--white);font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;backdrop-filter:blur(4px)}
+.dept-pill{background:rgba(0,0,0,0.25);color:var(--white);font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px}
+.project-body{padding:1.25rem}
+.project-title{font-size:15px;font-weight:700;color:var(--navy-dark);margin-bottom:8px;line-height:1.4}
+.project-meta-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.meta-chip{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--gray-600);background:var(--gray-50);padding:3px 8px;border-radius:20px;border:1px solid var(--gray-200)}
+.budget-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.budget-item{background:var(--gray-50);border-radius:var(--radius-sm);padding:8px 10px;border:1px solid var(--gray-100)}
+.budget-item label{display:block;font-size:10px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px}
+.budget-item strong{font-size:13px;font-weight:700;color:var(--navy-dark)}
+.progress-section{margin-bottom:12px}
+.progress-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;font-size:12px}
+.progress-label span{color:var(--gray-600)}
+.progress-label strong{color:var(--navy-dark);font-weight:700}
+.progress-bar{background:var(--gray-100);border-radius:10px;height:8px;overflow:hidden}
+.progress-fill{height:100%;border-radius:10px;transition:width 1s ease}
+.fill-low{background:linear-gradient(90deg,#e24b4a,#f09595)}
+.fill-mid{background:linear-gradient(90deg,var(--gold),var(--gold-light))}
+.fill-high{background:linear-gradient(90deg,var(--success),#1d9e75)}
+.project-footer{display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--gray-100)}
+.status-pill{font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:0.3px}
+.s-planning{background:var(--info-bg);color:var(--info)}
+.s-active{background:rgba(13,43,94,0.08);color:var(--navy)}
+.s-complete{background:var(--success-bg);color:var(--success)}
+.s-stalled{background:var(--warning-bg);color:var(--warning)}
+.s-cancelled{background:var(--danger-bg);color:var(--danger)}
+.timeline-chip{font-size:11px;color:var(--gray-400);display:flex;align-items:center;gap:4px}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(9,29,66,0.7);z-index:9999;align-items:center;justify-content:center;padding:1.5rem}
+.modal-overlay.visible{display:flex}
+.modal{background:var(--white);border-radius:var(--radius-lg);max-width:640px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:slideUp 0.3s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.modal-banner{height:180px;position:relative;display:flex;align-items:flex-end;padding:1.25rem;gap:10px}
+.modal-banner-icon{position:absolute;top:50%;left:50%;transform:translate(-50%,-70%);font-size:56px}
+.modal-body{padding:1.5rem}
+.modal-title{font-size:20px;font-weight:800;color:var(--navy-dark);margin-bottom:6px}
+.modal-section{margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--gray-100)}
+.modal-section h4{font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modal-field{background:var(--gray-50);border-radius:var(--radius-sm);padding:10px 12px;border:1px solid var(--gray-100)}
+.modal-field label{display:block;font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px}
+.modal-field strong{font-size:14px;font-weight:700;color:var(--navy-dark)}
+.modal-close{position:absolute;top:12px;right:12px;width:32px;height:32px;background:rgba(255,255,255,0.2);border:none;border-radius:50%;cursor:pointer;font-size:16px;color:var(--white);display:flex;align-items:center;justify-content:center;transition:background 0.2s}
+.modal-close:hover{background:rgba(255,255,255,0.4)}
+.spending-bar-wrap{margin-top:10px}
+.spending-bar{background:var(--gray-100);border-radius:10px;height:12px;overflow:hidden;position:relative}
+.spending-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--success),#1d9e75);transition:width 1s ease}
+.spending-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--gray-600);margin-top:4px}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:4rem 1.5rem;color:var(--gray-400)}
+.empty-state .empty-icon{font-size:48px;margin-bottom:1rem}
+.empty-state h3{font-size:16px;font-weight:600;color:var(--gray-600);margin-bottom:6px}
+.empty-state p{font-size:13px}
+
+/* FOOTER */
+.footer{background:var(--navy-dark)}
+.footer-top{padding:3rem 0}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2rem}
+.footer-logo{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.footer-brand p{font-size:13px;color:rgba(255,255,255,0.5);line-height:1.7;max-width:260px;margin-top:8px}
+.footer-col h4{font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold-light);margin-bottom:14px}
+.footer-col ul{list-style:none}
+.footer-col ul li{margin-bottom:8px;font-size:13px;color:rgba(255,255,255,0.5)}
+.footer-col ul li a{color:rgba(255,255,255,0.5);transition:color 0.2s}
+.footer-col ul li a:hover{color:var(--white)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,0.08);padding:1.25rem 0;text-align:center;font-size:12px;color:rgba(255,255,255,0.3)}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .footer-brand{grid-column:span 2}
+  .projects-grid{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+}
+@media(max-width:660px){
+  .nav-links{display:none;position:absolute;top:68px;left:0;right:0;background:var(--navy);flex-direction:column;padding:1rem 1.5rem;gap:4px;border-bottom:2px solid var(--gold)}
+  .nav-links.open{display:flex}
+  .hamburger{display:flex}
+  .projects-grid{grid-template-columns:1fr}
+  .project-card.list-view{grid-template-columns:1fr}
+  .modal-grid{grid-template-columns:1fr}
+  .filters-top{flex-direction:column;align-items:stretch}
+  .footer-grid{grid-template-columns:1fr}
+  .footer-brand{grid-column:span 1}
+  .hero-stats{flex-direction:column;align-items:center}
+  .budget-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-brand">
+      <div class="brand-logo">SL</div>
+      <div class="brand-text">
+        <span class="brand-name">SenateLink</span>
+        <span class="brand-county">Marsabit County</span>
+      </div>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="complaints.html" class="nav-link">Public Services</a></li>
+      <li><a href="transparency.html" class="nav-link active">Projects</a></li>
+      <li><a href="transparency.html" class="nav-link">Transparency</a></li>
+      <li><a href="#contact" class="nav-link">Contact</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <div class="breadcrumb">
+      <a href="index.html">Home</a> › <span>Transparency Portal</span>
+    </div>
+    <div class="hero-badge">📊 Public Accountability Dashboard</div>
+    <h1>Transparency <span>Portal</span></h1>
+    <p>Track every public project, budget allocation, and expenditure across all wards in Marsabit County. Open governance for every citizen.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><strong>KES 2.4B</strong><span>Total Budget Allocated</span></div>
+      <div class="hero-stat"><strong>KES 1.1B</strong><span>Amount Spent to Date</span></div>
+      <div class="hero-stat"><strong>47</strong><span>Active Projects</span></div>
+      <div class="hero-stat"><strong>18</strong><span>Completed Projects</span></div>
+    </div>
+  </div>
+</section>
+
+<main class="main">
+
+  <div class="summary-grid">
+    <div class="summary-card">
+      <div class="summary-icon" style="background:rgba(13,43,94,0.08)">🏗️</div>
+      <div class="summary-info"><strong id="totalCount">12</strong><span>Total Projects</span></div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-icon" style="background:rgba(201,162,39,0.1)">⚙️</div>
+      <div class="summary-info"><strong id="activeCount">0</strong><span>In Progress</span></div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-icon" style="background:rgba(15,110,86,0.1)">✅</div>
+      <div class="summary-info"><strong id="completeCount">0</strong><span>Completed</span></div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-icon" style="background:rgba(30,64,175,0.08)">📋</div>
+      <div class="summary-info"><strong id="planningCount">0</strong><span>Planning</span></div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-icon" style="background:rgba(180,83,9,0.08)">⚠️</div>
+      <div class="summary-info"><strong id="stalledCount">0</strong><span>Stalled</span></div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-icon" style="background:rgba(201,162,39,0.1)">💰</div>
+      <div class="summary-info"><strong>KES 2.4B</strong><span>Total Budget</span></div>
+    </div>
+  </div>
+
+  <div class="filters-bar">
+    <div class="filters-top">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search projects by name, ward, or department…">
+      </div>
+      <div class="view-toggle">
+        <button class="view-btn active" id="gridViewBtn" title="Grid view">⊞</button>
+        <button class="view-btn" id="listViewBtn" title="List view">☰</button>
+      </div>
+    </div>
+    <div class="filters-row">
+      <select class="filter-select" id="filterStatus">
+        <option value="">All Statuses</option>
+        <option value="Planning">Planning</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Completed">Completed</option>
+        <option value="Stalled">Stalled</option>
+        <option value="Cancelled">Cancelled</option>
+      </select>
+      <select class="filter-select" id="filterWard">
+        <option value="">All Wards</option>
+        <option value="Saku">Saku</option>
+        <option value="Moyale">Moyale</option>
+        <option value="North Horr">North Horr</option>
+        <option value="Laisamis">Laisamis</option>
+      </select>
+      <select class="filter-select" id="filterDept">
+        <option value="">All Departments</option>
+        <option value="Roads">Roads</option>
+        <option value="Water">Water</option>
+        <option value="Education">Education</option>
+        <option value="Health">Health</option>
+        <option value="Energy">Energy</option>
+        <option value="Agriculture">Agriculture</option>
+      </select>
+      <select class="filter-select" id="filterYear">
+        <option value="">All Years</option>
+        <option value="2026">2026</option>
+        <option value="2025">2025</option>
+        <option value="2024">2024</option>
+      </select>
+      <button class="btn-reset" id="resetBtn">✕ Reset</button>
+      <span class="results-count">Showing <strong id="resultNum">12</strong> projects</span>
+    </div>
+  </div>
+
+  <div class="projects-grid" id="projectsGrid"></div>
+  <div class="empty-state" id="emptyState" style="display:none">
+    <div class="empty-icon">🔍</div>
+    <h3>No projects found</h3>
+    <p>Try adjusting your search or filters to find projects.</p>
+  </div>
+
+</main>
+
+<!-- PROJECT MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalContent">
+    <div class="modal-banner" id="modalBanner" style="position:relative">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div class="modal-banner-icon" id="modalIcon"></div>
+      <span class="ward-pill" id="modalWardPill"></span>
+      <span class="dept-pill" id="modalDeptPill"></span>
+    </div>
+    <div class="modal-body">
+      <div id="modalStatusPill" style="margin-bottom:10px"></div>
+      <div class="modal-title" id="modalTitle"></div>
+      <p style="font-size:13px;color:var(--gray-600);line-height:1.65;margin-top:6px" id="modalDesc"></p>
+      <div class="modal-section">
+        <h4>📊 Financial Overview</h4>
+        <div class="modal-grid">
+          <div class="modal-field"><label>Total Budget</label><strong id="mBudget"></strong></div>
+          <div class="modal-field"><label>Amount Spent</label><strong id="mSpent"></strong></div>
+          <div class="modal-field"><label>Remaining</label><strong id="mRemaining"></strong></div>
+          <div class="modal-field"><label>Absorption Rate</label><strong id="mAbsorption"></strong></div>
+        </div>
+        <div class="spending-bar-wrap">
+          <div class="spending-bar"><div class="spending-fill" id="mSpendingBar"></div></div>
+          <div class="spending-labels"><span>KES 0</span><span id="mBudgetLabel"></span></div>
+        </div>
+      </div>
+      <div class="modal-section">
+        <h4>📋 Project Details</h4>
+        <div class="modal-grid">
+          <div class="modal-field"><label>Department</label><strong id="mDept"></strong></div>
+          <div class="modal-field"><label>Ward</label><strong id="mWard"></strong></div>
+          <div class="modal-field"><label>Contractor</label><strong id="mContractor"></strong></div>
+          <div class="modal-field"><label>Year</label><strong id="mYear"></strong></div>
+          <div class="modal-field"><label>Start Date</label><strong id="mStart"></strong></div>
+          <div class="modal-field"><label>End Date</label><strong id="mEnd"></strong></div>
+        </div>
+      </div>
+      <div class="modal-section">
+        <h4>📈 Progress</h4>
+        <div class="progress-label"><span>Completion</span><strong id="mProgress"></strong></div>
+        <div class="progress-bar"><div class="progress-fill" id="mProgressBar"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer" id="contact">
+  <div class="footer-top">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <div class="brand-logo">SL</div>
+          <div class="brand-text">
+            <span class="brand-name" style="color:#fff">SenateLink</span>
+            <span class="brand-county">Marsabit County</span>
+          </div>
+        </div>
+        <p>Connecting citizens of Marsabit County with their elected leadership through transparent digital governance.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="complaints.html">Submit Complaint</a></li>
+          <li><a href="bursary.html">Bursary Application</a></li>
+          <li><a href="transparency.html">Project Tracking</a></li>
+          <li><a href="proposal.html">Submit Proposal</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>County</h4>
+        <ul>
+          <li><a href="#">Marsabit County Govt</a></li>
+          <li><a href="#">Senate Office</a></li>
+          <li><a href="#">CDF Fund</a></li>
+          <li><a href="#">Public Participation</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li>📍 Senate Office, Marsabit Town</li>
+          <li>📞 +254 700 000 000</li>
+          <li>✉️ info@senatelink.go.ke</li>
+          <li>🕐 Mon–Fri: 8:00am – 5:00pm</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="container">
+      <p>© 2026 SenateLink · Marsabit County Government · All rights reserved</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+// NAVBAR
+const hamburger = document.getElementById('hamburger');
+const navLinks = document.getElementById('navLinks');
+hamburger.addEventListener('click', () => navLinks.classList.toggle('open'));
+document.querySelectorAll('.nav-link').forEach(l => l.addEventListener('click', () => navLinks.classList.remove('open')));
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').style.boxShadow = window.scrollY > 10 ? '0 4px 30px rgba(9,29,66,0.4)' : '';
+});
+
+// PROJECT DATA
+const projects = [];
+
+let currentView = 'grid';
+let filteredProjects = [...projects];
+
+function formatKES(num) {
+  if (num >= 1000000) return 'KES ' + (num/1000000).toFixed(1) + 'M';
+  if (num >= 1000) return 'KES ' + (num/1000).toFixed(0) + 'K';
+  return 'KES ' + num.toLocaleString();
+}
+
+function getStatusClass(status) {
+  const map = { 'Planning':'s-planning', 'In Progress':'s-active', 'Completed':'s-complete', 'Stalled':'s-stalled', 'Cancelled':'s-cancelled' };
+  return map[status] || 's-active';
+}
+
+function getProgressClass(p) {
+  if (p <= 30) return 'fill-low';
+  if (p <= 65) return 'fill-mid';
+  return 'fill-high';
+}
+
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character]));
+}
+
+function mapProject(record) {
+  const status = { planned: 'Planning', active: 'In Progress', completed: 'Completed', stalled: 'Stalled', cancelled: 'Cancelled' }[record.status] || 'Planning';
+  const category = record.department || record.category || 'Projects';
+  const start = record.startDate ? String(record.startDate).slice(0, 10) : 'Not set';
+  const end = record.endDate ? String(record.endDate).slice(0, 10) : 'Not set';
+  const visual = {
+    Roads: ['🛣️', 'linear-gradient(135deg,#0d2b5e,#1a3f7a)'],
+    Water: ['💧', 'linear-gradient(135deg,#0f6e56,#1d9e75)'],
+    Education: ['📚', 'linear-gradient(135deg,#c9a227,#e8c14a)'],
+    Health: ['🏥', 'linear-gradient(135deg,#993c1d,#d85a30)'],
+  }[category] || ['📍', 'linear-gradient(135deg,#185fa5,#378add)'];
+  return {
+    id: record._id,
+    name: escapeHTML(record.name),
+    dept: escapeHTML(category),
+    ward: escapeHTML(record.ward || 'Not specified'),
+    budget: Number(record.budget) || 0,
+    spent: Number(record.spent) || 0,
+    progress: Number(record.progress) || 0,
+    status,
+    contractor: escapeHTML(record.contractor || 'Not specified'),
+    start,
+    end,
+    year: start.slice(0, 4),
+    icon: visual[0],
+    color: visual[1],
+    desc: record.description || '',
+  };
+}
+
+async function loadProjects() {
+  const response = await fetch('/api/projects/public');
+  if (!response.ok) throw new Error('Project records are temporarily unavailable.');
+  const records = await response.json();
+  projects.splice(0, projects.length, ...records.map(mapProject));
+  filteredProjects = [...projects];
+  updateSummary();
+  renderCards();
+}
+
+function renderCards() {
+  const grid = document.getElementById('projectsGrid');
+  const empty = document.getElementById('emptyState');
+  document.getElementById('resultNum').textContent = filteredProjects.length;
+
+  if (!filteredProjects.length) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  const isListView = currentView === 'list';
+  grid.className = 'projects-grid' + (isListView ? ' list-view' : '');
+
+  grid.innerHTML = filteredProjects.map(p => `
+    <div class="project-card${isListView ? ' list-view' : ''}" onclick="openModal('${p.id}')">
+      <div class="project-banner" style="background:${p.color}">
+        <div class="project-banner-icon">${p.icon}</div>
+        <span class="ward-pill">📍 ${p.ward}</span>
+        <span class="dept-pill">${p.dept}</span>
+      </div>
+      <div class="project-body">
+        <div class="project-title">${p.name}</div>
+        <div class="project-meta-row">
+          <span class="meta-chip">📅 ${p.start} – ${p.end}</span>
+          <span class="meta-chip">🏢 ${p.contractor}</span>
+        </div>
+        <div class="budget-row">
+          <div class="budget-item"><label>Total Budget</label><strong>${formatKES(p.budget)}</strong></div>
+          <div class="budget-item"><label>Amount Spent</label><strong>${formatKES(p.spent)}</strong></div>
+        </div>
+        <div class="progress-section">
+          <div class="progress-label"><span>Completion</span><strong>${p.progress}%</strong></div>
+          <div class="progress-bar"><div class="progress-fill ${getProgressClass(p.progress)}" style="width:${p.progress}%"></div></div>
+        </div>
+        <div class="project-footer">
+          <span class="status-pill ${getStatusClass(p.status)}">${p.status}</span>
+          <span class="timeline-chip">📅 ${p.year}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function updateSummary() {
+  document.getElementById('totalCount').textContent = projects.length;
+  document.getElementById('activeCount').textContent = projects.filter(p => p.status === 'In Progress').length;
+  document.getElementById('completeCount').textContent = projects.filter(p => p.status === 'Completed').length;
+  document.getElementById('planningCount').textContent = projects.filter(p => p.status === 'Planning').length;
+  document.getElementById('stalledCount').textContent = projects.filter(p => p.status === 'Stalled').length;
+}
+
+function applyFilters() {
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const status = document.getElementById('filterStatus').value;
+  const ward = document.getElementById('filterWard').value;
+  const dept = document.getElementById('filterDept').value;
+  const year = document.getElementById('filterYear').value;
+
+  filteredProjects = projects.filter(p => {
+    const matchSearch = !search || p.name.toLowerCase().includes(search) || p.ward.toLowerCase().includes(search) || p.dept.toLowerCase().includes(search);
+    const matchStatus = !status || p.status === status;
+    const matchWard = !ward || p.ward === ward;
+    const matchDept = !dept || p.dept === dept;
+    const matchYear = !year || p.year === year;
+    return matchSearch && matchStatus && matchWard && matchDept && matchYear;
+  });
+  renderCards();
+}
+
+document.getElementById('searchInput').addEventListener('input', applyFilters);
+document.getElementById('filterStatus').addEventListener('change', applyFilters);
+document.getElementById('filterWard').addEventListener('change', applyFilters);
+document.getElementById('filterDept').addEventListener('change', applyFilters);
+document.getElementById('filterYear').addEventListener('change', applyFilters);
+document.getElementById('resetBtn').addEventListener('click', () => {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('filterStatus').value = '';
+  document.getElementById('filterWard').value = '';
+  document.getElementById('filterDept').value = '';
+  document.getElementById('filterYear').value = '';
+  filteredProjects = [...projects];
+  renderCards();
+});
+
+document.getElementById('gridViewBtn').addEventListener('click', () => {
+  currentView = 'grid';
+  document.getElementById('gridViewBtn').classList.add('active');
+  document.getElementById('listViewBtn').classList.remove('active');
+  renderCards();
+});
+document.getElementById('listViewBtn').addEventListener('click', () => {
+  currentView = 'list';
+  document.getElementById('listViewBtn').classList.add('active');
+  document.getElementById('gridViewBtn').classList.remove('active');
+  renderCards();
+});
+
+// MODAL
+function openModal(id) {
+  const p = projects.find(x => x.id === id);
+  if (!p) return;
+  const remaining = p.budget - p.spent;
+  const absorption = Math.round((p.spent / p.budget) * 100);
+
+  document.getElementById('modalBanner').style.background = p.color;
+  document.getElementById('modalIcon').textContent = p.icon;
+  document.getElementById('modalWardPill').textContent = '📍 ' + p.ward;
+  document.getElementById('modalDeptPill').textContent = p.dept;
+  document.getElementById('modalStatusPill').innerHTML = `<span class="status-pill ${getStatusClass(p.status)}">${p.status}</span>`;
+  document.getElementById('modalTitle').textContent = p.name;
+  document.getElementById('modalDesc').textContent = p.desc;
+  document.getElementById('mBudget').textContent = formatKES(p.budget);
+  document.getElementById('mSpent').textContent = formatKES(p.spent);
+  document.getElementById('mRemaining').textContent = formatKES(remaining);
+  document.getElementById('mAbsorption').textContent = absorption + '%';
+  document.getElementById('mSpendingBar').style.width = absorption + '%';
+  document.getElementById('mBudgetLabel').textContent = formatKES(p.budget);
+  document.getElementById('mDept').textContent = p.dept;
+  document.getElementById('mWard').textContent = p.ward;
+  document.getElementById('mContractor').textContent = p.contractor;
+  document.getElementById('mYear').textContent = p.year;
+  document.getElementById('mStart').textContent = p.start;
+  document.getElementById('mEnd').textContent = p.end;
+  document.getElementById('mProgress').textContent = p.progress + '%';
+  document.getElementById('mProgressBar').style.width = p.progress + '%';
+  document.getElementById('mProgressBar').className = 'progress-fill ' + getProgressClass(p.progress);
+  document.getElementById('modalOverlay').classList.add('visible');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('visible');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+updateSummary();
+renderCards();
+loadProjects().catch(error => {
+  document.getElementById('emptyState').textContent = error.message;
+  document.getElementById('emptyState').style.display = 'block';
+});
+</script>
+</body>
+</html>

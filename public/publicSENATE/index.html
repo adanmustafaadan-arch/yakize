@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SenateLink – Marsabit County</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0d2b5e;
+  --navy-dark:#28354f;
+  --navy-light:#4f6486;
+  --gold:#c9a227;
+  --gold-light:#e8c14a;
+  --white:#ffffff;
+  --gray-50:#f8f9fc;
+  --gray-100:#eef0f5;
+  --gray-200:#d8dce8;
+  --gray-400:#8a93aa;
+  --gray-600:#4a5168;
+  --gray-800:#1e2235;
+  --success:#0f6e56;
+  --success-bg:#e1f5ee;
+  --danger:#c0392b;
+  --radius-sm:6px;
+  --radius-md:10px;
+  --radius-lg:16px;
+  --shadow-sm:0 2px 8px rgba(13,43,94,0.08);
+  --shadow-md:0 4px 24px rgba(13,43,94,0.12);
+  --shadow-lg:0 8px 40px rgba(13,43,94,0.18);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Poppins',sans-serif;background:var(--gray-50);color:var(--gray-800);line-height:1.6}
+a{text-decoration:none;color:inherit}
+.container{max-width:1100px;margin:0 auto;padding:0 1.5rem}
+
+/* NAVBAR */
+.navbar{position:sticky;top:0;z-index:1000;background:var(--navy-dark);border-bottom:2px solid var(--gold)}
+.nav-container{max-width:1100px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:68px}
+.nav-brand{display:flex;align-items:center;gap:10px}
+.brand-logo{width:38px;height:38px;background:var(--gold);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:var(--navy-dark)}
+.brand-text{display:flex;flex-direction:column;line-height:1.1}
+.brand-name{font-size:18px;font-weight:700;color:var(--white)}
+.brand-county{font-size:10px;color:var(--gold-light);letter-spacing:1px;text-transform:uppercase}
+.nav-links{display:flex;gap:4px;list-style:none;align-items:center}
+.nav-link{color:rgba(255,255,255,0.75);font-size:13.5px;font-weight:500;padding:7px 14px;border-radius:var(--radius-sm);transition:all 0.2s}
+.nav-link:hover,.nav-link.active{background:rgba(255,255,255,0.1);color:var(--white)}
+.nav-link.active{color:var(--gold-light)}
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
+.hamburger span{display:block;width:22px;height:2px;background:var(--white);border-radius:2px;transition:all 0.25s}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:11px 22px;border-radius:var(--radius-md);font-size:14px;font-weight:600;font-family:'Poppins',sans-serif;cursor:pointer;transition:all 0.2s;border:2px solid transparent}
+.btn-gold{background:var(--gold);color:var(--navy-dark);border-color:var(--gold)}
+.btn-gold:hover{background:var(--gold-light);transform:translateY(-1px)}
+.btn-outline{background:transparent;color:var(--white);border-color:rgba(255,255,255,0.4)}
+.btn-outline:hover{background:rgba(255,255,255,0.1);border-color:var(--white)}
+.btn-navy{background:var(--navy-dark);color:var(--white);border-color:var(--navy-dark)}
+.btn-navy:hover{background:var(--navy-light)}
+
+/* HERO */
+.hero{min-height:88vh;background:linear-gradient(135deg,var(--navy-dark) 0%,var(--navy) 60%,var(--navy-light) 100%);display:flex;align-items:center;padding:5rem 1.5rem;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.025'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")}
+.hero-inner{max-width:1100px;margin:0 auto;width:100%;display:flex;align-items:center;justify-content:space-between;gap:3rem;position:relative;z-index:1}
+.hero-content{max-width:580px}
+.hero-badge{display:inline-block;background:rgba(201,162,39,0.15);border:1px solid rgba(201,162,39,0.4);color:var(--gold-light);font-size:12px;font-weight:600;padding:6px 16px;border-radius:20px;margin-bottom:1.5rem;letter-spacing:0.5px}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;color:var(--white);line-height:1.15;margin-bottom:1.25rem;letter-spacing:-0.5px}
+.hero h1 span{color:var(--gold-light)}
+.hero p{font-size:16px;color:rgba(255,255,255,0.75);margin-bottom:2rem;line-height:1.75}
+.hero-actions{display:flex;flex-wrap:wrap;gap:10px}
+.hero-visual{display:flex;flex-direction:column;gap:16px;flex-shrink:0}
+.float-card{background:rgba(255,255,255,0.95);border-radius:var(--radius-md);padding:14px 18px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow-lg);animation:float 3s ease-in-out infinite}
+.float-card:nth-child(2){animation-delay:1s}
+.float-card:nth-child(3){animation-delay:2s}
+.fc-icon{font-size:24px}
+.float-card strong{display:block;font-size:18px;font-weight:700;color:var(--navy-dark)}
+.float-card small{font-size:11px;color:var(--gray-600)}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+/* SECTION HEADER */
+.section-header{text-align:center;margin-bottom:3rem}
+.section-tag{display:inline-block;background:rgba(201,162,39,0.12);color:var(--gold);font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:10px}
+.section-header h2{font-size:clamp(1.6rem,3vw,2.2rem);font-weight:700;color:var(--navy-dark);margin-bottom:8px}
+.section-header p{color:var(--gray-600);font-size:15px}
+
+/* SERVICES */
+.services{padding:5rem 0;background:var(--white)}
+.services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.5rem}
+.service-card{background:var(--gray-50);border:1.5px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem 1.5rem;display:flex;flex-direction:column;gap:10px;transition:all 0.25s;position:relative;overflow:hidden;cursor:pointer}
+.service-card::before{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--navy),var(--gold));transform:scaleX(0);transform-origin:left;transition:transform 0.3s}
+.service-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md);border-color:var(--navy-light)}
+.service-card:hover::before{transform:scaleX(1)}
+.service-icon{font-size:32px;width:56px;height:56px;display:flex;align-items:center;justify-content:center;border-radius:var(--radius-md);margin-bottom:6px}
+.service-card h3{font-size:16px;font-weight:700;color:var(--navy-dark)}
+.service-card p{font-size:13px;color:var(--gray-600);line-height:1.6;flex:1}
+.service-arrow{font-size:18px;color:var(--gold);font-weight:700;transition:transform 0.2s}
+.service-card:hover .service-arrow{transform:translateX(4px)}
+
+/* STATS */
+.stats{padding:4rem 0;background:var(--navy-dark)}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem}
+.stat-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius-lg);padding:2rem;text-align:center}
+.stat-num{font-size:clamp(2rem,4vw,2.8rem);font-weight:800;color:var(--gold-light);margin-bottom:6px}
+.stat-label{font-size:13px;color:rgba(255,255,255,0.65);margin-bottom:14px;font-weight:500}
+.stat-bar{background:rgba(255,255,255,0.1);border-radius:10px;height:5px;overflow:hidden}
+.stat-fill{background:linear-gradient(90deg,var(--gold),var(--gold-light));height:100%;border-radius:10px}
+
+/* PROJECTS */
+.projects{padding:5rem 0;background:var(--gray-50)}
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;margin-bottom:2.5rem}
+.project-card{background:var(--white);border-radius:var(--radius-lg);overflow:hidden;border:1px solid var(--gray-200);box-shadow:var(--shadow-sm);transition:all 0.25s}
+.project-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md)}
+.project-img{height:160px;display:flex;align-items:flex-end;justify-content:space-between;padding:1rem;position:relative}
+.project-ward-badge{background:rgba(255,255,255,0.2);color:var(--white);font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;border:1px solid rgba(255,255,255,0.3)}
+.project-img-icon{font-size:36px;position:absolute;top:50%;left:50%;transform:translate(-50%,-60%)}
+.project-body{padding:1.25rem}
+.project-body h3{font-size:15px;font-weight:700;color:var(--navy-dark);margin-bottom:8px}
+.project-meta{display:flex;gap:12px;font-size:12px;color:var(--gray-600);margin-bottom:12px}
+.progress-wrap{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.progress-bar{flex:1;background:var(--gray-100);border-radius:10px;height:7px;overflow:hidden}
+.progress-fill{background:linear-gradient(90deg,var(--navy),var(--gold));height:100%;border-radius:10px}
+.progress-wrap span{font-size:12px;font-weight:600;color:var(--navy-dark)}
+.status-badge{font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px}
+.status-active{background:rgba(13,43,94,0.08);color:var(--navy)}
+.status-done{background:rgba(15,110,86,0.1);color:var(--success)}
+.center-btn{text-align:center}
+
+/* NEWS */
+.news{padding:5rem 0;background:var(--white)}
+.news-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.news-featured{grid-column:span 2;background:var(--navy-dark);border-color:var(--navy-dark)}
+.news-card{background:var(--gray-50);border:1.5px solid var(--gray-200);border-radius:var(--radius-lg);padding:1.75rem;transition:all 0.2s}
+.news-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+.news-featured h3,.news-featured p{color:var(--white)}
+.news-featured .news-meta{color:rgba(255,255,255,0.55)}
+.news-featured .news-meta a{color:var(--gold-light)}
+.news-tag{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:3px 10px;border-radius:20px;background:rgba(201,162,39,0.15);color:var(--gold);margin-bottom:10px}
+.news-tag-project{background:rgba(13,43,94,0.08);color:var(--navy)}
+.news-tag-alert{background:rgba(192,57,43,0.08);color:var(--danger)}
+.news-card h3{font-size:16px;font-weight:700;color:var(--navy-dark);margin-bottom:8px}
+.news-card p{font-size:13.5px;color:var(--gray-600);line-height:1.65;margin-bottom:12px}
+.news-meta{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--gray-400)}
+.news-meta a{color:var(--navy);font-weight:600}
+
+/* FOOTER */
+.footer{background:var(--navy-dark)}
+.footer-top{padding:3.5rem 0}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2rem}
+.footer-logo{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.footer-brand p{font-size:13px;color:rgba(255,255,255,0.5);line-height:1.7;max-width:260px;margin-top:8px}
+.social-links{display:flex;gap:8px;margin-top:1rem}
+.social-icon{width:34px;height:34px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.7);font-size:13px;font-weight:700;transition:all 0.2s}
+.social-icon:hover{background:var(--gold);color:var(--navy-dark);border-color:var(--gold)}
+.footer-col h4{font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold-light);margin-bottom:14px}
+.footer-col ul{list-style:none}
+.footer-col ul li{margin-bottom:8px;font-size:13px;color:rgba(255,255,255,0.5)}
+.footer-col ul li a{color:rgba(255,255,255,0.5);transition:color 0.2s}
+.footer-col ul li a:hover{color:var(--white)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,0.08);padding:1.25rem 0;text-align:center;font-size:12px;color:rgba(255,255,255,0.3)}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .hero-inner{flex-direction:column;text-align:center}
+  .hero-actions{justify-content:center}
+  .hero-visual{flex-direction:row;flex-wrap:wrap;justify-content:center}
+  .float-card{flex:1;min-width:130px}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:1.5rem}
+  .footer-brand{grid-column:span 2}
+}
+@media(max-width:660px){
+  .nav-links{display:none;position:absolute;top:68px;left:0;right:0;background:var(--navy);flex-direction:column;padding:1rem 1.5rem;gap:4px;border-bottom:2px solid var(--gold)}
+  .nav-links.open{display:flex}
+  .hamburger{display:flex}
+  .news-grid{grid-template-columns:1fr}
+  .news-featured{grid-column:span 1}
+  .footer-grid{grid-template-columns:1fr}
+  .footer-brand{grid-column:span 1}
+  .hero-visual{display:none}
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-brand">
+      <div class="brand-logo">SL</div>
+      <div class="brand-text">
+        <span class="brand-name">SenateLink</span>
+        <span class="brand-county">Marsabit County</span>
+      </div>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html" class="nav-link active">Home</a></li>
+      <li><a href="complaints.html" class="nav-link">Public Services</a></li>
+      <li><a href="transparency.html" class="nav-link">Projects</a></li>
+      <li><a href="transparency.html" class="nav-link">Transparency</a></li>
+      <li><a href="#contact" class="nav-link">Contact</a></li>
+      
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-badge">🏛️ Official Digital Office – Marsabit County Senate</div>
+      <h1>Digital Leadership.<br><span>Transparent Governance.</span><br>Connected Citizens.</h1>
+      <p>SenateLink brings Marsabit County government closer to its people — empowering citizens to participate, track, and engage with their leadership.</p>
+      <div class="hero-actions">
+        <a href="complaints.html" class="btn btn-gold">📋 Submit Complaint</a>
+        <a href="bursary.html" class="btn btn-outline">🎓 Apply for Bursary</a>
+        <a href="../admin/" class="btn btn-gold">🔑 Admin Login</a>
+        <a href="transparency.html" class="btn btn-outline">📊 Track Projects</a>
+        <a href="proposal.html" class="btn btn-outline">💡 Submit Proposal</a>
+
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="float-card">
+        <span class="fc-icon">📋</span>
+        <div><strong id="heroComplaints">0</strong><small>Complaints Filed</small></div>
+      </div>
+      <div class="float-card">
+        <span class="fc-icon">🏗️</span>
+        <div><strong id="heroProjects">0</strong><small>Active Projects</small></div>
+      </div>
+      <div class="float-card">
+        <span class="fc-icon">🎓</span>
+        <div><strong id="heroBursaries">0</strong><small>Bursaries Awarded</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="services">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Quick Access</span>
+      <h2>Citizen Services</h2>
+      <p>Access all county services from one place</p>
+    </div>
+    <div class="services-grid">
+      <a href="complaints.html" class="service-card">
+        <div class="service-icon" style="background:rgba(13,43,94,0.08)">📋</div>
+        <h3>Citizen Complaints</h3>
+        <p>Report issues in your ward and track resolution progress in real time.</p>
+        <span class="service-arrow">→</span>
+      </a>
+      <a href="bursary.html" class="service-card">
+        <div class="service-icon" style="background:rgba(201,162,39,0.1)">🎓</div>
+        <h3>Bursary Application</h3>
+        <p>Apply for educational bursaries and financial support for students.</p>
+        <span class="service-arrow">→</span>
+      </a>
+      <a href="transparency.html" class="service-card">
+        <div class="service-icon" style="background:rgba(15,110,86,0.08)">📊</div>
+        <h3>Transparency Portal</h3>
+        <p>Track public projects, budgets, expenditure, and timelines.</p>
+        <span class="service-arrow">→</span>
+      </a>
+      <a href="proposal.html" class="service-card">
+        <div class="service-icon" style="background:rgba(83,74,183,0.08)">💡</div>
+        <h3>Project Proposals</h3>
+        <p>Submit community development proposals for senate review.</p>
+        <span class="service-arrow">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="stats">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-num" id="publicComplaints">0</div>
+        <div class="stat-label">Complaints Received</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="publicProjects">0</div>
+        <div class="stat-label">Projects Running</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="publicBursaries">0</div>
+        <div class="stat-label">Bursaries Awarded</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">—</div>
+        <div class="stat-label">Citizens Served</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="projects">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Ongoing</span>
+      <h2>Featured Projects</h2>
+      <p>Active development projects across Marsabit County</p>
+    </div>
+    <div class="projects-grid" id="featuredProjects"><p>Loading published projects…</p></div>
+    <div class="center-btn">
+      <a href="transparency.html" class="btn btn-navy">View All Projects →</a>
+    </div>
+  </div>
+</section>
+
+<section class="news">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Latest</span>
+      <h2>News & Updates</h2>
+      <p>County announcements, bursary deadlines, and project launches</p>
+    </div>
+    <div class="news-grid" id="publicNews"><p>Loading published news…</p></div>
+  </div>
+</section>
+
+<footer class="footer" id="contact">
+  <div class="footer-top">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <div class="brand-logo">SL</div>
+          <div class="brand-text">
+            <span class="brand-name" style="color:#fff">SenateLink</span>
+            <span class="brand-county">Marsabit County</span>
+          </div>
+        </div>
+        <p>Connecting citizens of Marsabit County with their elected leadership through transparent digital governance.</p>
+        <div class="social-links">
+          <a href="#" class="social-icon">𝕏</a>
+          <a href="#" class="social-icon">f</a>
+          <a href="#" class="social-icon">in</a>
+          <a href="#" class="social-icon">▶</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="complaints.html">Submit Complaint</a></li>
+          <li><a href="bursary.html">Bursary Application</a></li>
+          <li><a href="transparency.html">Project Tracking</a></li>
+          <li><a href="proposal.html">Submit Proposal</a></li>
+          <li><a href="../admin/">Admin Login</a></li>
+           
+
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>County</h4>
+        <ul>
+          <li><a href="#">Marsabit County Govt</a></li>
+          <li><a href="#">Senate Office</a></li>
+          <li><a href="#">CDF Fund</a></li>
+          <li><a href="#">Public Participation</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li>📍 Senate Office, Marsabit Town</li>
+          <li>📞 +254 700 000 000</li>
+          <li>✉️ info@senatelink.go.ke</li>
+          <li>🕐 Mon–Fri: 8:00am – 5:00pm</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="container">
+      <p>© 2026 SenateLink · Marsabit County Government · All rights reserved</p>
+    </div>
+  </div>
+</footer>
+
+<script src="portal.js"></script>
+</body>
+</html>

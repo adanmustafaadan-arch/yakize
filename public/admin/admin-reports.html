@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SenateLink Admin — Reports</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0d2b5e;--navy-dark:#091e45;--navy-mid:#1a3d78;--navy-light:#2a5298;
+  --gold:#c9a227;--gold-light:#e8b93a;--gold-pale:#f5e8c0;--gold-dark:#a07c15;
+  --white:#ffffff;--off-white:#f7f8fc;--surface:#eef1f8;--surface2:#e4e9f4;
+  --text:#1a1d2e;--text2:#4a5270;--text3:#8892b0;
+  --success:#1a7a4a;--success-bg:#e6f4ec;
+  --warn:#b35c00;--warn-bg:#fff3e0;
+  --danger:#c0392b;--danger-bg:#fdecea;
+  --info:#1565c0;--info-bg:#e3f0ff;
+  --radius:10px;--radius-lg:16px;--radius-xl:22px;
+  --shadow:0 2px 12px rgba(13,43,94,.10);
+  --shadow-lg:0 6px 28px rgba(13,43,94,.16);
+  --sidebar-w:260px;--topbar-h:64px;
+  --transition:all .22s cubic-bezier(.4,0,.2,1);
+}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--text);font-size:15px}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:99px}
+
+/* ── SIDEBAR ── */
+.sidebar{position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;background:var(--navy);z-index:200;display:flex;flex-direction:column;transition:var(--transition);overflow:hidden}
+.sidebar-brand{padding:0 20px;height:var(--topbar-h);display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.brand-icon{width:38px;height:38px;border-radius:10px;background:var(--gold);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.brand-icon svg{width:22px;height:22px;fill:var(--navy)}
+.brand-text{display:flex;flex-direction:column;line-height:1.2}
+.brand-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--white)}
+.brand-sub{font-size:10px;color:rgba(201,162,39,.85);font-weight:500;text-transform:uppercase;letter-spacing:1px}
+.sidebar-scroll{flex:1;overflow-y:auto;padding:16px 0 24px}
+.nav-section-label{font-size:10px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:rgba(255,255,255,.35);padding:16px 20px 6px}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 20px;margin:1px 10px;border-radius:var(--radius);color:rgba(255,255,255,.7);font-size:14px;cursor:pointer;transition:var(--transition)}
+.nav-item:hover{background:rgba(255,255,255,.07);color:var(--white)}
+.nav-item.active{background:linear-gradient(90deg,var(--gold),var(--gold-light));color:var(--navy);font-weight:600}
+.nav-icon{width:18px;height:18px;flex-shrink:0;opacity:.7}
+.nav-item.active .nav-icon{opacity:1}
+.nav-badge{margin-left:auto;background:var(--danger);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px}
+.nav-item.active .nav-badge{background:var(--navy)}
+.sidebar-footer{padding:16px;border-top:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.user-card{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--radius);background:rgba(255,255,255,.06);cursor:pointer;transition:var(--transition)}
+.user-card:hover{background:rgba(255,255,255,.10)}
+.user-avatar{width:34px;height:34px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--navy);flex-shrink:0}
+.user-info{flex:1;overflow:hidden}
+.user-name{font-size:13px;font-weight:600;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-role{font-size:11px;color:rgba(255,255,255,.45)}
+.logout-btn{margin-top:8px;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:9px;border-radius:var(--radius);color:rgba(255,100,100,.8);font-size:13px;font-weight:500;transition:var(--transition)}
+.logout-btn:hover{background:rgba(255,100,100,.1);color:#ff6b6b}
+
+/* ── TOPBAR ── */
+.topbar{position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--topbar-h);background:var(--white);border-bottom:1px solid var(--surface2);display:flex;align-items:center;padding:0 28px;gap:16px;z-index:100;transition:var(--transition)}
+.topbar-hamburger{display:none;width:36px;height:36px;border-radius:8px;align-items:center;justify-content:center;background:var(--surface);cursor:pointer;transition:var(--transition)}
+.topbar-hamburger:hover{background:var(--surface2)}
+.topbar-title{flex:1}
+.topbar-title h1{font-size:18px;font-weight:600;color:var(--text)}
+.topbar-title p{font-size:12px;color:var(--text3)}
+.topbar-actions{display:flex;align-items:center;gap:8px}
+.icon-btn{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:var(--surface);color:var(--text2);transition:var(--transition);position:relative;cursor:pointer}
+.icon-btn:hover{background:var(--navy);color:var(--white)}
+.notif-dot{position:absolute;top:7px;right:7px;width:8px;height:8px;background:var(--danger);border-radius:50%;border:2px solid var(--white)}
+.topbar-divider{width:1px;height:28px;background:var(--surface2);margin:0 4px}
+.topbar-user{display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 8px;border-radius:9px;transition:var(--transition)}
+.topbar-user:hover{background:var(--surface)}
+.topbar-user-avatar{width:34px;height:34px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--gold)}
+.topbar-user-name{font-size:13px;font-weight:600;color:var(--text)}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar-w);margin-top:var(--topbar-h);padding:28px;min-height:calc(100vh - var(--topbar-h));transition:var(--transition)}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px}
+.page-header-left h2{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--navy)}
+.page-header-left p{font-size:13px;color:var(--text3);margin-top:2px}
+
+/* ── REPORT TYPE CARDS ── */
+.report-types{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-bottom:28px}
+.report-type-card{background:var(--white);border-radius:var(--radius-lg);padding:22px;box-shadow:var(--shadow);border:1.5px solid var(--surface2);cursor:pointer;transition:var(--transition);position:relative;overflow:hidden}
+.report-type-card:hover{border-color:var(--navy);transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.report-type-card.active{border-color:var(--navy);background:rgba(13,43,94,.03)}
+.report-type-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.report-type-card[data-color="navy"]::before{background:var(--navy)}
+.report-type-card[data-color="gold"]::before{background:var(--gold)}
+.report-type-card[data-color="success"]::before{background:var(--success)}
+.report-type-card[data-color="info"]::before{background:var(--info)}
+.report-type-card[data-color="warn"]::before{background:var(--warn)}
+.rt-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.rt-icon svg{width:22px;height:22px}
+.report-type-card[data-color="navy"] .rt-icon{background:rgba(13,43,94,.1);color:var(--navy)}
+.report-type-card[data-color="gold"] .rt-icon{background:var(--gold-pale);color:var(--gold-dark)}
+.report-type-card[data-color="success"] .rt-icon{background:var(--success-bg);color:var(--success)}
+.report-type-card[data-color="info"] .rt-icon{background:var(--info-bg);color:var(--info)}
+.report-type-card[data-color="warn"] .rt-icon{background:var(--warn-bg);color:var(--warn)}
+.rt-name{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px}
+.rt-desc{font-size:12px;color:var(--text3);line-height:1.5}
+.rt-count{position:absolute;top:16px;right:16px;font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--text3);opacity:.3}
+
+/* ── GENERATE PANEL ── */
+.generate-panel{background:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow);border:1px solid var(--surface2);padding:24px;margin-bottom:22px}
+.generate-panel-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.generate-panel-title::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0}
+.generate-filters{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap}
+.gf-group{display:flex;flex-direction:column;gap:5px;min-width:150px;flex:1}
+.gf-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text3)}
+.gf-input,.gf-select{padding:9px 12px;border:1.5px solid var(--surface2);border-radius:var(--radius);font-size:13px;color:var(--text);font-family:inherit;background:var(--off-white);outline:none;transition:var(--transition)}
+.gf-input:focus,.gf-select:focus{border-color:var(--gold);background:var(--white)}
+
+/* ── EXPORT BUTTONS ── */
+.export-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:22px}
+.export-btn{display:flex;align-items:center;gap:8px;padding:10px 18px;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;border:none;transition:var(--transition);font-family:inherit}
+.export-pdf{background:var(--danger);color:#fff}
+.export-pdf:hover{background:#a93226}
+.export-excel{background:var(--success);color:#fff}
+.export-excel:hover{background:#14633b}
+.export-csv{background:var(--navy);color:#fff}
+.export-csv:hover{background:var(--navy-mid)}
+.export-print{background:var(--surface);color:var(--text2);border:1.5px solid var(--surface2)}
+.export-print:hover{background:var(--navy);color:#fff;border-color:var(--navy)}
+.export-btn svg{width:15px;height:15px;flex-shrink:0}
+
+/* ── STATS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px;margin-bottom:22px}
+.stat-card{background:var(--white);border-radius:var(--radius-lg);padding:18px 20px;box-shadow:var(--shadow);border:1px solid var(--surface2);position:relative;overflow:hidden;transition:var(--transition)}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.stat-card[data-color="navy"]::before{background:var(--navy)}
+.stat-card[data-color="gold"]::before{background:var(--gold)}
+.stat-card[data-color="success"]::before{background:var(--success)}
+.stat-card[data-color="warn"]::before{background:var(--warn)}
+.stat-card[data-color="danger"]::before{background:var(--danger)}
+.stat-card[data-color="info"]::before{background:var(--info)}
+.stat-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-bottom:8px}
+.stat-value{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--text);line-height:1}
+.stat-trend{display:flex;align-items:center;gap:4px;margin-top:5px;font-size:11px;font-weight:600}
+.trend-up{color:var(--success)}
+.trend-down{color:var(--danger)}
+
+/* ── CARD ── */
+.card{background:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow);border:1px solid var(--surface2);overflow:hidden;margin-bottom:22px}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--surface);flex-wrap:wrap;gap:10px}
+.card-title{font-size:15px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px}
+.card-title-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0}
+
+/* ── CHART BARS (CSS) ── */
+.chart-area{padding:22px}
+.bar-chart-wrap{display:flex;align-items:flex-end;gap:8px;height:180px;margin-bottom:8px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar-val{font-size:10px;font-weight:700;color:var(--text2)}
+.bar-body{width:100%;border-radius:5px 5px 0 0;transition:height 1s cubic-bezier(.4,0,.2,1);position:relative;min-width:20px;cursor:pointer}
+.bar-body:hover{opacity:.82}
+.bar-label{font-size:10px;color:var(--text3);text-align:center;margin-top:4px;font-weight:500}
+.chart-divider{height:1px;background:var(--surface2);margin-bottom:6px}
+
+/* ── DONUT ── */
+.donut-wrap{display:flex;align-items:center;justify-content:center;gap:28px;padding:22px;flex-wrap:wrap}
+.donut-svg-wrap{position:relative;width:150px;height:150px;flex-shrink:0}
+.donut-svg-wrap svg{transform:rotate(-90deg)}
+.donut-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.donut-center-num{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--navy);line-height:1}
+.donut-center-lbl{font-size:10px;color:var(--text3);margin-top:2px}
+.donut-legend{display:flex;flex-direction:column;gap:10px}
+.donut-leg-item{display:flex;align-items:center;gap:10px}
+.donut-leg-color{width:11px;height:11px;border-radius:3px;flex-shrink:0}
+.donut-leg-name{font-size:12px;color:var(--text2);flex:1}
+.donut-leg-pct{font-size:12px;font-weight:700;color:var(--text)}
+
+/* ── PROGRESS BARS ── */
+.prog-list{padding:18px 22px;display:flex;flex-direction:column;gap:14px}
+.prog-item-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.prog-item-label{font-size:13px;color:var(--text2);font-weight:500}
+.prog-item-val{font-size:12px;font-weight:700;color:var(--text)}
+.prog-track{height:8px;background:var(--surface);border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;border-radius:99px;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+
+/* ── TWO COL ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-bottom:22px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:22px;margin-bottom:22px}
+@media(max-width:1100px){.two-col{grid-template-columns:1fr}.three-col{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.three-col{grid-template-columns:1fr}}
+
+/* ── TABLE ── */
+.table-wrap{overflow-x:auto}
+.data-table{width:100%;border-collapse:collapse}
+.data-table th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);padding:11px 18px;background:var(--surface);text-align:left;white-space:nowrap}
+.data-table th:last-child{text-align:right}
+.data-table td{padding:12px 18px;border-bottom:1px solid var(--surface);font-size:13px;color:var(--text2);vertical-align:middle}
+.data-table td:last-child{text-align:right}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover td{background:var(--off-white)}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
+.badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.7}
+.badge-success{background:var(--success-bg);color:var(--success)}
+.badge-warn{background:var(--warn-bg);color:var(--warn)}
+.badge-danger{background:var(--danger-bg);color:var(--danger)}
+.badge-info{background:var(--info-bg);color:var(--info)}
+.badge-navy{background:rgba(13,43,94,.08);color:var(--navy)}
+
+/* ── BUTTONS ── */
+.btn{padding:9px 20px;border-radius:9px;font-size:13px;font-weight:600;transition:var(--transition);cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:7px}
+.btn-navy{background:var(--navy);color:var(--white);border:none}
+.btn-navy:hover{background:var(--navy-mid)}
+.btn-gold{background:var(--gold);color:var(--navy);border:none}
+.btn-gold:hover{background:var(--gold-light)}
+.btn-outline{background:transparent;color:var(--text2);border:1.5px solid var(--surface2)}
+.btn-outline:hover{border-color:var(--navy);color:var(--navy)}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(13,43,94,.55);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(3px);padding:20px}
+.modal-overlay.open{display:flex;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:var(--white);border-radius:var(--radius-xl);width:100%;max-width:520px;box-shadow:0 20px 60px rgba(13,43,94,.3);animation:slideUp .3s cubic-bezier(.4,0,.2,1);max-height:92vh;overflow-y:auto}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:22px 26px;border-bottom:1px solid var(--surface);position:sticky;top:0;background:var(--white);z-index:1}
+.modal-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--navy)}
+.modal-close{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--surface);color:var(--text3);cursor:pointer;transition:var(--transition);border:none}
+.modal-close:hover{background:var(--danger-bg);color:var(--danger)}
+.modal-body{padding:26px}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;padding:18px 26px;border-top:1px solid var(--surface)}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:6px}
+.form-input,.form-select{width:100%;padding:10px 14px;border:1.5px solid var(--surface2);border-radius:var(--radius);font-size:14px;color:var(--text);font-family:inherit;transition:var(--transition);background:var(--off-white);outline:none}
+.form-input:focus,.form-select:focus{border-color:var(--gold);background:var(--white)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+/* ── TOAST ── */
+.toast-container{position:fixed;bottom:28px;right:28px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none}
+.toast{background:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);border:1px solid var(--surface2);padding:14px 18px;display:flex;align-items:flex-start;gap:12px;min-width:300px;max-width:360px;pointer-events:all;animation:toastIn .4s cubic-bezier(.4,0,.2,1) forwards}
+.toast.success{border-left:4px solid var(--success)}
+.toast.warning{border-left:4px solid var(--gold)}
+.toast.error{border-left:4px solid var(--danger)}
+.toast.info{border-left:4px solid var(--navy)}
+@keyframes toastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+@keyframes toastOut{from{opacity:1}to{opacity:0;transform:translateX(40px)}}
+.toast-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.toast-icon svg{width:16px;height:16px}
+.toast.success .toast-icon{background:var(--success-bg);color:var(--success)}
+.toast.warning .toast-icon{background:var(--warn-bg);color:var(--warn)}
+.toast.error .toast-icon{background:var(--danger-bg);color:var(--danger)}
+.toast.info .toast-icon{background:var(--info-bg);color:var(--info)}
+.toast-body{flex:1}
+.toast-title{font-size:13px;font-weight:700;color:var(--text)}
+.toast-msg{font-size:12px;color:var(--text3);margin-top:2px}
+.toast-x{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);background:none;border:none;transition:var(--transition)}
+.toast-x:hover{background:var(--surface);color:var(--text)}
+
+/* ── SIDEBAR OVERLAY ── */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:190}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-overlay.open{display:block}
+  .topbar{left:0;padding:0 16px;gap:10px}
+  .topbar-hamburger{display:flex}
+  .main{margin-left:0;padding:16px}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .topbar-user-name{display:none}
+  .form-row{grid-template-columns:1fr}
+  .generate-filters{flex-direction:column}
+  .gf-group{min-width:100%}
+}
+@media(max-width:480px){
+  .stats-grid{grid-template-columns:1fr}
+  .report-types{grid-template-columns:1fr 1fr}
+  .export-row{flex-direction:column}
+  .export-btn{justify-content:center}
+}
+</style>
+</head>
+<body>
+<script src="/admin/admin-auth.js"></script>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><polyline points="9 22 9 12 15 12 15 22" fill="none" stroke="#0d2b5e" stroke-width="2"/></svg>
+    </div>
+    <div class="brand-text"><span class="brand-title">SenateLink</span><span class="brand-sub">Marsabit County</span></div>
+  </div>
+  <div class="sidebar-scroll">
+    <div class="nav-section-label">Main Menu</div>
+    <div class="nav-item" onclick="go('admin-dashboard.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard
+    </div>
+    <div class="nav-item" onclick="go('admin-complaints.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Complaints<span class="nav-badge" id="sidebarPendingComplaints">0</span>
+    </div>
+    <div class="nav-item" onclick="go('admin-bursaries.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>Bursaries<span class="nav-badge" id="sidebarPendingBursaries">0</span>
+    </div>
+    <div class="nav-item" onclick="go('admin-proposals.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Proposals
+    </div>
+    <div class="nav-item" onclick="go('admin-projects.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Projects
+    </div>
+    <div class="nav-section-label">Content</div>
+    <div class="nav-item" onclick="go('admin-news.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2v-9c0-1.1.9-2 2-2h2"/></svg>News
+    </div>
+    <div class="nav-section-label">Administration</div>
+    <div class="nav-item" onclick="go('admin-users.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Users
+    </div>
+    <div class="nav-item active">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Reports
+    </div>
+    <div class="nav-item" onclick="go('admin-settings.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 19.07a10 10 0 010-14.14"/></svg>Settings
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">JM</div>
+      <div class="user-info"><div class="user-name">James Mureithi</div><div class="user-role">Super Admin</div></div>
+    </div>
+    <button class="logout-btn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout
+    </button>
+  </div>
+</aside>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-hamburger" onclick="toggleSidebar()">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </div>
+  <div class="topbar-title">
+    <h1>Reports & Analytics</h1>
+    <p>Dashboard › Reports</p>
+  </div>
+  <div class="topbar-actions">
+    <div class="icon-btn" title="Notifications">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <span class="notif-dot"></span>
+    </div>
+    <div class="topbar-divider"></div>
+    <div class="topbar-user">
+      <div class="topbar-user-avatar">JM</div>
+      <span class="topbar-user-name">James Mureithi</span>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="main">
+
+  <div class="page-header">
+    <div class="page-header-left">
+      <h2>Reports & Analytics</h2>
+      <p>Generate, view and export comprehensive reports across all county operations</p>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-outline" onclick="openModal('scheduleModal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Schedule Report
+      </button>
+      <button class="btn btn-gold" onclick="generateReport()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Generate Report
+      </button>
+    </div>
+  </div>
+
+  <!-- REPORT TYPE CARDS -->
+  <div class="report-types">
+    <div class="report-type-card active" data-color="navy" onclick="selectReport('complaints',this)">
+      <div class="rt-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+      <div class="rt-name">Complaint Report</div>
+      <div class="rt-desc">Submission trends, resolution rates and ward breakdown</div>
+      <div class="rt-count">248</div>
+    </div>
+    <div class="report-type-card" data-color="gold" onclick="selectReport('bursary',this)">
+      <div class="rt-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
+      <div class="rt-name">Bursary Report</div>
+      <div class="rt-desc">Applications, approvals, disbursements and beneficiaries</div>
+      <div class="rt-count">347</div>
+    </div>
+    <div class="report-type-card" data-color="success" onclick="selectReport('projects',this)">
+      <div class="rt-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+      <div class="rt-name">Project Report</div>
+      <div class="rt-desc">Budget utilization, progress and contractor performance</div>
+      <div class="rt-count">47</div>
+    </div>
+    <div class="report-type-card" data-color="info" onclick="selectReport('ward',this)">
+      <div class="rt-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+      <div class="rt-name">Ward Report</div>
+      <div class="rt-desc">Per-ward engagement, activity and development status</div>
+      <div class="rt-count">6</div>
+    </div>
+    <div class="report-type-card" data-color="warn" onclick="selectReport('users',this)">
+      <div class="rt-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
+      <div class="rt-name">User Activity</div>
+      <div class="rt-desc">Admin logins, actions and system usage analytics</div>
+      <div class="rt-count">24</div>
+    </div>
+  </div>
+
+  <!-- GENERATE PANEL -->
+  <div class="generate-panel">
+    <div class="generate-panel-title">Report Parameters — <span id="reportTypeLabel">Complaint Report</span></div>
+    <div class="generate-filters">
+      <div class="gf-group">
+        <label class="gf-label">Date From</label>
+        <input type="date" class="gf-input" id="dateFrom">
+      </div>
+      <div class="gf-group">
+        <label class="gf-label">Date To</label>
+        <input type="date" class="gf-input" id="dateTo">
+      </div>
+      <div class="gf-group">
+        <label class="gf-label">Ward</label>
+        <select class="gf-select" id="wardFilter">
+          <option value="">All Wards</option>
+          <option>Marsabit Central</option>
+          <option>Saku Ward</option>
+          <option>North Horr</option>
+          <option>Laisamis</option>
+          <option>Moyale</option>
+          <option>Sololo</option>
+        </select>
+      </div>
+      <div class="gf-group">
+        <label class="gf-label">Category</label>
+        <select class="gf-select" id="catFilter">
+          <option value="">All Categories</option>
+          <option>Infrastructure</option>
+          <option>Healthcare</option>
+          <option>Education</option>
+          <option>Security</option>
+          <option>Water</option>
+          <option>Roads</option>
+        </select>
+      </div>
+      <div class="gf-group">
+        <label class="gf-label">Status</label>
+        <select class="gf-select" id="statusFilter">
+          <option value="">All Status</option>
+          <option>Pending</option>
+          <option>In Progress</option>
+          <option>Resolved</option>
+          <option>Escalated</option>
+        </select>
+      </div>
+      <div class="gf-group" style="justify-content:flex-end">
+        <button class="btn btn-navy" onclick="generateReport()" style="white-space:nowrap">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Run Report
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPORT BUTTONS -->
+  <div class="export-row">
+    <button class="export-btn export-pdf" onclick="doExport('PDF')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>Export PDF
+    </button>
+    <button class="export-btn export-excel" onclick="doExport('Excel')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Export Excel
+    </button>
+    <button class="export-btn export-csv" onclick="doExport('CSV')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export CSV
+    </button>
+    <button class="export-btn export-print" onclick="window.print()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Print Report
+    </button>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+      <span style="font-size:12px;color:var(--text3)">Generated:</span>
+      <span style="font-size:12px;font-weight:600;color:var(--text)" id="genTimestamp">—</span>
+    </div>
+  </div>
+
+  <!-- SUMMARY STATS -->
+  <div class="stats-grid" id="summaryStats"></div>
+
+  <!-- CHARTS ROW -->
+  <div class="two-col">
+    <!-- BAR CHART -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title"><span class="card-title-dot"></span><span id="barChartTitle">Monthly Complaints Trend</span></span>
+        <select style="font-size:12px;padding:5px 10px;border:1.5px solid var(--surface2);border-radius:7px;background:var(--surface);font-family:inherit;outline:none;cursor:pointer" onchange="refreshBarChart(this.value)">
+          <option>2025</option><option>2024</option><option>2023</option>
+        </select>
+      </div>
+      <div class="chart-area">
+        <div class="bar-chart-wrap" id="barChart"></div>
+        <div class="chart-divider"></div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2)"><div style="width:10px;height:10px;border-radius:3px;background:var(--navy)"></div>Submitted</div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2)"><div style="width:10px;height:10px;border-radius:3px;background:var(--gold)"></div>Resolved</div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2)"><div style="width:10px;height:10px;border-radius:3px;background:var(--danger)"></div>Escalated</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DONUT CHART -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title"><span class="card-title-dot"></span><span id="donutTitle">Complaints by Category</span></span>
+        <button class="btn-outline" style="font-size:12px;padding:5px 12px;border-radius:7px;border:1.5px solid var(--surface2);cursor:pointer;font-family:inherit" onclick="showToast('Breakdown updated','info','Refreshed')">Refresh</button>
+      </div>
+      <div class="donut-wrap" id="donutWrap"></div>
+    </div>
+  </div>
+
+  <!-- WARD PROGRESS + PIE -->
+  <div class="two-col">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title"><span class="card-title-dot"></span>Ward Performance Index</span>
+      </div>
+      <div class="prog-list" id="wardProgress"></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title"><span class="card-title-dot"></span>Resolution Rate Overview</span>
+      </div>
+      <div style="padding:22px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px" id="resolutionGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REPORT TABLE -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title"><span class="card-title-dot"></span><span id="tableTitle">Detailed Complaints Report</span></span>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="text" placeholder="Search table…" style="font-size:12px;padding:6px 12px;border:1.5px solid var(--surface2);border-radius:7px;background:var(--surface);font-family:inherit;outline:none;width:180px;transition:all .2s" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--surface2)'" oninput="filterReportTable(this.value)">
+        <span style="font-size:12px;color:var(--text3)" id="recordCount">0 records</span>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead id="reportTableHead"></thead>
+        <tbody id="reportTableBody"></tbody>
+      </table>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-top:1px solid var(--surface);flex-wrap:wrap;gap:8px">
+      <span style="font-size:12px;color:var(--text3)" id="reportPaginInfo">Showing all records</span>
+      <div style="display:flex;gap:5px" id="reportPaginBtns"></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ── MODAL: SCHEDULE REPORT ── -->
+<div class="modal-overlay" id="scheduleModal">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <span class="modal-title">Schedule Automated Report</span>
+      <button class="modal-close" onclick="closeModal('scheduleModal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Report Type</label>
+        <select class="form-select">
+          <option>Complaint Report</option><option>Bursary Report</option>
+          <option>Project Report</option><option>Ward Report</option><option>User Activity</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Frequency</label>
+          <select class="form-select">
+            <option>Daily</option><option selected>Weekly</option><option>Monthly</option><option>Quarterly</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Format</label>
+          <select class="form-select">
+            <option>PDF</option><option>Excel</option><option>CSV</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Send To (Email)</label>
+        <input type="email" class="form-input" placeholder="admin@marsabit.go.ke" value="admin@marsabit.go.ke">
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Start Date</label>
+          <input type="date" class="form-input" id="schedStart">
+        </div>
+        <div class="form-group"><label class="form-label">Time</label>
+          <input type="time" class="form-input" value="08:00">
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Additional Recipients</label>
+        <input type="text" class="form-input" placeholder="Comma-separated emails…">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('scheduleModal')">Cancel</button>
+      <button class="btn btn-gold" onclick="saveSchedule()">Schedule Report</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ── REPORT DATA ──
+const REPORT_DATA={
+  complaints:{
+    title:'Complaint Report',
+    stats:[
+      {label:'Total Complaints',value:'248',trend:'+14%',up:true,color:'navy'},
+      {label:'Resolved',value:'118',trend:'+22%',up:true,color:'success'},
+      {label:'Pending',value:'54',trend:'-3',up:false,color:'warn'},
+      {label:'Escalated',value:'14',trend:'+2',up:false,color:'danger'},
+      {label:'Avg. Resolution',value:'4.2 days',trend:'Improved',up:true,color:'info'},
+      {label:'Satisfaction',value:'78%',trend:'+5%',up:true,color:'gold'},
+    ],
+    barLabel:'Monthly Complaints Trend',
+    barData:[
+      {m:'Jan',a:18,b:12,c:1},{m:'Feb',a:22,b:15,c:2},{m:'Mar',a:30,b:20,c:3},
+      {m:'Apr',a:26,b:18,c:2},{m:'May',a:35,b:28,c:4},{m:'Jun',a:40,b:33,c:5},
+      {m:'Jul',a:38,b:30,c:3},{m:'Aug',a:42,b:35,c:4},{m:'Sep',a:50,b:44,c:6},
+      {m:'Oct',a:55,b:48,c:5},{m:'Nov',a:48,b:40,c:4},{m:'Dec',a:60,b:52,c:7},
+    ],
+    donutTitle:'Complaints by Category',
+    donut:[
+      {name:'Infrastructure',val:92,color:'#0d2b5e'},
+      {name:'Healthcare',val:68,color:'#c9a227'},
+      {name:'Education',val:54,color:'#1a7a4a'},
+      {name:'Security',val:34,color:'#1565c0'},
+    ],
+    tableHead:['ID','Citizen','Ward','Category','Date','Priority','Status'],
+    tableRows:[
+      ['CMP-001','Ahmed Hassan','North Horr','Infrastructure','2025-05-28','High','Pending'],
+      ['CMP-002','Fatuma Wako','Marsabit Central','Healthcare','2025-05-27','Critical','In Progress'],
+      ['CMP-003','John Lesirma','Laisamis','Education','2025-05-26','Medium','Resolved'],
+      ['CMP-004','Mary Karisa','Saku Ward','Security','2025-05-25','High','Resolved'],
+      ['CMP-005','Ibrahim Galma','Moyale','Infrastructure','2025-05-24','Medium','Pending'],
+      ['CMP-006','Safia Duba','Sololo','Healthcare','2025-05-23','High','Under Review'],
+      ['CMP-007','Peter Lowasa','North Horr','Water','2025-05-22','Critical','In Progress'],
+      ['CMP-008','Amina Guyo','Marsabit Central','Education','2025-05-21','Low','Resolved'],
+      ['CMP-009','Hassan Roba','Laisamis','Roads','2025-05-20','High','Pending'],
+      ['CMP-010','Naomi Tiriamuk','Saku Ward','Infrastructure','2025-05-19','Medium','In Progress'],
+      ['CMP-011','Omar Dida','Moyale','Security','2025-05-18','High','Under Review'],
+      ['CMP-012','Asha Boru','Marsabit Central','Healthcare','2025-05-17','Low','Resolved'],
+    ],
+  },
+  bursary:{
+    title:'Bursary Report',
+    stats:[
+      {label:'Total Applications',value:'347',trend:'+18%',up:true,color:'navy'},
+      {label:'Approved',value:'183',trend:'+22%',up:true,color:'success'},
+      {label:'Rejected',value:'54',trend:'-8',up:true,color:'danger'},
+      {label:'On Hold',value:'23',trend:'-5',up:true,color:'warn'},
+      {label:'Total Disbursed',value:'KES 9.2M',trend:'+30%',up:true,color:'gold'},
+      {label:'Approval Rate',value:'52.7%',trend:'+4%',up:true,color:'info'},
+    ],
+    barLabel:'Monthly Bursary Applications',
+    barData:[
+      {m:'Jan',a:12,b:8,c:2},{m:'Feb',a:18,b:11,c:3},{m:'Mar',a:22,b:15,c:4},
+      {m:'Apr',a:28,b:18,c:5},{m:'May',a:35,b:25,c:6},{m:'Jun',a:42,b:30,c:7},
+      {m:'Jul',a:38,b:28,c:5},{m:'Aug',a:45,b:35,c:8},{m:'Sep',a:50,b:38,c:9},
+      {m:'Oct',a:48,b:36,c:7},{m:'Nov',a:40,b:30,c:6},{m:'Dec',a:55,b:42,c:10},
+    ],
+    donutTitle:'Bursaries by Level',
+    donut:[
+      {name:'University',val:142,color:'#0d2b5e'},
+      {name:'Secondary',val:118,color:'#c9a227'},
+      {name:'College',val:57,color:'#1a7a4a'},
+      {name:'TVET',val:30,color:'#1565c0'},
+    ],
+    tableHead:['ID','Applicant','Ward','Level','Amount (KES)','Status'],
+    tableRows:[
+      ['BRS-001','Amina Hassan Roba','North Horr','University','65,000','Pending'],
+      ['BRS-002','David Lesirma Ole','Laisamis','University','58,000','Approved'],
+      ['BRS-003','Fatuma Wako Dida','Marsabit Central','Secondary','28,000','Approved'],
+      ['BRS-004','Peter Lorotian Lmu','Saku Ward','College','42,000','On Hold'],
+      ['BRS-005','Safia Boru Guyo','Moyale','Secondary','24,000','Pending'],
+      ['BRS-006','Ibrahim Galma Wario','Sololo','TVET','35,000','Rejected'],
+      ['BRS-007','Mary Karisa Lowasa','Marsabit Central','University','72,000','Approved'],
+      ['BRS-008','Omar Dida Huka','North Horr','Secondary','22,000','Pending'],
+      ['BRS-009','Zainab Hussein Oda','Laisamis','University','80,000','Under Review'],
+      ['BRS-010','Abdi Galate Roba','Laisamis','Secondary','26,000','Approved'],
+      ['BRS-011','Rose Tiriamuk Len','Saku Ward','University','68,000','Pending'],
+      ['BRS-012','Halima Wario Gufu','Marsabit Central','TVET','30,000','On Hold'],
+    ],
+  },
+  projects:{
+    title:'Project Report',
+    stats:[
+      {label:'Total Projects',value:'47',trend:'+5',up:true,color:'navy'},
+      {label:'Active',value:'31',trend:'+3',up:true,color:'success'},
+      {label:'Completed',value:'9',trend:'+2',up:true,color:'info'},
+      {label:'Delayed',value:'5',trend:'+1',up:false,color:'danger'},
+      {label:'Total Budget',value:'KES 2.84B',trend:'+18%',up:true,color:'gold'},
+      {label:'Avg. Progress',value:'58%',trend:'+8%',up:true,color:'warn'},
+    ],
+    barLabel:'Monthly Budget Utilization (KES M)',
+    barData:[
+      {m:'Jan',a:45,b:32,c:8},{m:'Feb',a:60,b:44,c:10},{m:'Mar',a:72,b:55,c:12},
+      {m:'Apr',a:68,b:50,c:9},{m:'May',a:85,b:65,c:14},{m:'Jun',a:92,b:72,c:16},
+      {m:'Jul',a:88,b:68,c:12},{m:'Aug',a:105,b:82,c:18},{m:'Sep',a:120,b:95,c:20},
+      {m:'Oct',a:115,b:90,c:17},{m:'Nov',a:100,b:78,c:15},{m:'Dec',a:130,b:105,c:22},
+    ],
+    donutTitle:'Projects by Category',
+    donut:[
+      {name:'Infrastructure',val:18,color:'#0d2b5e'},
+      {name:'Healthcare',val:10,color:'#c0392b'},
+      {name:'Education',val:9,color:'#1a7a4a'},
+      {name:'Water',val:6,color:'#1565c0'},
+    ],
+    tableHead:['ID','Project Name','Ward','Budget','Spent','Progress','Status'],
+    tableRows:[
+      ['PRJ-001','North Horr-Turbi Road Rehab','North Horr','KES 120M','KES 68M','58%','Active'],
+      ['PRJ-002','County Referral Hospital Expansion','Marsabit Central','KES 180M','KES 42M','24%','Active'],
+      ['PRJ-003','Laisamis Solar Mini-Grid','Laisamis','KES 45M','KES 45M','100%','Completed'],
+      ['PRJ-004','Moyale Girls Secondary Dormitory','Moyale','KES 28M','KES 19.6M','70%','Active'],
+      ['PRJ-005','Saku Ward Borehole & Piping','Saku Ward','KES 18M','KES 5.4M','30%','Active'],
+      ['PRJ-006','Sololo Market Renovation','Sololo','KES 22M','KES 2.2M','10%','Delayed'],
+      ['PRJ-007','North Horr Feeding Programme','North Horr','KES 9M','KES 9M','100%','Completed'],
+      ['PRJ-008','Marsabit ICT Innovation Hub','Marsabit Central','KES 35M','KES 10.5M','30%','Active'],
+      ['PRJ-009','Laisamis Health Centre Upgrade','Laisamis','KES 85M','KES 17M','20%','Active'],
+      ['PRJ-010','Moyale Peace Infrastructure','Moyale','KES 12M','KES 9.6M','80%','Active'],
+      ['PRJ-011','Sololo Irrigation Scheme Ph.1','Sololo','KES 65M','KES 13M','20%','Planning'],
+      ['PRJ-012','North Horr Policing Posts','North Horr','KES 8.5M','KES 8.5M','100%','Completed'],
+    ],
+  },
+  ward:{
+    title:'Ward Report',
+    stats:[
+      {label:'Total Wards',value:'6',trend:'Active',up:true,color:'navy'},
+      {label:'Top Ward',value:'Marsabit Central',trend:'87% index',up:true,color:'gold'},
+      {label:'Total Citizens',value:'459,785',trend:'2024 census',up:true,color:'info'},
+      {label:'Active Projects',value:'47',trend:'Across all wards',up:true,color:'success'},
+      {label:'Complaints Filed',value:'248',trend:'This year',up:true,color:'warn'},
+      {label:'Bursaries Issued',value:'183',trend:'This cycle',up:true,color:'danger'},
+    ],
+    barLabel:'Ward Complaint Volume',
+    barData:[
+      {m:'Marsabit',a:68,b:45,c:8},{m:'Saku',a:52,b:38,c:6},{m:'N. Horr',a:45,b:30,c:9},
+      {m:'Laisamis',a:38,b:25,c:5},{m:'Moyale',a:32,b:20,c:7},{m:'Sololo',a:13,b:8,c:3},
+    ],
+    donutTitle:'Population by Ward',
+    donut:[
+      {name:'Marsabit Central',val:112000,color:'#0d2b5e'},
+      {name:'Moyale',val:98000,color:'#c9a227'},
+      {name:'North Horr',val:84000,color:'#1a7a4a'},
+      {name:'Laisamis',val:76000,color:'#1565c0'},
+    ],
+    tableHead:['Ward','Population','Complaints','Projects','Bursaries','Engagement'],
+    tableRows:[
+      ['Marsabit Central','112,000','68','14','62','87%'],
+      ['Saku Ward','76,800','52','8','34','74%'],
+      ['North Horr','84,200','45','11','42','63%'],
+      ['Laisamis','76,000','38','7','28','58%'],
+      ['Moyale','98,000','32','5','12','52%'],
+      ['Sololo','12,785','13','2','5','45%'],
+    ],
+  },
+  users:{
+    title:'User Activity Report',
+    stats:[
+      {label:'Total Users',value:'24',trend:'+3',up:true,color:'navy'},
+      {label:'Active Sessions',value:'7',trend:'Right now',up:true,color:'success'},
+      {label:'Actions Today',value:'142',trend:'+28%',up:true,color:'info'},
+      {label:'Suspended',value:'3',trend:'Under review',up:false,color:'danger'},
+      {label:'Avg. Sessions/Day',value:'18.4',trend:'+12%',up:true,color:'gold'},
+      {label:'Reports Generated',value:'34',trend:'This month',up:true,color:'warn'},
+    ],
+    barLabel:'Daily Admin Actions (Last 12 Months)',
+    barData:[
+      {m:'Jan',a:85,b:60,c:10},{m:'Feb',a:92,b:70,c:12},{m:'Mar',a:110,b:82,c:14},
+      {m:'Apr',a:98,b:75,c:11},{m:'May',a:120,b:90,c:16},{m:'Jun',a:135,b:100,c:18},
+      {m:'Jul',a:125,b:95,c:15},{m:'Aug',a:142,b:108,c:20},{m:'Sep',a:158,b:122,c:22},
+      {m:'Oct',a:148,b:115,c:19},{m:'Nov',a:130,b:100,c:17},{m:'Dec',a:162,b:128,c:24},
+    ],
+    donutTitle:'Actions by Module',
+    donut:[
+      {name:'Complaints',val:48,color:'#0d2b5e'},
+      {name:'Bursaries',val:32,color:'#c9a227'},
+      {name:'Projects',val:28,color:'#1a7a4a'},
+      {name:'Reports',val:34,color:'#1565c0'},
+    ],
+    tableHead:['User','Role','Department','Actions Today','Last Login','Status'],
+    tableRows:[
+      ['James Mureithi','Super Admin','Senate Office','48','Today 09:14','Active'],
+      ['Fatuma Hassan','Super Admin','ICT','32','Today 08:52','Active'],
+      ['Samuel Lenku','Officer','Infrastructure','18','Today 09:30','Active'],
+      ['Hawa Abdi Roba','Officer','Health','12','Today 07:45','Active'],
+      ['Peter Dida Galma','Moderator','ICT','24','Today 09:02','Active'],
+      ['Jane Lorot Lmoi','Officer','Education','8','Yesterday','Active'],
+      ['Omar Roba Guyo','Moderator','Security','15','Today 08:10','Active'],
+      ['Naomi Bonaya','Editor','ICT','6','3 days ago','Active'],
+      ['Ibrahim Galate','Officer','Finance','0','2 weeks ago','Suspended'],
+      ['Asha Duba Roba','Moderator','Planning','9','Today 06:30','Active'],
+    ],
+  },
+};
+
+const WARD_PROGRESS=[
+  {name:'Marsabit Central',val:87,color:'#0d2b5e'},
+  {name:'Saku Ward',val:74,color:'#c9a227'},
+  {name:'North Horr',val:63,color:'#1a7a4a'},
+  {name:'Laisamis',val:58,color:'#1565c0'},
+  {name:'Moyale',val:52,color:'#b35c00'},
+  {name:'Sololo',val:45,color:'#c0392b'},
+];
+
+const RESOLUTION_ITEMS=[
+  {label:'Complaints Resolved',val:'47.6%',color:'var(--success)',bg:'var(--success-bg)'},
+  {label:'Bursaries Approved',val:'52.7%',color:'var(--gold-dark)',bg:'var(--gold-pale)'},
+  {label:'Projects On Track',val:'66%',color:'var(--navy)',bg:'rgba(13,43,94,.08)'},
+  {label:'Proposals Actioned',val:'54.3%',color:'var(--info)',bg:'var(--info-bg)'},
+];
+
+Object.keys(REPORT_DATA).forEach(key=>delete REPORT_DATA[key]);
+WARD_PROGRESS.length=0;
+RESOLUTION_ITEMS.length=0;
+
+let activeReport='complaints';
+let reportRows=[];
+let filteredRows=[];
+let reportPage=1;
+const REPORT_PER_PAGE=10;
+
+// ── HELPERS ──
+function go(url){window.location.href=url}
+function getBadge(val){
+  if(!val)return'';
+  const v=val.toLowerCase();
+  if(v.includes('resolv')||v.includes('complet')||v.includes('approv')||v.includes('active'))return`<span class="badge badge-success">${val}</span>`;
+  if(v.includes('pend')||v.includes('hold')||v.includes('planning'))return`<span class="badge badge-warn">${val}</span>`;
+  if(v.includes('delay')||v.includes('reject')||v.includes('suspend')||v.includes('escalat'))return`<span class="badge badge-danger">${val}</span>`;
+  if(v.includes('progress')||v.includes('review'))return`<span class="badge badge-info">${val}</span>`;
+  return`<span style="font-size:12px">${val}</span>`;
+}
+
+// ── SELECT REPORT ──
+function selectReport(type,el){
+  if(!REPORT_DATA[type])return;
+  activeReport=type;
+  document.querySelectorAll('.report-type-card').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('reportTypeLabel').textContent=REPORT_DATA[type].title;
+  renderReport();
+}
+
+// ── GENERATE ──
+function generateReport(){
+  if(!REPORT_DATA[activeReport]){showToast('Live report data is not loaded yet.','error','Report Unavailable');return;}
+  renderReport();
+  const now=new Date();
+  document.getElementById('genTimestamp').textContent=now.toLocaleString('en-KE',{dateStyle:'medium',timeStyle:'short'});
+  showToast(`${REPORT_DATA[activeReport].title} generated successfully.`,'success','Report Ready');
+}
+
+function renderReport(){
+  const d=REPORT_DATA[activeReport];
+  if(!d)return;
+  renderStats(d.stats);
+  renderBarChart(d.barData,d.barLabel);
+  renderDonut(d.donut,d.donutTitle);
+  renderWardProgress();
+  renderResolutionGrid();
+  renderReportTable(d);
+}
+
+// ── STATS ──
+function renderStats(stats){
+  const grid=document.getElementById('summaryStats');
+  grid.innerHTML=stats.map(s=>`
+    <div class="stat-card" data-color="${s.color}">
+      <div class="stat-label">${s.label}</div>
+      <div class="stat-value">${s.value}</div>
+      <div class="stat-trend ${s.up?'trend-up':'trend-down'}">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="${s.up?'18 15 12 9 6 15':'6 9 12 15 18 9'}"/></svg>
+        ${s.trend}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── BAR CHART ──
+function renderBarChart(data,label){
+  document.getElementById('barChartTitle').textContent=label;
+  const chart=document.getElementById('barChart');
+  if(!data.length){chart.textContent='Historical trend data is not available.';return;}
+  const maxA=Math.max(...data.map(d=>d.a));
+  chart.innerHTML=data.map(d=>{
+    const ha=Math.round((d.a/maxA)*160);
+    const hb=Math.round((d.b/maxA)*160);
+    const hc=Math.round((d.c/maxA)*160);
+    return`<div class="bar-col">
+      <div style="display:flex;align-items:flex-end;gap:2px;height:165px">
+        <div class="bar-body" style="background:var(--navy);height:0;flex:1" data-h="${ha}" data-val="${d.a}" title="${d.a}"></div>
+        <div class="bar-body" style="background:var(--gold);height:0;flex:1" data-h="${hb}" data-val="${d.b}" title="${d.b}"></div>
+        <div class="bar-body" style="background:var(--danger);height:0;flex:1" data-h="${hc}" data-val="${d.c}" title="${d.c}"></div>
+      </div>
+      <div class="bar-label">${d.m}</div>
+    </div>`;
+  }).join('');
+  setTimeout(()=>document.querySelectorAll('.bar-body[data-h]').forEach(b=>{b.style.height=b.dataset.h+'px'}),80);
+}
+function refreshBarChart(year){renderBarChart(REPORT_DATA[activeReport].barData,REPORT_DATA[activeReport].barLabel);showToast(`Chart updated for ${year}`,'info','Updated')}
+
+// ── DONUT ──
+function renderDonut(items,title){
+  document.getElementById('donutTitle').textContent=title;
+  const wrap=document.getElementById('donutWrap');
+  const total=items.reduce((s,i)=>s+i.val,0);
+  const r=60,circ=2*Math.PI*r;
+  let offset=0;
+  const segments=items.map(item=>{
+    const arc=(item.val/total)*circ;
+    const seg={...item,arc,offset};
+    offset+=arc;
+    return seg;
+  });
+  wrap.innerHTML=`
+    <div class="donut-svg-wrap">
+      <svg width="150" height="150" viewBox="0 0 150 150">
+        <circle cx="75" cy="75" r="${r}" fill="none" stroke="var(--surface)" stroke-width="24"/>
+        ${segments.map(s=>`<circle cx="75" cy="75" r="${r}" fill="none" stroke="${s.color}" stroke-width="24" stroke-dasharray="${s.arc} ${circ-s.arc}" stroke-dashoffset="${-s.offset}" style="transition:all .8s ease"/>`).join('')}
+      </svg>
+      <div class="donut-center">
+        <div class="donut-center-num">${total.toLocaleString()}</div>
+        <div class="donut-center-lbl">Total</div>
+      </div>
+    </div>
+    <div class="donut-legend">
+      ${items.map(i=>`
+        <div class="donut-leg-item">
+          <div class="donut-leg-color" style="background:${i.color}"></div>
+          <div class="donut-leg-name">${i.name}</div>
+          <div class="donut-leg-pct">${i.val.toLocaleString()} <span style="font-weight:400;color:var(--text3)">(${Math.round((i.val/total)*100)}%)</span></div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+// ── WARD PROGRESS ──
+function renderWardProgress(){
+  if(!WARD_PROGRESS.length){document.getElementById('wardProgress').textContent='Ward-level performance data is not available.';return;}
+  document.getElementById('wardProgress').innerHTML=WARD_PROGRESS.map(w=>`
+    <div>
+      <div class="prog-item-header">
+        <span class="prog-item-label">${w.name}</span>
+        <span class="prog-item-val">${w.val}%</span>
+      </div>
+      <div class="prog-track">
+        <div class="prog-fill" data-w="${w.val}" style="width:0;background:${w.color}"></div>
+      </div>
+    </div>
+  `).join('');
+  setTimeout(()=>document.querySelectorAll('.prog-fill[data-w]').forEach(el=>{el.style.width=el.dataset.w+'%'}),100);
+}
+
+// ── RESOLUTION GRID ──
+function renderResolutionGrid(){
+  if(!RESOLUTION_ITEMS.length){document.getElementById('resolutionGrid').textContent='Outcome metrics are not available.';return;}
+  document.getElementById('resolutionGrid').innerHTML=RESOLUTION_ITEMS.map(r=>`
+    <div style="background:${r.bg};border-radius:var(--radius-lg);padding:16px 18px;text-align:center">
+      <div style="font-size:24px;font-weight:700;color:${r.color};font-family:'Playfair Display',serif">${r.val}</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px;font-weight:500">${r.label}</div>
+    </div>
+  `).join('');
+}
+
+// ── REPORT TABLE ──
+function renderReportTable(d){
+  document.getElementById('tableTitle').textContent=`Detailed ${d.title}`;
+  document.getElementById('reportTableHead').innerHTML=`<tr>${d.tableHead.map((h,i)=>`<th${i===d.tableHead.length-1?' style="text-align:right"':''}>${h}</th>`).join('')}</tr>`;
+  reportRows=[...d.tableRows];
+  filteredRows=[...reportRows];
+  reportPage=1;
+  renderReportRows();
+}
+function renderReportRows(){
+  const start=(reportPage-1)*REPORT_PER_PAGE;
+  const slice=filteredRows.slice(start,start+REPORT_PER_PAGE);
+  const lastIdx=slice[0]?slice[0].length-1:0;
+  if(!slice.length){document.getElementById('reportTableBody').innerHTML='<tr><td colspan="20" style="text-align:center;padding:30px;color:var(--text3)">No records available.</td></tr>';document.getElementById('recordCount').textContent='0 records';document.getElementById('reportPaginInfo').textContent='No results';document.getElementById('reportPaginBtns').innerHTML='';return;}
+  document.getElementById('reportTableBody').innerHTML=slice.map(row=>`
+    <tr>${row.map((cell,i)=>`<td${i===lastIdx?' style="text-align:right"':''}>${i===lastIdx?getBadge(escapeHTML(cell)):escapeHTML(cell)}</td>`).join('')}</tr>
+  `).join('');
+  document.getElementById('recordCount').textContent=`${filteredRows.length} records`;
+  renderReportPagination();
+  document.getElementById('reportPaginInfo').textContent=`Showing ${start+1}–${Math.min(start+REPORT_PER_PAGE,filteredRows.length)} of ${filteredRows.length} records`;
+}
+function filterReportTable(val){
+  const v=val.toLowerCase();
+  filteredRows=reportRows.filter(row=>row.some(cell=>cell.toString().toLowerCase().includes(v)));
+  reportPage=1;renderReportRows();
+}
+function renderReportPagination(){
+  const total=Math.ceil(filteredRows.length/REPORT_PER_PAGE);
+  const c=document.getElementById('reportPaginBtns');c.innerHTML='';
+  if(total<=1)return;
+  const mk=(label,page,active)=>{const b=document.createElement('button');b.style.cssText=`font-size:12px;font-weight:600;padding:5px 10px;border-radius:6px;cursor:pointer;border:1.5px solid ${active?'var(--navy)':'var(--surface2)'};background:${active?'var(--navy)':'var(--white)'};color:${active?'var(--white)':'var(--text2)'};font-family:inherit;transition:all .2s`;b.textContent=label;b.onclick=()=>{reportPage=page;renderReportRows()};return b};
+  c.appendChild(mk('←',Math.max(1,reportPage-1)));
+  for(let i=1;i<=Math.min(total,5);i++)c.appendChild(mk(i,i,i===reportPage));
+  c.appendChild(mk('→',Math.min(total,reportPage+1)));
+}
+
+// ── EXPORT ──
+function doExport(type){
+  if(type==='CSV'){
+    const d=REPORT_DATA[activeReport];
+    const rows=[d.tableHead,...d.tableRows];
+    const csv=rows.map(r=>r.join(',')).join('\n');
+    const a=document.createElement('a');a.href='data:text/csv,'+encodeURIComponent(csv);a.download=`${activeReport}-report.csv`;a.click();
+  }
+  showToast(`${REPORT_DATA[activeReport].title} exported as ${type}.`,'success',`${type} Export Complete`);
+}
+
+// ── SCHEDULE ──
+function saveSchedule(){closeModal('scheduleModal');showToast('Email report delivery is not configured.','info','Scheduling Unavailable')}
+
+function escapeHTML(value){return String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]))}
+function buildReport(title,tableHead,records,columns,groupField){
+  const rows=records.map(record=>columns.map(column=>column(record)));
+  const groups={};
+  if(groupField)records.forEach(record=>{const name=record[groupField]||'Unspecified';groups[name]=(groups[name]||0)+1;});
+  const colors=['#0d2b5e','#c9a227','#1a7a4a','#1565c0'];
+  const donut=Object.entries(groups).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([name,val],index)=>({name,val,color:colors[index]}));
+  return {title,stats:[{label:'Records',value:String(records.length),trend:'Current database total',up:true,color:'navy'}],barLabel:'Historical trend',barData:[],donutTitle:`${title} breakdown`,donut,tableHead,tableRows:rows};
+}
+async function loadReports(){
+  const paths=['/api/complaints','/api/bursary','/api/projects','/api/proposals','/api/staff'];
+  const responses=await Promise.all(paths.map(path=>adminFetch(path)));
+  if(responses.some(response=>!response.ok))throw new Error('Unable to load report data');
+  const [complaints,bursaries,projects,proposals,users]=await Promise.all(responses.map(response=>response.json()));
+  const formatDate=value=>value?String(value).slice(0,10):'';
+  REPORT_DATA.complaints=buildReport('Complaint Report',['Tracking ID','Citizen','Ward','Category','Date','Priority','Status'],complaints,[r=>r.trackingId,r=>r.fullName,r=>r.ward,r=>r.category,r=>formatDate(r.createdAt),r=>r.priority,r=>r.status],'category');
+  REPORT_DATA.bursary=buildReport('Bursary Report',['Application ID','Applicant','Ward','Institution','Amount (KES)','Status'],bursaries,[r=>r.applicationId,r=>r.studentName,r=>r.ward,r=>r.institutionType,r=>Number(r.amountRequested||0).toLocaleString(),r=>r.status],'institutionType');
+  REPORT_DATA.projects=buildReport('Project Report',['Project ID','Project Name','Ward','Budget','Spent','Progress','Status'],projects,[r=>r.projectId,r=>r.name,r=>r.ward,r=>Number(r.budget||0).toLocaleString(),r=>Number(r.spent||0).toLocaleString(),r=>`${Number(r.progress)||0}%`,r=>r.status],'category');
+  REPORT_DATA.proposals=buildReport('Proposal Report',['Proposal ID','Title','Submitter','Ward','Category','Budget','Status'],proposals,[r=>r.proposalId,r=>r.title,r=>r.submittedBy,r=>r.ward,r=>r.category,r=>Number(r.budget||0).toLocaleString(),r=>r.status],'category');
+  REPORT_DATA.users=buildReport('Staff Report',['Employee ID','Name','Role','Department','Created','Status'],users,[r=>r.employeeId,r=>r.fullName,r=>r.role,r=>r.department,formatDate(r.createdAt),r=>r.status],'role');
+  const wards={};complaints.forEach(record=>{const ward=record.ward||'Unspecified';wards[ward]=(wards[ward]||0)+1;});
+  REPORT_DATA.ward=buildReport('Ward Report',['Ward','Complaints'],Object.entries(wards).map(([ward,count])=>({ward,count})),[r=>r.ward,r=>r.count],'ward');
+  document.getElementById('reportTypeLabel').textContent=REPORT_DATA[activeReport].title;
+}
+
+// ── MODAL ──
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open')}));
+
+// ── TOAST ──
+function showToast(msg,type='info',title=''){
+  const icons={success:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',warning:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>',error:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'};
+  const t=document.createElement('div');t.className=`toast ${type}`;
+  t.innerHTML=`<div class="toast-icon">${icons[type]||icons.info}</div><div class="toast-body"><div class="toast-title">${title}</div><div class="toast-msg">${msg}</div></div><button class="toast-x" onclick="removeToast(this.parentElement)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
+  document.getElementById('toastContainer').appendChild(t);
+  setTimeout(()=>removeToast(t),4500);
+}
+function removeToast(el){if(!el||!el.parentElement)return;el.style.animation='toastOut .35s ease forwards';setTimeout(()=>el.remove(),340)}
+
+// ── SIDEBAR ──
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('open')}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('open')}
+
+// ── INIT ──
+window.addEventListener('load',async()=>{
+  const today=new Date().toISOString().slice(0,10);
+  const from=new Date(Date.now()-30*24*60*60*1000).toISOString().slice(0,10);
+  document.getElementById('dateFrom').value=from;
+  document.getElementById('dateTo').value=today;
+  document.getElementById('schedStart').value=today;
+  try{await loadReports();renderReport();}
+  catch(error){showToast(error.message,'error','Could Not Load Reports');}
+  document.getElementById('genTimestamp').textContent=new Date().toLocaleString('en-KE',{dateStyle:'medium',timeStyle:'short'});
+});
+</script>
+</body>
+</html>

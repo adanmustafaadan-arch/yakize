@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bursary Application – SenateLink Marsabit</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0d2b5e;
+  --navy-dark:#091d42;
+  --navy-light:#1a3f7a;
+  --gold:#c9a227;
+  --gold-light:#e8c14a;
+  --white:#ffffff;
+  --gray-50:#f8f9fc;
+  --gray-100:#eef0f5;
+  --gray-200:#d8dce8;
+  --gray-400:#8a93aa;
+  --gray-600:#4a5168;
+  --gray-800:#1e2235;
+  --success:#0f6e56;
+  --success-bg:#e1f5ee;
+  --danger:#c0392b;
+  --danger-bg:#faece7;
+  --radius-sm:6px;
+  --radius-md:10px;
+  --radius-lg:16px;
+  --shadow-sm:0 2px 8px rgba(13,43,94,0.08);
+  --shadow-md:0 4px 24px rgba(13,43,94,0.12);
+  --shadow-lg:0 8px 40px rgba(13,43,94,0.18);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Poppins',sans-serif;background:var(--gray-50);color:var(--gray-800);line-height:1.6}
+a{text-decoration:none;color:inherit}
+.container{max-width:1100px;margin:0 auto;padding:0 1.5rem}
+
+/* NAVBAR */
+.navbar{position:sticky;top:0;z-index:1000;background:var(--navy-dark);border-bottom:2px solid var(--gold)}
+.nav-container{max-width:1100px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:68px}
+.nav-brand{display:flex;align-items:center;gap:10px}
+.brand-logo{width:38px;height:38px;background:var(--gold);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:var(--navy-dark)}
+.brand-text{display:flex;flex-direction:column;line-height:1.1}
+.brand-name{font-size:18px;font-weight:700;color:var(--white)}
+.brand-county{font-size:10px;color:var(--gold-light);letter-spacing:1px;text-transform:uppercase}
+.nav-links{display:flex;gap:4px;list-style:none;align-items:center}
+.nav-link{color:rgba(255,255,255,0.75);font-size:13.5px;font-weight:500;padding:7px 14px;border-radius:var(--radius-sm);transition:all 0.2s}
+.nav-link:hover,.nav-link.active{background:rgba(255,255,255,0.1);color:var(--white)}
+.nav-link.active{color:var(--gold-light)}
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
+.hamburger span{display:block;width:22px;height:2px;background:var(--white);border-radius:2px}
+
+/* PAGE HERO */
+.page-hero{background:linear-gradient(135deg,var(--navy-dark) 0%,var(--navy) 60%,var(--navy-light) 100%);padding:3.5rem 1.5rem;text-align:center;position:relative;overflow:hidden;border-bottom:3px solid var(--gold)}
+.page-hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.025'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")}
+.page-hero-inner{position:relative;z-index:1;max-width:700px;margin:0 auto}
+.hero-badge{display:inline-block;background:rgba(201,162,39,0.15);border:1px solid rgba(201,162,39,0.4);color:var(--gold-light);font-size:12px;font-weight:600;padding:6px 16px;border-radius:20px;margin-bottom:1rem;letter-spacing:0.5px}
+.page-hero h1{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;color:var(--white);margin-bottom:1rem;letter-spacing:-0.5px}
+.page-hero h1 span{color:var(--gold-light)}
+.page-hero p{font-size:15px;color:rgba(255,255,255,0.75);line-height:1.75;margin-bottom:1.5rem}
+.breadcrumb{display:flex;align-items:center;gap:6px;justify-content:center;margin-bottom:1rem;font-size:12px;color:rgba(255,255,255,0.5)}
+.breadcrumb a{color:rgba(255,255,255,0.5);transition:color 0.2s}
+.breadcrumb a:hover{color:var(--gold-light)}
+.breadcrumb span{color:var(--gold-light)}
+.hero-info-cards{display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;margin-top:1.5rem}
+.hero-info-card{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:var(--radius-md);padding:12px 20px;text-align:center;backdrop-filter:blur(4px)}
+.hero-info-card strong{display:block;font-size:16px;font-weight:700;color:var(--gold-light)}
+.hero-info-card span{font-size:11px;color:rgba(255,255,255,0.6)}
+
+/* ELIGIBILITY BANNER */
+.eligibility{background:rgba(201,162,39,0.08);border:1.5px solid rgba(201,162,39,0.25);border-radius:var(--radius-lg);padding:1.5rem 1.75rem;margin-bottom:2rem;display:flex;gap:1rem;align-items:flex-start}
+.eligibility-icon{font-size:28px;flex-shrink:0;margin-top:2px}
+.eligibility h3{font-size:14px;font-weight:700;color:var(--navy-dark);margin-bottom:6px}
+.eligibility ul{list-style:none;display:flex;flex-wrap:wrap;gap:6px 16px}
+.eligibility ul li{font-size:13px;color:var(--gray-600);display:flex;align-items:center;gap:5px}
+.eligibility ul li::before{content:'✓';color:var(--success);font-weight:700;font-size:12px}
+
+/* PROGRESS STEPS */
+.steps{display:flex;align-items:center;gap:0;margin-bottom:2rem;background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-sm)}
+.step{flex:1;padding:14px 10px;text-align:center;font-size:12px;font-weight:600;color:var(--gray-400);position:relative;transition:all 0.3s;border-right:1px solid var(--gray-200)}
+.step:last-child{border-right:none}
+.step.active{background:var(--navy-dark);color:var(--gold-light)}
+.step.done{background:var(--success-bg);color:var(--success)}
+.step-num{display:block;font-size:16px;font-weight:800;margin-bottom:2px}
+
+/* MAIN */
+.main{max-width:860px;margin:0 auto;padding:2.5rem 1.5rem 4rem}
+
+/* CARD */
+.card{background:var(--white);border-radius:var(--radius-lg);border:1px solid var(--gray-200);box-shadow:var(--shadow-md);margin-bottom:2rem;overflow:hidden}
+.card-header{background:var(--navy-dark);padding:1.25rem 1.75rem;display:flex;align-items:center;gap:12px;border-bottom:2px solid var(--gold)}
+.card-header-icon{width:40px;height:40px;background:rgba(201,162,39,0.2);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.card-header h2{color:var(--white);font-size:16px;font-weight:700}
+.card-header p{color:rgba(255,255,255,0.55);font-size:12px;margin-top:1px}
+.card-body{padding:1.75rem}
+
+/* FORM */
+.section-label{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;margin-top:1.5rem;padding-bottom:6px;border-bottom:1.5px solid var(--gray-100)}
+.section-label:first-child{margin-top:0}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem}
+.form-group{margin-bottom:1rem}
+label{display:block;font-size:13px;font-weight:600;color:var(--gray-600);margin-bottom:5px}
+label .req{color:var(--danger);margin-left:2px}
+label .opt{font-weight:400;color:var(--gray-400);font-size:11px;margin-left:4px}
+input[type=text],input[type=tel],input[type=email],input[type=number],select,textarea{width:100%;border:1.5px solid var(--gray-200);border-radius:var(--radius-md);padding:10px 14px;font-size:14px;color:var(--gray-800);background:var(--gray-50);transition:all 0.18s;font-family:'Poppins',sans-serif;outline:none;appearance:none;-webkit-appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--navy-light);background:var(--white);box-shadow:0 0 0 3px rgba(13,43,94,0.1)}
+input.error,select.error,textarea.error{border-color:var(--danger);box-shadow:0 0 0 3px rgba(192,57,43,0.1)}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238a93aa' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+textarea{resize:vertical;min-height:110px;line-height:1.65}
+.err-msg{font-size:11px;color:var(--danger);margin-top:4px;display:none}
+.err-msg.visible{display:block}
+.input-prefix{position:relative}
+.input-prefix span{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:13px;font-weight:600;color:var(--gray-400)}
+.input-prefix input{padding-left:48px}
+
+/* FILE UPLOAD */
+.file-wrap{border:2px dashed var(--gray-200);border-radius:var(--radius-md);padding:1.5rem;text-align:center;cursor:pointer;transition:all 0.2s;position:relative}
+.file-wrap:hover{border-color:var(--navy-light);background:rgba(13,43,94,0.02)}
+.file-wrap.has-file{border-color:var(--success);background:var(--success-bg)}
+.file-wrap input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;border:none;box-shadow:none;padding:0;background:none}
+.file-wrap input[type=file]:focus{box-shadow:none}
+.file-icon-big{font-size:30px;margin-bottom:6px}
+.file-wrap p{font-size:13px;color:var(--gray-600)}
+.file-wrap p span{color:var(--navy-light);font-weight:600}
+.file-wrap small{font-size:11px;color:var(--gray-400)}
+.file-preview{display:none;align-items:center;gap:8px;margin-top:10px;padding:8px 12px;background:rgba(15,110,86,0.08);border-radius:var(--radius-sm);font-size:12px;color:var(--success);font-weight:600}
+.file-preview.visible{display:flex}
+
+/* DECLARATION */
+.declaration{background:var(--gray-50);border:1.5px solid var(--gray-200);border-radius:var(--radius-md);padding:1.25rem 1.5rem;margin-top:1.5rem}
+.declaration p{font-size:13px;color:var(--gray-600);line-height:1.7;margin-bottom:10px}
+.checkbox-row{display:flex;align-items:flex-start;gap:10px}
+.checkbox-row input[type=checkbox]{width:18px;height:18px;margin-top:2px;cursor:pointer;flex-shrink:0;accent-color:var(--navy)}
+.checkbox-row label{font-size:13px;color:var(--gray-700);font-weight:500;cursor:pointer}
+.err-msg-check{font-size:11px;color:var(--danger);margin-top:6px;display:none}
+.err-msg-check.visible{display:block}
+
+/* SUBMIT */
+.btn-submit{width:100%;padding:14px;background:var(--navy-dark);color:var(--white);border:none;border-radius:var(--radius-md);font-size:15px;font-weight:700;font-family:'Poppins',sans-serif;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:1.5rem}
+.btn-submit:hover{background:var(--navy-light);transform:translateY(-1px);box-shadow:var(--shadow-md)}
+.btn-submit:active{transform:scale(0.99)}
+
+/* POPUP OVERLAY */
+.popup-overlay{display:none;position:fixed;inset:0;background:rgba(9,29,66,0.65);z-index:9999;align-items:center;justify-content:center;padding:1.5rem}
+.popup-overlay.visible{display:flex}
+.popup{background:var(--white);border-radius:var(--radius-lg);padding:2.5rem 2rem;max-width:480px;width:100%;text-align:center;box-shadow:var(--shadow-lg);animation:popIn 0.35s ease}
+@keyframes popIn{from{opacity:0;transform:scale(0.9)}to{opacity:1;transform:scale(1)}}
+.popup-icon{font-size:56px;margin-bottom:1rem}
+.popup h2{font-size:20px;font-weight:800;color:var(--navy-dark);margin-bottom:8px}
+.popup p{font-size:14px;color:var(--gray-600);line-height:1.7;margin-bottom:6px}
+.app-id-display{display:inline-block;background:rgba(201,162,39,0.1);border:2px solid var(--gold);color:var(--navy-dark);font-size:20px;font-weight:800;padding:10px 28px;border-radius:var(--radius-md);margin:14px 0;letter-spacing:2px;font-family:'Courier New',monospace}
+.popup-note{font-size:12px;color:var(--gray-400);margin-top:6px}
+.popup-steps{display:flex;flex-direction:column;gap:8px;margin:16px 0;text-align:left}
+.popup-step{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--gray-50);border-radius:var(--radius-sm);font-size:13px;color:var(--gray-700)}
+.popup-step span{width:24px;height:24px;background:var(--navy-dark);color:var(--white);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.btn-close-popup{margin-top:1rem;padding:12px 32px;background:var(--navy-dark);color:var(--white);border:none;border-radius:var(--radius-md);font-size:14px;font-weight:700;font-family:'Poppins',sans-serif;cursor:pointer;transition:background 0.2s}
+.btn-close-popup:hover{background:var(--navy-light)}
+
+/* INFO SIDEBAR */
+.layout-with-sidebar{display:grid;grid-template-columns:1fr 300px;gap:1.5rem;align-items:start}
+.sidebar-card{background:var(--white);border-radius:var(--radius-lg);border:1px solid var(--gray-200);box-shadow:var(--shadow-sm);overflow:hidden;position:sticky;top:88px}
+.sidebar-header{background:var(--gold);padding:1rem 1.25rem}
+.sidebar-header h3{font-size:14px;font-weight:700;color:var(--navy-dark)}
+.sidebar-header p{font-size:11px;color:rgba(13,43,94,0.65);margin-top:2px}
+.sidebar-body{padding:1.25rem}
+.info-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--gray-100)}
+.info-item:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
+.info-item-icon{font-size:20px;flex-shrink:0;margin-top:2px}
+.info-item h4{font-size:13px;font-weight:700;color:var(--navy-dark);margin-bottom:2px}
+.info-item p{font-size:12px;color:var(--gray-600);line-height:1.5}
+.deadline-badge{display:inline-block;background:var(--danger-bg);color:var(--danger);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;margin-top:4px}
+
+/* FOOTER */
+.footer{background:var(--navy-dark)}
+.footer-top{padding:3rem 0}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2rem}
+.footer-logo{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.footer-brand p{font-size:13px;color:rgba(255,255,255,0.5);line-height:1.7;max-width:260px;margin-top:8px}
+.footer-col h4{font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold-light);margin-bottom:14px}
+.footer-col ul{list-style:none}
+.footer-col ul li{margin-bottom:8px;font-size:13px;color:rgba(255,255,255,0.5)}
+.footer-col ul li a{color:rgba(255,255,255,0.5);transition:color 0.2s}
+.footer-col ul li a:hover{color:var(--white)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,0.08);padding:1.25rem 0;text-align:center;font-size:12px;color:rgba(255,255,255,0.3)}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .layout-with-sidebar{grid-template-columns:1fr}
+  .sidebar-card{position:static}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .footer-brand{grid-column:span 2}
+  .form-row-3{grid-template-columns:1fr 1fr}
+}
+@media(max-width:660px){
+  .nav-links{display:none;position:absolute;top:68px;left:0;right:0;background:var(--navy);flex-direction:column;padding:1rem 1.5rem;gap:4px;border-bottom:2px solid var(--gold)}
+  .nav-links.open{display:flex}
+  .hamburger{display:flex}
+  .form-row,.form-row-3{grid-template-columns:1fr}
+  .card-body{padding:1.25rem}
+  .steps{flex-direction:column;border-radius:var(--radius-md)}
+  .step{border-right:none;border-bottom:1px solid var(--gray-200)}
+  .step:last-child{border-bottom:none}
+  .footer-grid{grid-template-columns:1fr}
+  .footer-brand{grid-column:span 1}
+  .hero-info-cards{flex-direction:column;align-items:center}
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-brand">
+      <div class="brand-logo">SL</div>
+      <div class="brand-text">
+        <span class="brand-name">SenateLink</span>
+        <span class="brand-county">Marsabit County</span>
+      </div>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="complaints.html" class="nav-link">Public Services</a></li>
+      <li><a href="transparency.html" class="nav-link">Projects</a></li>
+      <li><a href="transparency.html" class="nav-link">Transparency</a></li>
+      <li><a href="#contact" class="nav-link">Contact</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <div class="breadcrumb">
+      <a href="index.html">Home</a> › <span>Bursary Application</span>
+    </div>
+    <div class="hero-badge">🎓 Education Support Programme</div>
+    <h1>Bursary <span>Application</span> Portal</h1>
+    <p>Apply for the Marsabit County Senate Bursary Fund. Supporting deserving students across all four constituencies to access quality education.</p>
+    <div class="hero-info-cards">
+      <div class="hero-info-card">
+        <strong>Not listed</strong>
+        <span>Current Fund</span>
+      </div>
+      <div class="hero-info-card">
+        <strong>—</strong>
+        <span>Students Supported</span>
+      </div>
+      <div class="hero-info-card">
+        <strong>Not announced</strong>
+        <span>Application Deadline</span>
+      </div>
+      <div class="hero-info-card">
+        <strong>4 Constituencies</strong>
+        <span>Coverage Area</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<main class="main">
+
+  <div class="steps">
+    <div class="step active" id="step1"><span class="step-num">1</span>Student Info</div>
+    <div class="step" id="step2"><span class="step-num">2</span>School Details</div>
+    <div class="step" id="step3"><span class="step-num">3</span>Guardian Info</div>
+    <div class="step" id="step4"><span class="step-num">4</span>Financial Need</div>
+    <div class="step" id="step5"><span class="step-num">5</span>Documents</div>
+  </div>
+
+  <div class="layout-with-sidebar">
+
+    <div class="form-col">
+
+      <div class="eligibility">
+        <div class="eligibility-icon">ℹ️</div>
+        <div>
+          <h3>Eligibility Requirements</h3>
+          <ul>
+            <li>Registered in Marsabit County ward</li>
+            <li>Must be enrolled in accredited institution</li>
+            <li>Household income below KES 50,000/month</li>
+            <li>Valid admission letter required</li>
+            <li>One application per student per year</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-icon">🎓</div>
+          <div>
+            <h2>Bursary Application Form</h2>
+            <p>Fields marked * are required</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <form id="bursaryForm" novalidate>
+
+            <div class="section-label">👤 Student Information</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="studentName">Student Full Name <span class="req">*</span></label>
+                <input type="text" id="studentName" placeholder="e.g. Fatuma Ali Hassan">
+                <div class="err-msg" id="err-studentName">Please enter the student's full name.</div>
+              </div>
+              <div class="form-group">
+                <label for="idNumber">ID / Birth Certificate No. <span class="req">*</span></label>
+                <input type="text" id="idNumber" placeholder="e.g. 12345678">
+                <div class="err-msg" id="err-idNumber">Please enter a valid ID or birth certificate number.</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="dob">Date of Birth <span class="req">*</span></label>
+                <input type="text" id="dob" placeholder="DD/MM/YYYY">
+                <div class="err-msg" id="err-dob">Please enter a valid date of birth.</div>
+              </div>
+              <div class="form-group">
+                <label for="gender">Gender <span class="req">*</span></label>
+                <select id="gender">
+                  <option value="">— Select —</option>
+                  <option>Male</option>
+                  <option>Female</option>
+                  <option>Prefer not to say</option>
+                </select>
+                <div class="err-msg" id="err-gender">Please select gender.</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="ward">Home Ward <span class="req">*</span></label>
+                <select id="ward">
+                  <option value="">— Select Ward —</option>
+                  <optgroup label="Moyale Constituency">
+                    <option>Moyale Township</option>
+                    <option>Sololo</option>
+                    <option>Heillu / Manyatta</option>
+                    <option>Golbo</option>
+                    <option>Uran</option>
+                    <option>Obbu</option>
+                  </optgroup>
+                  <optgroup label="Saku Constituency">
+                    <option>Marsabit Township</option>
+                    <option>Kambi Samaki</option>
+                    <option>Sagante / Jaldesa</option>
+                    <option>Are / Logo</option>
+                    <option>Kargi South</option>
+                  </optgroup>
+                  <optgroup label="North Horr Constituency">
+                    <option>North Horr</option>
+                    <option>Dukana</option>
+                    <option>Maikona</option>
+                    <option>Turbi</option>
+                    <option>Illeret</option>
+                  </optgroup>
+                  <optgroup label="Laisamis Constituency">
+                    <option>Laisamis</option>
+                    <option>Loiyangalani</option>
+                    <option>Mount Kulal</option>
+                    <option>Kargi</option>
+                  </optgroup>
+                </select>
+                <div class="err-msg" id="err-ward">Please select your home ward.</div>
+              </div>
+              <div class="form-group">
+                <label for="level">Education Level <span class="req">*</span></label>
+                <select id="level">
+                  <option value="">— Select Level —</option>
+                  <option>Secondary School (Form 1–4)</option>
+                  <option>TVET / Vocational Training</option>
+                  <option>Diploma Programme</option>
+                  <option>Undergraduate Degree</option>
+                  <option>Postgraduate</option>
+                </select>
+                <div class="err-msg" id="err-level">Please select education level.</div>
+              </div>
+            </div>
+
+            <div class="section-label">🏫 School / Institution Details</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="schoolName">School / Institution Name <span class="req">*</span></label>
+                <input type="text" id="schoolName" placeholder="e.g. Marsabit Boys High School">
+                <div class="err-msg" id="err-schoolName">Please enter the school name.</div>
+              </div>
+              <div class="form-group">
+                <label for="admissionNo">Admission Number <span class="req">*</span></label>
+                <input type="text" id="admissionNo" placeholder="e.g. MBH/2024/001">
+                <div class="err-msg" id="err-admissionNo">Please enter the admission number.</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="schoolCounty">School County / Location <span class="req">*</span></label>
+                <input type="text" id="schoolCounty" placeholder="e.g. Marsabit, Nairobi">
+                <div class="err-msg" id="err-schoolCounty">Please enter school location.</div>
+              </div>
+              <div class="form-group">
+                <label for="yearOfStudy">Current Year / Form <span class="req">*</span></label>
+                <select id="yearOfStudy">
+                  <option value="">— Select —</option>
+                  <option>Form 1 / Year 1</option>
+                  <option>Form 2 / Year 2</option>
+                  <option>Form 3 / Year 3</option>
+                  <option>Form 4 / Year 4</option>
+                  <option>Year 5+</option>
+                </select>
+                <div class="err-msg" id="err-yearOfStudy">Please select year of study.</div>
+              </div>
+            </div>
+
+            <div class="section-label">👨‍👩‍👧 Parent / Guardian Information</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="parentName">Parent / Guardian Full Name <span class="req">*</span></label>
+                <input type="text" id="parentName" placeholder="e.g. Ali Hassan Mohamed">
+                <div class="err-msg" id="err-parentName">Please enter parent or guardian name.</div>
+              </div>
+              <div class="form-group">
+                <label for="relationship">Relationship to Student <span class="req">*</span></label>
+                <select id="relationship">
+                  <option value="">— Select —</option>
+                  <option>Father</option>
+                  <option>Mother</option>
+                  <option>Guardian</option>
+                  <option>Sibling</option>
+                  <option>Other</option>
+                </select>
+                <div class="err-msg" id="err-relationship">Please select relationship.</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="parentPhone">Parent Phone Number <span class="req">*</span></label>
+                <input type="tel" id="parentPhone" placeholder="e.g. 0712 345 678">
+                <div class="err-msg" id="err-parentPhone">Please enter a valid phone number.</div>
+              </div>
+              <div class="form-group">
+                <label for="parentId">Parent / Guardian ID No. <span class="req">*</span></label>
+                <input type="text" id="parentId" placeholder="e.g. 12345678">
+                <div class="err-msg" id="err-parentId">Please enter parent ID number.</div>
+              </div>
+            </div>
+
+            <div class="section-label">💰 Financial Need Information</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="amountRequested">Amount Requested (KES) <span class="req">*</span></label>
+                <div class="input-prefix">
+                  <span>KES</span>
+                  <input type="number" id="amountRequested" placeholder="e.g. 50000" min="1000" max="200000">
+                </div>
+                <div class="err-msg" id="err-amount">Please enter a valid amount between KES 1,000 and 200,000.</div>
+              </div>
+              <div class="form-group">
+                <label for="totalFee">Total School Fee (KES) <span class="req">*</span></label>
+                <div class="input-prefix">
+                  <span>KES</span>
+                  <input type="number" id="totalFee" placeholder="e.g. 80000" min="1000">
+                </div>
+                <div class="err-msg" id="err-totalFee">Please enter the total school fee.</div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="householdIncome">Approximate Monthly Household Income (KES) <span class="req">*</span></label>
+              <select id="householdIncome">
+                <option value="">— Select Range —</option>
+                <option value="0-10000">Below KES 10,000</option>
+                <option value="10000-20000">KES 10,000 – 20,000</option>
+                <option value="20000-35000">KES 20,000 – 35,000</option>
+                <option value="35000-50000">KES 35,000 – 50,000</option>
+              </select>
+              <div class="err-msg" id="err-income">Please select household income range.</div>
+            </div>
+            <div class="form-group">
+              <label for="reason">Reason for Applying / Statement of Need <span class="req">*</span></label>
+              <textarea id="reason" maxlength="800" placeholder="Explain your financial situation and why you need this bursary. Include any special circumstances such as orphan status, disability, or family hardship…"></textarea>
+              <div style="font-size:11px;color:var(--gray-400);text-align:right;margin-top:4px"><span id="reasonCount">0</span>/800</div>
+              <div class="err-msg" id="err-reason">Please provide a reason (minimum 50 characters).</div>
+            </div>
+
+            <div class="section-label">📎 Required Documents</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Admission Letter <span class="req">*</span></label>
+                <div class="file-wrap" id="fileWrap1">
+                  <input type="file" id="admissionFile" accept="image/*,.pdf">
+                  <div class="file-icon-big">📄</div>
+                  <p><span>Browse</span> or drop file</p>
+                  <small>PDF or Image · Max 5MB</small>
+                </div>
+                <div class="file-preview" id="preview1">✅ <span id="fname1"></span></div>
+                <div class="err-msg" id="err-admission">Please upload the admission letter.</div>
+              </div>
+              <div class="form-group">
+                <label>School Fee Structure <span class="req">*</span></label>
+                <div class="file-wrap" id="fileWrap2">
+                  <input type="file" id="feeFile" accept="image/*,.pdf">
+                  <div class="file-icon-big">💰</div>
+                  <p><span>Browse</span> or drop file</p>
+                  <small>PDF or Image · Max 5MB</small>
+                </div>
+                <div class="file-preview" id="preview2">✅ <span id="fname2"></span></div>
+                <div class="err-msg" id="err-fee">Please upload the fee structure.</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Parent / Guardian ID Copy <span class="req">*</span></label>
+                <div class="file-wrap" id="fileWrap3">
+                  <input type="file" id="idFile" accept="image/*,.pdf">
+                  <div class="file-icon-big">🪪</div>
+                  <p><span>Browse</span> or drop file</p>
+                  <small>PDF or Image · Max 5MB</small>
+                </div>
+                <div class="file-preview" id="preview3">✅ <span id="fname3"></span></div>
+                <div class="err-msg" id="err-id">Please upload the ID copy.</div>
+              </div>
+              <div class="form-group">
+                <label>Supporting Document <span style="font-weight:400;color:var(--gray-400);font-size:11px;margin-left:4px">(optional)</span></label>
+                <div class="file-wrap" id="fileWrap4">
+                  <input type="file" id="supportFile" accept="image/*,.pdf,.doc,.docx">
+                  <div class="file-icon-big">📎</div>
+                  <p><span>Browse</span> or drop file</p>
+                  <small>Death cert, disability card, etc.</small>
+                </div>
+                <div class="file-preview" id="preview4">✅ <span id="fname4"></span></div>
+              </div>
+            </div>
+
+            <div class="declaration">
+              <p>By submitting this application, I declare that all information provided is true and accurate to the best of my knowledge. I understand that providing false information may result in disqualification and legal action.</p>
+              <div class="checkbox-row">
+                <input type="checkbox" id="declare" name="declare">
+                <label for="declare">I confirm that all information provided is accurate and I agree to the terms and conditions of the Marsabit County Bursary Programme.</label>
+              </div>
+              <div class="err-msg-check" id="err-declare">You must accept the declaration to proceed.</div>
+            </div>
+
+            <button type="submit" class="btn-submit">🎓 Submit Bursary Application</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar-col">
+      <div class="sidebar-card">
+        <div class="sidebar-header">
+          <h3>📅 Important Dates</h3>
+          <p>2026 Bursary Cycle</p>
+        </div>
+        <div class="sidebar-body">
+          <div class="info-item">
+            <div class="info-item-icon">🟢</div>
+            <div>
+              <h4>Applications Open</h4>
+              <p>May 1, 2026</p>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-item-icon">🔴</div>
+            <div>
+              <h4>Application Deadline</h4>
+              <p>June 30, 2026</p>
+              <span class="deadline-badge">⚠️ 31 days left</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-item-icon">📋</div>
+            <div>
+              <h4>Review Period</h4>
+              <p>July 1 – August 15, 2026</p>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-item-icon">💰</div>
+            <div>
+              <h4>Disbursement</h4>
+              <p>September 1, 2026</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-card" style="margin-top:1rem">
+        <div class="sidebar-header">
+          <h3>📞 Need Help?</h3>
+          <p>Contact our bursary office</p>
+        </div>
+        <div class="sidebar-body">
+          <div class="info-item">
+            <div class="info-item-icon">📞</div>
+            <div>
+              <h4>Bursary Hotline</h4>
+              <p>+254 700 000 001</p>
+              <p>Mon–Fri: 8am–5pm</p>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-item-icon">✉️</div>
+            <div>
+              <h4>Email</h4>
+              <p>bursary@senatelink.go.ke</p>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-item-icon">📍</div>
+            <div>
+              <h4>Walk-In Office</h4>
+              <p>Senate Office, Marsabit Town Hall, Ground Floor</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- SUCCESS POPUP -->
+<div class="popup-overlay" id="popupOverlay" role="dialog" aria-modal="true">
+  <div class="popup">
+    <div class="popup-icon">🎉</div>
+    <h2>Application Submitted!</h2>
+    <p>Your bursary application has been received successfully.</p>
+    <div class="app-id-display" id="appIdDisplay">BSY-2026-000000</div>
+    <p class="popup-note">Save this Application ID. Use it to track your application status.</p>
+    <div class="popup-steps">
+      <div class="popup-step"><span>1</span>Application received and logged</div>
+      <div class="popup-step"><span>2</span>Documents reviewed by bursary committee</div>
+      <div class="popup-step"><span>3</span>Ward verification conducted</div>
+      <div class="popup-step"><span>4</span>Funds disbursed to institution</div>
+    </div>
+    <p style="font-size:13px;color:var(--gray-600)">You will be contacted via the phone number provided within 14 working days.</p>
+    <button class="btn-close-popup" onclick="closePopup()">Close & Return to Home</button>
+  </div>
+</div>
+
+<footer class="footer" id="contact">
+  <div class="footer-top">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <div class="brand-logo">SL</div>
+          <div class="brand-text">
+            <span class="brand-name" style="color:#fff">SenateLink</span>
+            <span class="brand-county">Marsabit County</span>
+          </div>
+        </div>
+        <p>Connecting citizens of Marsabit County with their elected leadership through transparent digital governance.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="complaints.html">Submit Complaint</a></li>
+          <li><a href="bursary.html">Bursary Application</a></li>
+          <li><a href="transparency.html">Project Tracking</a></li>
+          <li><a href="proposal.html">Submit Proposal</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>County</h4>
+        <ul>
+          <li><a href="#">Marsabit County Govt</a></li>
+          <li><a href="#">Senate Office</a></li>
+          <li><a href="#">CDF Fund</a></li>
+          <li><a href="#">Public Participation</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li>📍 Senate Office, Marsabit Town</li>
+          <li>📞 +254 700 000 000</li>
+          <li>✉️ info@senatelink.go.ke</li>
+          <li>🕐 Mon–Fri: 8:00am – 5:00pm</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="container">
+      <p>© 2026 SenateLink · Marsabit County Government · All rights reserved</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+// NAVBAR
+const hamburger = document.getElementById('hamburger');
+const navLinks = document.getElementById('navLinks');
+hamburger.addEventListener('click', () => navLinks.classList.toggle('open'));
+document.querySelectorAll('.nav-link').forEach(l => l.addEventListener('click', () => navLinks.classList.remove('open')));
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').style.boxShadow = window.scrollY > 10 ? '0 4px 30px rgba(9,29,66,0.4)' : '';
+});
+
+// CHAR COUNT
+document.getElementById('reason').addEventListener('input', function() {
+  document.getElementById('reasonCount').textContent = this.value.length;
+});
+
+// FILE UPLOADS
+function setupFile(inputId, wrapId, previewId, nameId) {
+  document.getElementById(inputId).addEventListener('change', function() {
+    const file = this.files[0];
+    const wrap = document.getElementById(wrapId);
+    const preview = document.getElementById(previewId);
+    const nameEl = document.getElementById(nameId);
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) { alert('File size exceeds 5MB.'); this.value = ''; return; }
+      nameEl.textContent = file.name;
+      preview.classList.add('visible');
+      wrap.classList.add('has-file');
+    }
+  });
+}
+setupFile('admissionFile','fileWrap1','preview1','fname1');
+setupFile('feeFile','fileWrap2','preview2','fname2');
+setupFile('idFile','fileWrap3','preview3','fname3');
+setupFile('supportFile','fileWrap4','preview4','fname4');
+
+// STEP HIGHLIGHT
+function updateSteps(filledCount) {
+  document.querySelectorAll('.step').forEach((s, i) => {
+    s.classList.remove('active','done');
+    if (i < filledCount) s.classList.add('done');
+    else if (i === filledCount) s.classList.add('active');
+  });
+}
+const stepFields = [
+  ['studentName','idNumber','dob','gender'],
+  ['ward','level','schoolName','admissionNo','schoolCounty','yearOfStudy'],
+  ['parentName','relationship','parentPhone','parentId'],
+  ['amountRequested','totalFee','householdIncome','reason'],
+  []
+];
+document.querySelectorAll('input,select,textarea').forEach(el => {
+  el.addEventListener('input', () => {
+    let filled = 0;
+    stepFields.forEach((group, idx) => {
+      const allFilled = group.every(id => {
+        const f = document.getElementById(id);
+        return f && f.value.trim() !== '';
+      });
+      if (allFilled && filled === idx) filled++;
+    });
+    updateSteps(filled);
+  });
+});
+
+// VALIDATION
+function clearErrors() {
+  document.querySelectorAll('.err-msg,.err-msg-check').forEach(e => e.classList.remove('visible'));
+  document.querySelectorAll('input,select,textarea').forEach(e => e.classList.remove('error'));
+}
+function showErr(id, msgId) {
+  const f = document.getElementById(id);
+  const m = document.getElementById(msgId);
+  if (f) f.classList.add('error');
+  if (m) m.classList.add('visible');
+}
+function validPhone(p) { return /^[0-9+\s\-(]{7,15}$/.test(p.trim()); }
+
+document.getElementById('bursaryForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  clearErrors();
+  let valid = true;
+
+  const checks = [
+    ['studentName','err-studentName', v => v.length >= 2],
+    ['idNumber','err-idNumber', v => v.length >= 6],
+    ['dob','err-dob', v => v.length >= 6],
+    ['gender','err-gender', v => v !== ''],
+    ['ward','err-ward', v => v !== ''],
+    ['level','err-level', v => v !== ''],
+    ['schoolName','err-schoolName', v => v.length >= 2],
+    ['admissionNo','err-admissionNo', v => v.length >= 2],
+    ['schoolCounty','err-schoolCounty', v => v.length >= 2],
+    ['yearOfStudy','err-yearOfStudy', v => v !== ''],
+    ['parentName','err-parentName', v => v.length >= 2],
+    ['relationship','err-relationship', v => v !== ''],
+    ['parentPhone','err-parentPhone', v => validPhone(v)],
+    ['parentId','err-parentId', v => v.length >= 6],
+    ['amountRequested','err-amount', v => parseFloat(v) >= 1000 && parseFloat(v) <= 200000],
+    ['totalFee','err-totalFee', v => parseFloat(v) >= 1000],
+    ['householdIncome','err-income', v => v !== ''],
+    ['reason','err-reason', v => v.length >= 50],
+  ];
+
+  checks.forEach(([id, msgId, validator]) => {
+    const el = document.getElementById(id);
+    if (!el || !validator(el.value.trim())) { showErr(id, msgId); valid = false; }
+  });
+
+  if (!document.getElementById('admissionFile').files.length) { document.getElementById('err-admission').classList.add('visible'); valid = false; }
+  if (!document.getElementById('feeFile').files.length) { document.getElementById('err-fee').classList.add('visible'); valid = false; }
+  if (!document.getElementById('idFile').files.length) { document.getElementById('err-id').classList.add('visible'); valid = false; }
+  if (!document.getElementById('declare').checked) { document.getElementById('err-declare').classList.add('visible'); valid = false; }
+
+  if (!valid) {
+    const firstErr = document.querySelector('.error,.err-msg.visible');
+    if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  const values = {
+    studentName: document.getElementById('studentName').value.trim(),
+    idNumber: document.getElementById('idNumber').value.trim(),
+    gender: document.getElementById('gender').value,
+    dob: document.getElementById('dob').value.trim(),
+    phone: document.getElementById('parentPhone').value.trim(),
+    schoolName: document.getElementById('schoolName').value.trim(),
+    institutionType: document.getElementById('level').value,
+    schoolCounty: document.getElementById('schoolCounty').value.trim(),
+    yearOfStudy: document.getElementById('yearOfStudy').value,
+    admissionNo: document.getElementById('admissionNo').value.trim(),
+    feeBalance: document.getElementById('totalFee').value,
+    amountRequested: document.getElementById('amountRequested').value,
+    guardianName: document.getElementById('parentName').value.trim(),
+    guardianPhone: document.getElementById('parentPhone').value.trim(),
+    guardianId: document.getElementById('parentId').value.trim(),
+    relationship: document.getElementById('relationship').value,
+    income: document.getElementById('householdIncome').value,
+    reason: document.getElementById('reason').value.trim(),
+    ward: document.getElementById('ward').value,
+  };
+  const formData = new FormData();
+  Object.entries(values).forEach(([key, value]) => formData.append(key, value));
+  ['admissionFile', 'feeFile', 'idFile', 'supportFile'].forEach(id => {
+    const file = document.getElementById(id).files[0];
+    if (file) formData.append('documents', file);
+  });
+
+  try {
+    const response = await fetch('/api/bursary', { method: 'POST', body: formData });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'Unable to submit bursary application');
+    document.getElementById('appIdDisplay').textContent = result.applicationId;
+  } catch (error) {
+    alert(error.message || 'Unable to submit bursary application. Please try again.');
+    return;
+  }
+
+  document.getElementById('popupOverlay').classList.add('visible');
+  document.body.style.overflow = 'hidden';
+  updateSteps(5);
+});
+
+function closePopup() {
+  document.getElementById('popupOverlay').classList.remove('visible');
+  document.body.style.overflow = '';
+  window.location.href = 'index.html';
+}
+
+document.getElementById('popupOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closePopup();
+});
+</script>
+</body>
+</html>

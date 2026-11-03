@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SenateLink Admin — Settings</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0d2b5e;--navy-dark:#091e45;--navy-mid:#1a3d78;--navy-light:#2a5298;
+  --gold:#c9a227;--gold-light:#e8b93a;--gold-pale:#f5e8c0;--gold-dark:#a07c15;
+  --white:#ffffff;--off-white:#f7f8fc;--surface:#eef1f8;--surface2:#e4e9f4;
+  --text:#1a1d2e;--text2:#4a5270;--text3:#8892b0;
+  --success:#1a7a4a;--success-bg:#e6f4ec;
+  --warn:#b35c00;--warn-bg:#fff3e0;
+  --danger:#c0392b;--danger-bg:#fdecea;
+  --info:#1565c0;--info-bg:#e3f0ff;
+  --radius:10px;--radius-lg:16px;--radius-xl:22px;
+  --shadow:0 2px 12px rgba(13,43,94,.10);
+  --shadow-lg:0 6px 28px rgba(13,43,94,.16);
+  --sidebar-w:260px;--topbar-h:64px;
+  --transition:all .22s cubic-bezier(.4,0,.2,1);
+}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--text);font-size:15px}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:99px}
+
+/* ── SIDEBAR ── */
+.sidebar{position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;background:var(--navy);z-index:200;display:flex;flex-direction:column;transition:var(--transition);overflow:hidden}
+.sidebar-brand{padding:0 20px;height:var(--topbar-h);display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.brand-icon{width:38px;height:38px;border-radius:10px;background:var(--gold);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.brand-icon svg{width:22px;height:22px;fill:var(--navy)}
+.brand-text{display:flex;flex-direction:column;line-height:1.2}
+.brand-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--white)}
+.brand-sub{font-size:10px;color:rgba(201,162,39,.85);font-weight:500;text-transform:uppercase;letter-spacing:1px}
+.sidebar-scroll{flex:1;overflow-y:auto;padding:16px 0 24px}
+.nav-section-label{font-size:10px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:rgba(255,255,255,.35);padding:16px 20px 6px}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 20px;margin:1px 10px;border-radius:var(--radius);color:rgba(255,255,255,.7);font-size:14px;cursor:pointer;transition:var(--transition)}
+.nav-item:hover{background:rgba(255,255,255,.07);color:var(--white)}
+.nav-item.active{background:linear-gradient(90deg,var(--gold),var(--gold-light));color:var(--navy);font-weight:600}
+.nav-icon{width:18px;height:18px;flex-shrink:0;opacity:.7}
+.nav-item.active .nav-icon{opacity:1}
+.nav-badge{margin-left:auto;background:var(--danger);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px}
+.nav-item.active .nav-badge{background:var(--navy)}
+.sidebar-footer{padding:16px;border-top:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.user-card{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--radius);background:rgba(255,255,255,.06);cursor:pointer;transition:var(--transition)}
+.user-card:hover{background:rgba(255,255,255,.10)}
+.user-avatar{width:34px;height:34px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--navy);flex-shrink:0}
+.user-info{flex:1;overflow:hidden}
+.user-name{font-size:13px;font-weight:600;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-role{font-size:11px;color:rgba(255,255,255,.45)}
+.logout-btn{margin-top:8px;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:9px;border-radius:var(--radius);color:rgba(255,100,100,.8);font-size:13px;font-weight:500;transition:var(--transition)}
+.logout-btn:hover{background:rgba(255,100,100,.1);color:#ff6b6b}
+
+/* ── TOPBAR ── */
+.topbar{position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--topbar-h);background:var(--white);border-bottom:1px solid var(--surface2);display:flex;align-items:center;padding:0 28px;gap:16px;z-index:100;transition:var(--transition)}
+.topbar-hamburger{display:none;width:36px;height:36px;border-radius:8px;align-items:center;justify-content:center;background:var(--surface);cursor:pointer;transition:var(--transition)}
+.topbar-hamburger:hover{background:var(--surface2)}
+.topbar-title{flex:1}
+.topbar-title h1{font-size:18px;font-weight:600;color:var(--text)}
+.topbar-title p{font-size:12px;color:var(--text3)}
+.topbar-actions{display:flex;align-items:center;gap:8px}
+.icon-btn{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:var(--surface);color:var(--text2);transition:var(--transition);position:relative;cursor:pointer}
+.icon-btn:hover{background:var(--navy);color:var(--white)}
+.notif-dot{position:absolute;top:7px;right:7px;width:8px;height:8px;background:var(--danger);border-radius:50%;border:2px solid var(--white)}
+.topbar-divider{width:1px;height:28px;background:var(--surface2);margin:0 4px}
+.topbar-user{display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 8px;border-radius:9px;transition:var(--transition)}
+.topbar-user:hover{background:var(--surface)}
+.topbar-user-avatar{width:34px;height:34px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--gold)}
+.topbar-user-name{font-size:13px;font-weight:600;color:var(--text)}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar-w);margin-top:var(--topbar-h);padding:28px;min-height:calc(100vh - var(--topbar-h));transition:var(--transition)}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px}
+.page-header-left h2{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--navy)}
+.page-header-left p{font-size:13px;color:var(--text3);margin-top:2px}
+
+/* ── SETTINGS LAYOUT ── */
+.settings-layout{display:grid;grid-template-columns:220px 1fr;gap:22px;align-items:start}
+@media(max-width:900px){.settings-layout{grid-template-columns:1fr}}
+
+/* ── SETTINGS NAV ── */
+.settings-nav{background:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow);border:1px solid var(--surface2);overflow:hidden;position:sticky;top:calc(var(--topbar-h) + 28px)}
+.settings-nav-title{padding:16px 18px 12px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3)}
+.settings-nav-item{display:flex;align-items:center;gap:10px;padding:10px 18px;cursor:pointer;transition:var(--transition);border-left:3px solid transparent;font-size:13px;color:var(--text2);font-weight:500}
+.settings-nav-item:hover{background:var(--off-white);color:var(--navy)}
+.settings-nav-item.active{background:rgba(13,43,94,.04);border-left-color:var(--navy);color:var(--navy);font-weight:600}
+.settings-nav-item svg{width:16px;height:16px;flex-shrink:0;opacity:.6}
+.settings-nav-item.active svg{opacity:1}
+.settings-nav-divider{height:1px;background:var(--surface);margin:4px 0}
+
+/* ── SETTINGS CONTENT ── */
+.settings-content{display:flex;flex-direction:column;gap:22px}
+.settings-section{display:none}
+.settings-section.active{display:block}
+
+/* ── SETTINGS CARD ── */
+.settings-card{background:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow);border:1px solid var(--surface2);overflow:hidden;margin-bottom:22px}
+.settings-card:last-child{margin-bottom:0}
+.settings-card-header{padding:18px 24px;border-bottom:1px solid var(--surface);display:flex;align-items:center;gap:12px}
+.settings-card-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.settings-card-icon svg{width:18px;height:18px}
+.settings-card-title{font-size:15px;font-weight:700;color:var(--navy)}
+.settings-card-desc{font-size:12px;color:var(--text3);margin-top:1px}
+.settings-card-body{padding:24px}
+
+/* ── FORM ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.form-full{grid-column:1/-1}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2)}
+.form-input,.form-select,.form-textarea{padding:10px 14px;border:1.5px solid var(--surface2);border-radius:var(--radius);font-size:14px;color:var(--text);font-family:inherit;transition:var(--transition);background:var(--off-white);outline:none;width:100%}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--gold);background:var(--white)}
+.form-textarea{resize:vertical;line-height:1.6}
+.form-hint{font-size:11px;color:var(--text3);margin-top:2px}
+.form-input[readonly]{background:var(--surface);color:var(--text3);cursor:not-allowed}
+
+/* ── TOGGLE SWITCH ── */
+.toggle-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid var(--surface)}
+.toggle-row:last-child{border-bottom:none;padding-bottom:0}
+.toggle-row:first-child{padding-top:0}
+.toggle-info{flex:1}
+.toggle-label{font-size:14px;font-weight:600;color:var(--text)}
+.toggle-desc{font-size:12px;color:var(--text3);margin-top:3px;line-height:1.5}
+.toggle-switch{position:relative;width:44px;height:24px;flex-shrink:0;margin-top:2px}
+.toggle-switch input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{position:absolute;inset:0;background:var(--surface2);border-radius:99px;cursor:pointer;transition:var(--transition)}
+.toggle-slider::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:var(--white);border-radius:50%;transition:var(--transition);box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.toggle-switch input:checked+.toggle-slider{background:var(--navy)}
+.toggle-switch input:checked+.toggle-slider::before{transform:translateX(20px)}
+
+/* ── COLOR SWATCHES ── */
+.color-swatches{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.color-swatch{width:36px;height:36px;border-radius:9px;cursor:pointer;transition:var(--transition);border:2px solid transparent;position:relative}
+.color-swatch:hover{transform:scale(1.1)}
+.color-swatch.active::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff}
+.swatch-label{font-size:11px;color:var(--text3);margin-top:4px;text-align:center}
+
+/* ── THEME PREVIEW ── */
+.theme-preview{border-radius:var(--radius);overflow:hidden;border:1.5px solid var(--surface2);margin-top:16px}
+.theme-preview-bar{height:36px;display:flex;align-items:center;padding:0 14px;gap:8px}
+.theme-preview-dot{width:10px;height:10px;border-radius:50%}
+.theme-preview-body{padding:14px;background:var(--off-white)}
+.theme-preview-card{background:var(--white);border-radius:8px;padding:12px;border:1px solid var(--surface2)}
+
+/* ── BACKUP PROGRESS ── */
+.backup-item{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--surface)}
+.backup-item:last-child{border-bottom:none;padding-bottom:0}
+.backup-item:first-child{padding-top:0}
+.backup-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.backup-icon svg{width:18px;height:18px}
+.backup-info{flex:1}
+.backup-name{font-size:13px;font-weight:600;color:var(--text)}
+.backup-meta{font-size:11px;color:var(--text3);margin-top:2px}
+.backup-size{font-size:12px;font-weight:600;color:var(--text2)}
+.backup-status{font-size:10px;font-weight:700;padding:2px 9px;border-radius:99px}
+
+/* ── SECURITY ITEMS ── */
+.security-item{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid var(--surface)}
+.security-item:last-child{border-bottom:none;padding-bottom:0}
+.security-item:first-child{padding-top:0}
+.sec-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sec-icon svg{width:18px;height:18px}
+.sec-info{flex:1}
+.sec-title{font-size:13px;font-weight:600;color:var(--text)}
+.sec-desc{font-size:12px;color:var(--text3);margin-top:3px;line-height:1.5}
+.sec-action{flex-shrink:0}
+
+/* ── SOCIAL MEDIA ── */
+.social-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--surface)}
+.social-item:last-child{border-bottom:none;padding-bottom:0}
+.social-item:first-child{padding-top:0}
+.social-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.social-icon svg{width:18px;height:18px}
+.social-label{font-size:13px;font-weight:600;color:var(--text);min-width:100px}
+
+/* ── BUTTONS ── */
+.btn{padding:9px 20px;border-radius:9px;font-size:13px;font-weight:600;transition:var(--transition);cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:7px}
+.btn-navy{background:var(--navy);color:var(--white);border:none}
+.btn-navy:hover{background:var(--navy-mid)}
+.btn-gold{background:var(--gold);color:var(--navy);border:none}
+.btn-gold:hover{background:var(--gold-light)}
+.btn-outline{background:transparent;color:var(--text2);border:1.5px solid var(--surface2)}
+.btn-outline:hover{border-color:var(--navy);color:var(--navy)}
+.btn-success{background:var(--success);color:#fff;border:none}
+.btn-success:hover{background:#14633b}
+.btn-danger{background:var(--danger);color:#fff;border:none}
+.btn-danger:hover{background:#a93226}
+.btn-warn{background:var(--warn);color:#fff;border:none}
+.btn-warn:hover{background:#8a4500}
+.btn-sm{padding:6px 14px;font-size:12px}
+
+/* ── SAVE BAR ── */
+.save-bar{position:fixed;bottom:0;left:var(--sidebar-w);right:0;background:var(--white);border-top:1px solid var(--surface2);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;z-index:90;box-shadow:0 -4px 20px rgba(13,43,94,.08);transition:var(--transition)}
+.save-bar-msg{font-size:13px;color:var(--text3);display:flex;align-items:center;gap:8px}
+.unsaved-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.8)}}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(13,43,94,.55);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(3px);padding:20px}
+.modal-overlay.open{display:flex;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:var(--white);border-radius:var(--radius-xl);width:100%;max-width:480px;box-shadow:0 20px 60px rgba(13,43,94,.3);animation:slideUp .3s cubic-bezier(.4,0,.2,1);max-height:92vh;overflow-y:auto}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:22px 26px;border-bottom:1px solid var(--surface);position:sticky;top:0;background:var(--white);z-index:1}
+.modal-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--navy)}
+.modal-close{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--surface);color:var(--text3);cursor:pointer;transition:var(--transition);border:none}
+.modal-close:hover{background:var(--danger-bg);color:var(--danger)}
+.modal-body{padding:26px}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;padding:18px 26px;border-top:1px solid var(--surface)}
+
+/* ── TOAST ── */
+.toast-container{position:fixed;bottom:80px;right:28px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none}
+.toast{background:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);border:1px solid var(--surface2);padding:14px 18px;display:flex;align-items:flex-start;gap:12px;min-width:300px;max-width:360px;pointer-events:all;animation:toastIn .4s cubic-bezier(.4,0,.2,1) forwards}
+.toast.success{border-left:4px solid var(--success)}
+.toast.warning{border-left:4px solid var(--gold)}
+.toast.error{border-left:4px solid var(--danger)}
+.toast.info{border-left:4px solid var(--navy)}
+@keyframes toastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+@keyframes toastOut{from{opacity:1}to{opacity:0;transform:translateX(40px)}}
+.toast-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.toast-icon svg{width:16px;height:16px}
+.toast.success .toast-icon{background:var(--success-bg);color:var(--success)}
+.toast.warning .toast-icon{background:var(--warn-bg);color:var(--warn)}
+.toast.error .toast-icon{background:var(--danger-bg);color:var(--danger)}
+.toast.info .toast-icon{background:var(--info-bg);color:var(--info)}
+.toast-body{flex:1}
+.toast-title{font-size:13px;font-weight:700;color:var(--text)}
+.toast-msg{font-size:12px;color:var(--text3);margin-top:2px}
+.toast-x{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);background:none;border:none;transition:var(--transition)}
+.toast-x:hover{background:var(--surface);color:var(--text)}
+
+/* ── SIDEBAR OVERLAY ── */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:190}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-overlay.open{display:block}
+  .topbar{left:0;padding:0 16px;gap:10px}
+  .topbar-hamburger{display:flex}
+  .main{margin-left:0;padding:16px;padding-bottom:80px}
+  .save-bar{left:0}
+  .topbar-user-name{display:none}
+  .form-grid,.form-grid-3{grid-template-columns:1fr}
+  .form-full{grid-column:1}
+}
+</style>
+</head>
+<body>
+<script src="/admin/admin-auth.js"></script>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><polyline points="9 22 9 12 15 12 15 22" fill="none" stroke="#0d2b5e" stroke-width="2"/></svg>
+    </div>
+    <div class="brand-text"><span class="brand-title">SenateLink</span><span class="brand-sub">Marsabit County</span></div>
+  </div>
+  <div class="sidebar-scroll">
+    <div class="nav-section-label">Main Menu</div>
+    <div class="nav-item" onclick="go('admin-dashboard.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard
+    </div>
+    <div class="nav-item" onclick="go('admin-complaints.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Complaints<span class="nav-badge" id="sidebarPendingComplaints">0</span>
+    </div>
+    <div class="nav-item" onclick="go('admin-bursaries.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>Bursaries<span class="nav-badge" id="sidebarPendingBursaries">0</span>
+    </div>
+    <div class="nav-item" onclick="go('admin-proposals.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Proposals
+    </div>
+    <div class="nav-item" onclick="go('admin-projects.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Projects
+    </div>
+    <div class="nav-section-label">Content</div>
+    <div class="nav-item" onclick="go('admin-news.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2v-9c0-1.1.9-2 2-2h2"/></svg>News
+    </div>
+    <div class="nav-section-label">Administration</div>
+    <div class="nav-item" onclick="go('admin-users.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Users
+    </div>
+    <div class="nav-item" onclick="go('admin-reports.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Reports
+    </div>
+    <div class="nav-item active">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 19.07a10 10 0 010-14.14"/></svg>Settings
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">JM</div>
+      <div class="user-info"><div class="user-name">James Mureithi</div><div class="user-role">Super Admin</div></div>
+    </div>
+    <button class="logout-btn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout
+    </button>
+  </div>
+</aside>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-hamburger" onclick="toggleSidebar()">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </div>
+  <div class="topbar-title">
+    <h1>System Settings</h1>
+    <p>Dashboard › Settings</p>
+  </div>
+  <div class="topbar-actions">
+    <div class="icon-btn" title="Notifications">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <span class="notif-dot"></span>
+    </div>
+    <div class="topbar-divider"></div>
+    <div class="topbar-user">
+      <div class="topbar-user-avatar">JM</div>
+      <span class="topbar-user-name">James Mureithi</span>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="main" style="padding-bottom:80px">
+
+  <div class="page-header">
+    <div class="page-header-left">
+      <h2>System Settings</h2>
+      <p>Configure county information, security, appearance and system preferences</p>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-outline" onclick="resetSettings()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>Reset
+      </button>
+      <button class="btn btn-gold" onclick="saveSettings()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Save All Changes
+      </button>
+    </div>
+  </div>
+
+  <div class="settings-layout">
+
+    <!-- SETTINGS NAV -->
+    <div class="settings-nav">
+      <div class="settings-nav-title">Settings</div>
+      <div class="settings-nav-item active" onclick="showSection('county',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg>County Information
+      </div>
+      <div class="settings-nav-item" onclick="showSection('contact',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.66A2 2 0 012 .84h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>Contact Information
+      </div>
+      <div class="settings-nav-item" onclick="showSection('social',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Social Media
+      </div>
+      <div class="settings-nav-divider"></div>
+      <div class="settings-nav-item" onclick="showSection('theme',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>Theme Settings
+      </div>
+      <div class="settings-nav-item" onclick="showSection('notifications',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>Notifications
+      </div>
+      <div class="settings-nav-divider"></div>
+      <div class="settings-nav-item" onclick="showSection('security',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Security Settings
+      </div>
+      <div class="settings-nav-item" onclick="showSection('backup',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>Backup & Restore
+      </div>
+      <div class="settings-nav-item" onclick="showSection('advanced',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 19.07a10 10 0 010-14.14M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>Advanced
+      </div>
+    </div>
+
+    <!-- SETTINGS CONTENT -->
+    <div class="settings-content">
+
+      <!-- COUNTY INFORMATION -->
+      <div class="settings-section active" id="section-county">
+        <div class="settings-card">
+          <div class="settings-card-header">
+            <div class="settings-card-icon" style="background:rgba(13,43,94,.1);color:var(--navy)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg>
+            </div>
+            <div><div class="settings-card-title">County Information</div><div class="settings-card-desc">Official county details used across the portal</div></div>
+          </div>
+          <div class="settings-card-body">
+            <div class="form-grid">
+              <div class="form-group form-full">
+                <label class="form-label">County Name</label>
+                <input type="text" class="form-input" value="Marsabit County" oninput="markUnsaved()">
+              </div>
+              <div class="form-group">
+                <label class="form-label">County Code</label>
+                <input type="text" class="form-input" value="MRS-01" oninput="markUnsaved()">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Senate Reference Number</label>
+                <input type="text" class="form-input" value="SEN/MRS/2023/001" oninput="markUnsaved()">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Governor's Name</label>
+                <input type="text" class="form-input" value="H.E. Hassan Guyo Isiako" oninput="markUnsaved()">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Senator's Name</label>
+                <input type="text" class="form-input" value="Sen. Mohammed Godana" oninput="markUnsaved()">
+              </div>
+              <div class="form-group">
+                <label class="form-label">County Headquarters</label>
+                <input type="text" class="form-input" value="Marsabit Town" oninput="markUnsaved()">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Region / Province</label>
+                <input type="text" class="form-input" value="North Eastern Region" oninput="markUnsaved()">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Number of Wards</label>
+                <input type="number" class="form-input" value="6" oninput="markUnsaved()">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Population (2024 Census)</label>
+                <input type="number" class="form-input" value="459785" oninput="markUnsaved()">
+              </div>
+              <div class="form-group form-full">
+                <label class="form-label">County Slogan / Motto</label>
+                <input type="text" class="form-input" value="Unity, Peace and Development" oninput="markUnsaved()">
+              </div>
+              <div class="form-group form-full">
+                <label class="form-label">County Description</label>
+                <textarea class="form-textarea" rows="3" oninput="markUnsaved()">Marsabit County is located in northern Kenya bordering Ethiopia to the north, Samburu and Isiolo to the south, Wajir to the east and Turkana to the west. It is home to diverse communities including the Gabra, Rendille, Borana and Burji peoples.</textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-card">
+          <div class="settings-card-header">
+            <div class="settings-card-icon" style="background:var(--gold-pale);color:var(--gold-dark)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
+            <div><div class="settings-card-title">County Logo & Branding</div><div class="settings-card-desc">Upload official county seal and branding assets</div></div>
+          </div>
+          <div class="settings-card-body">
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">County Seal / Logo</label>
+                <div style="border:2px dashed var(--surface2);border-radius:var(--radius);padding:24px;text-align:center;cursor:default;transition:var(--transition)" onclick="showToast('Branding file storage is not configured.','warning','Upload Unavailable')" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--surface2)'">
+                  <div style="font-size:32px;margin-bottom:8px">🏛️</div>
+                  <div style="font-size:13px;font-weight:600;color:var(--text2)">Click to upload seal</div>
+                  <div style="font-size:11px;color:var(--text3);margin-top:4px">PNG, SVG · Max 2MB</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Portal Favicon</label>
+                <div style="border:2px dashed var(--surface2);border-radius:var(--radius);padding:24px;text-align:center;cursor:default;transition:var(--transition)" onclick="showToast('Branding file storage is not configured.','warning','Upload Unavailable')" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--surface2)'">
+                  <div style="font-size:32px;margin-bottom:8px">🖼️</div>
+                  <div style="font-size:13px;font-weight:600;color:var(--text2)">Click to upload favicon</div>
+                  <div style="font-size:11px;color:var(--text3);margin-top:4px">ICO, PNG · 32×32px</div>
+                </div>
+              </div>
+              <div class="form-group form-full">
+                <label class="form-label">Portal Name</label>
+                <input type="text" class="form-input" value="SenateLink — Marsabit County Admin Portal" oninput="markUnsaved()">
+              </div>
+              <div class="form-group form-full">
+                <label class="form-label">Footer Text</label>
+                <input type="text" class="form-input" value="© 2025 Marsabit County Government. All rights reserved." oninput="markUnsaved()">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTACT INFORMATION -->
+      <div class="settings-section" id="section-contact">
+        <div class="settings-card">
+          <div class="settings-card-header">
+            <div class="settings-card-icon" style="background:var(--info-bg);color:var(--info)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.66A2 2 0 012 .84h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+            </div>
+            <div><div class="settings-card-title">Contact Information</div><div class="settings-card-desc">Official contact details displayed to the public</div></div>
+          </div>
+          <div class="settings-card-body">
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">Main Office Phone</label>
+                <input type="tel" class="form-input" value="+254 720 000 001" oninput="markUnsaved()">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Alternate Phone</label>
+                <input type="tel" class="form-input" value="+254 720 000 002" oninput="markUnsaved()">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Official Email</label>
+                <input type="email" class="form-input" value="info@marsabit.go.ke" oninput="markUnsaved()">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Technical Support Email</label>
+                <input type="email" class="form-input" value="ict@marsabit.go.ke" oninput="markUnsaved()">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Complaints Hotline</label>
+                <input type="tel" class="form-input" value="0800 720 001" oninput="markUnsaved()">
+                <span class="form-hint">Toll-free number for citizen complaints</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Emergency Line</label>
+                <input type="tel" class="form-input" value="0800 720 911" oninput="markUnsaved()">
+              </div>
+              <div class="form-group form-full">
+                <label class="form-label">Physical Address</label>
+                <textarea class="form-textarea" rows="2" oninput="markUnsaved()">Marsabit County Government Headquarters, Off Marsabit-Moyale Road, Marsabit Town, P.O. Box 13 – 60500</textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label">County Website URL</label>
+                <input type="url" class="form-input" value="https://www.marsabit.go.ke" oninput="markUnsaved()">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Senate Portal URL</label>
+                <input type="url" class="form-input" value="https://senate.marsabit.go.ke" oninput="markUnsaved()">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Office Hours</label>
+                <input type="text" class="form-input" value="Monday – Friday, 8:00 AM – 5:00 PM" oninput="markUnsaved()">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Time Zone</label>
+                <select class="form-select" onchange="markUnsaved()">
+                  <option selected>Africa/Nairobi (EAT, UTC+3)</option>
+                  <option>Africa/Lagos (WAT, UTC+1)</option>
+                  <option>UTC</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SOCIAL MEDIA -->
+      <div class="settings-section" id="section-social">
+        <div class="settings-card">
+          <div class="settings-card-header">
+            <div class="settings-card-icon" style="background:rgba(13,43,94,.1);color:var(--navy)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            </div>
+            <div><div class="settings-card-title">Social Media Links</div><div class="settings-card-desc">Official county social media profiles</div></div>
+          </div>
+          <div class="settings-card-body">
+            <div class="social-item">
+              <div class="social-icon" style="background:#1877F220;color:#1877F2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></div>
+              <div class="social-label">Facebook</div>
+              <input type="url" class="form-input" style="flex:1" value="https://facebook.com/MarsabitCountyGovernment" oninput="markUnsaved()">
+            </div>
+            <div class="social-item">
+              <div class="social-icon" style="background:#1DA1F220;color:#1DA1F2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/></svg></div>
+              <div class="social-label">Twitter / X</div>
+              <input type="url" class="form-input" style="flex:1" value="https://twitter.com/MarsabitCounty" oninput="markUnsaved()">
+            </div>
+            <div class="social-item">
+              <div class="social-icon" style="background:#E4405F20;color:#E4405F"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></div>
+              <div class="social-label">Instagram</div>
+              <input type="url" class="form-input" style="flex:1" value="https://instagram.com/marsabitcounty" oninput="markUnsaved()">
+            </div>
+            <div class="social-item">
+              <div class="social-icon" style="background:#FF000020;color:#FF0000"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22.54 6.42a2.78 2.78 0 00-1.94-1.96C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 00-1.94 1.96A29 29 0 001 12a29 29 0 00.46 5.58A2.78 2.78 0 003.4 19.54C5.12 20 12 20 12 20s6.88 0 8.6-.46a2.78 2.78 0 001.94-1.96A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg></div>
+              <div class="social-label">YouTube</div>
+              <input type="url" class="form-input" style="flex:1" value="https://youtube.com/@MarsabitCounty" oninput="markUnsaved()">
+            </div>
+            <div class="social-item">
+              <div class="social-icon" style="background:#0A66C220;color:#0A66C2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></div>
+              <div class="social-label">LinkedIn</div>
+              <input type="url" class="form-input" style="flex:1" value="https://linkedin.com/company/marsabit-county" oninput="markUnsaved()">
+            </div>
+            <div class="social-item">
+              <div class="social-icon" style="background:rgba(37,211,102,.15);color:#25D166"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+              <div class="social-label">WhatsApp</div>
+              <input type="tel" class="form-input" style="flex:1" value="+254720000001" oninput="markUnsaved()">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- THEME SETTINGS -->
+      <div class="settings-section" id="section-theme">
+        <div class="settings-card">
+          <div class="settings-card-header">
+            <div class="settings-card-icon" style="background:var(--gold-pale);color:var(--gold-dark)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/></svg>
+            </div>
+            <div><div class="settings-card-title">Theme & Appearance</div><div class="settings-card-desc">Customize the portal's visual identity</div></div>
+          </div>
+          <div class="settings-card-body">
+            <div class="form-group" style="margin-bottom:20px">
+              <label class="form-label">Primary Color (Navy)</label>
+              <div style="display:flex;align-items:center;gap:12px">
+                <input type="color" value="#0d2b5e" style="width:48px;height:38px;border-radius:8px;border:1.5px solid var(--surface2);cursor:pointer;background:none;padding:2px" onchange="updateThemePreview(this.value,'navy');markUnsaved()">
+                <input type="text" class="form-input" style="max-width:140px" value="#0d2b5e" oninput="markUnsaved()">
+                <span style="font-size:12px;color:var(--text3)">Main brand color</span>
+              </div>
+            </div>
+            <div class="form-group" style="margin-bottom:20px">
+              <label class="form-label">Accent Color (Gold)</label>
+              <div style="display:flex;align-items:center;gap:12px">
+                <input type="color" value="#c9a227" style="width:48px;height:38px;border-radius:8px;border:1.5px solid var(--surface2);cursor:pointer;background:none;padding:2px" onchange="updateThemePreview(this.value,'gold');markUnsaved()">
+                <input type="text" class="form-input" style="max-width:140px" value="#c9a227" oninput="markUnsaved()">
+                <span style="font-size:12px;color:var(--text3)">Highlights & accents</span>
+              </div>
+            </div>
+            <div class="form-group" style="margin-bottom:20px">
+              <label class="form-label">Preset Color Schemes</label>
+              <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:6px">
+                <div onclick="applyPreset('marsabit',this)" style="cursor:pointer;padding:10px 16px;border-radius:var(--radius);border:2px solid var(--navy);background:rgba(13,43,94,.05);font-size:12px;font-weight:600;color:var(--navy);transition:all .2s">Marsabit (Default)</div>
+                <div onclick="applyPreset('nairobi',this)" style="cursor:pointer;padding:10px 16px;border-radius:var(--radius);border:1.5px solid var(--surface2);font-size:12px;font-weight:600;color:var(--text2);transition:all .2s">Nairobi Green</div>
+                <div onclick="applyPreset('mombasa',this)" style="cursor:pointer;padding:10px 16px;border-radius:var(--radius);border:1.5px solid var(--surface2);font-size:12px;font-weight:600;color:var(--text2);transition:all .2s">Coastal Blue</div>
+                <div onclick="applyPreset('savanna',this)" style="cursor:pointer;padding:10px 16px;border-radius:var(--radius);border:1.5px solid var(--surface2);font-size:12px;font-weight:600;color:var(--text2);transition:all .2s">Savanna Earth</div>
+              </div>
+            </div>
+            <div class="form-group" style="margin-bottom:20px">
+              <label class="form-label">Font Family</label>
+              <select class="form-select" style="max-width:300px" onchange="markUnsaved()">
+                <option selected>DM Sans (Current)</option>
+                <option>Inter</option>
+                <option>Roboto</option>
+                <option>Open Sans</option>
+                <option>Source Sans 3</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom:20px">
+              <label class="form-label">Sidebar Style</label>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
+                <div onclick="selectSidebarStyle('solid',this)" style="cursor:pointer;padding:10px 16px;border-radius:var(--radius);border:2px solid var(--navy);background:rgba(13,43,94,.05);font-size:12px;font-weight:600;color:var(--navy);transition:all .2s">Solid (Default)</div>
+                <div onclick="selectSidebarStyle('gradient',this)" style="cursor:pointer;padding:10px 16px;border-radius:var(--radius);border:1.5px solid var(--surface2);font-size:12px;font-weight:600;color:var(--text2);transition:all .2s">Gradient</div>
+                <div onclick="selectSidebarStyle('light',this)" style="cursor:pointer;padding:10px 16px;border-radius:var(--radius);border:1.5px solid var(--surface2);font-size:12px;font-weight:600;color:var(--text2);transition:all .2s">Light Mode</div>
+              </div>
+            </div>
+            <div class="theme-preview">
+              <div class="theme-preview-bar" id="themePreviewBar" style="background:var(--navy)">
+                <div class="theme-preview-dot" style="background:#ff5f57"></div>
+                <div class="theme-preview-dot" style="background:#ffbd2e"></div>
+                <div class="theme-preview-dot" style="background:#28c940"></div>
+                <span style="font-size:11px;color:rgba(255,255,255,.6);margin-left:8px">SenateLink Preview</span>
+              </div>
+              <div class="theme-preview-body">
+                <div class="theme-preview-card">
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                    <div id="themePreviewDot" style="width:10px;height:10px;border-radius:50%;background:var(--gold)"></div>
+                    <span style="font-size:12px;font-weight:600;color:var(--text)">Dashboard Overview</span>
+                  </div>
+                  <div style="display:flex;gap:8px">
+                    <div id="themeBtn1" style="padding:5px 12px;border-radius:6px;background:var(--navy);color:#fff;font-size:11px;font-weight:600">Active</div>
+                    <div id="themeBtn2" style="padding:5px 12px;border-radius:6px;background:var(--gold-pale);color:var(--gold-dark);font-size:11px;font-weight:600">Pending</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NOTIFICATIONS -->
+      <div class="settings-section" id="section-notifications">
+        <div class="settings-card">
+          <div class="settings-card-header">
+            <div class="settings-card-icon" style="background:var(--info-bg);color:var(--info)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+            </div>
+            <div><div class="settings-card-title">Notification Preferences</div><div class="settings-card-desc">Control which alerts and emails are sent</div></div>
+          </div>
+          <div class="settings-card-body">
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Email Notifications</div><div class="toggle-desc">Receive email alerts for new complaints, approvals and system events</div></div><label class="toggle-switch"><input type="checkbox" checked onchange="markUnsaved()"><span class="toggle-slider"></span></label></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">New Complaint Alerts</div><div class="toggle-desc">Get notified immediately when a citizen files a new complaint</div></div><label class="toggle-switch"><input type="checkbox" checked onchange="markUnsaved()"><span class="toggle-slider"></span></label></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Bursary Application Alerts</div><div class="toggle-desc">Alert when new bursary applications are submitted for review</div></div><label class="toggle-switch"><input type="checkbox" checked onchange="markUnsaved()"><span class="toggle-slider"></span></label></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Project Milestone Updates</div><div class="toggle-desc">Receive updates when project progress is reported by contractors</div></div><label class="toggle-switch"><input type="checkbox" onchange="markUnsaved()"><span class="toggle-slider"></span></label></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Weekly Summary Digest</div><div class="toggle-desc">Receive a weekly summary of all portal activities every Monday morning</div></div><label class="toggle-switch"><input type="checkbox" checked onchange="markUnsaved()"><span class="toggle-slider"></span></label></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Escalation Alerts</div><div class="toggle-desc">Critical alerts when complaints are escalated to senior review</div></div><label class="toggle-switch"><input type="checkbox" checked onchange="markUnsaved()"><span class="toggle-slider"></span></label></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">System Maintenance Notices</div><div class="toggle-desc">Advance notice before scheduled system downtime or upgrades</div></div><label class="toggle-switch"><input type="checkbox" checked onchange="markUnsaved()"><span class="toggle-slider"></span></label></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">SMS Notifications</div><div class="toggle-desc">Send SMS alerts to registered admin phone numbers for critical events</div></div><label class="toggle-switch"><input type="checkbox" onchange="markUnsaved()"><span class="toggle-slider"></span></label></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECURITY -->
+      <div class="settings-section" id="section-security">
+        <div class="settings-card">
+          <div class="settings-card-header">
+            <div class="settings-card-icon" style="background:rgba(13,43,94,.1);color:var(--navy)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div><div class="settings-card-title">Security Settings</div><div class="settings-card-desc">Authentication, access control and audit settings</div></div>
+          </div>
+          <div class="settings-card-body">
+            <div class="security-item">
+              <div class="sec-icon" style="background:var(--success-bg);color:var(--success)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+              <div class="sec-info">
+                <div class="sec-title">Two-Factor Authentication (2FA)</div>
+                <div class="sec-desc">Require OTP verification for all admin logins. Currently <strong style="color:var(--success)">enabled</strong> for Super Admins.</div>
+              </div>
+              <div class="sec-action"><button class="btn btn-outline btn-sm" onclick="showToast('2FA settings updated.','success','Security')">Configure</button></div>
+            </div>
+            <div class="security-item">
+              <div class="sec-icon" style="background:var(--info-bg);color:var(--info)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+              <div class="sec-info">
+                <div class="sec-title">Session Timeout</div>
+                <div class="sec-desc">Automatically log out inactive sessions after a set period.</div>
+                <select class="form-select" style="max-width:200px;margin-top:8px" onchange="markUnsaved()">
+                  <option>30 minutes</option><option selected>1 hour</option><option>2 hours</option><option>4 hours</option><option>8 hours</option>
+                </select>
+              </div>
+            </div>
+            <div class="security-item">
+              <div class="sec-icon" style="background:var(--warn-bg);color:var(--warn)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+              <div class="sec-info">
+                <div class="sec-title">Failed Login Lockout</div>
+                <div class="sec-desc">Lock accounts after consecutive failed login attempts.</div>
+                <select class="form-select" style="max-width:200px;margin-top:8px" onchange="markUnsaved()">
+                  <option>3 attempts</option><option selected>5 attempts</option><option>10 attempts</option>
+                </select>
+              </div>
+            </div>
+            <div class="security-item">
+              <div class="sec-icon" style="background:var(--gold-pale);color:var(--gold-dark)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+              <div class="sec-info">
+                <div class="sec-title">Password Policy</div>
+                <div class="sec-desc">Enforce strong password requirements for all admin accounts.</div>
+              </div>
+              <div class="sec-action"><button class="btn btn-outline btn-sm" onclick="openModal('passwordPolicyModal')">Configure</button></div>
+            </div>
+            <div class="security-item">
+              <div class="sec-icon" style="background:var(--success-bg);color:var(--success)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+              <div class="sec-info">
+                <div class="sec-title">Audit Log</div>
+                <div class="sec-desc">Administrative audit logging is not configured.</div>
+              </div>
+              <div class="sec-action"><button class="btn btn-outline btn-sm" onclick="showToast('Opening full audit log…','info','Audit Log')">View Log</button></div>
+            </div>
+            <div class="security-item">
+              <div class="sec-icon" style="background:var(--danger-bg);color:var(--danger)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></div>
+              <div class="sec-info">
+                <div class="sec-title">IP Allowlisting</div>
+                <div class="sec-desc">Restrict admin portal access to specific IP addresses only. Currently <strong style="color:var(--danger)">disabled</strong>.</div>
+              </div>
+              <div class="sec-action"><button class="btn btn-outline btn-sm" onclick="showToast('IP allowlist configured.','success','Security')">Enable</button></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-card">
+          <div class="settings-card-header">
+            <div class="settings-card-icon" style="background:var(--danger-bg);color:var(--danger)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+            </div>
+            <div><div class="settings-card-title">Danger Zone</div><div class="settings-card-desc">Irreversible system actions — proceed with caution</div></div>
+          </div>
+          <div class="settings-card-body">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:14px;border:1.5px solid var(--danger-bg);border-radius:var(--radius);margin-bottom:12px;flex-wrap:wrap;gap:12px">
+              <div><div style="font-size:13px;font-weight:600;color:var(--text)">Clear All Portal Cache</div><div style="font-size:12px;color:var(--text3);margin-top:2px">Forces a full refresh of all cached data and sessions</div></div>
+              <button class="btn btn-outline btn-sm" style="border-color:var(--danger);color:var(--danger)" onclick="showToast('Cache management is not configured.','warning','Unavailable')">Clear Cache</button>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:14px;border:1.5px solid var(--danger-bg);border-radius:var(--radius);flex-wrap:wrap;gap:12px">
+              <div><div style="font-size:13px;font-weight:600;color:var(--danger)">Reset System to Defaults</div><div style="font-size:12px;color:var(--text3);margin-top:2px">Erases all settings and restores factory defaults. Cannot be undone.</div></div>
+              <button class="btn btn-danger btn-sm" onclick="confirmReset()">Factory Reset</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BACKUP & RESTORE -->
+      <div class="settings-section" id="section-backup">
+        <div class="settings-card">
+          <div class="settings-card-header">
+            <div class="settings-card-icon" style="background:var(--info-bg);color:var(--info)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+            </div>
+            <div><div class="settings-card-title">Backup & Restore</div><div class="settings-card-desc">Manage system backups and data restoration</div></div>
+          </div>
+          <div class="settings-card-body">
+            <div style="background:var(--success-bg);border:1px solid rgba(26,122,74,.2);border-radius:var(--radius);padding:14px 16px;margin-bottom:20px;display:flex;align-items:center;gap:10px">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <div style="font-size:13px;color:var(--warn)">Automated backups are not configured for this deployment.</div>
+            </div>
+            <div style="display:flex;gap:10px;margin-bottom:22px;flex-wrap:wrap">
+              <button class="btn btn-navy" onclick="runBackup()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/></svg>Run Backup Now
+              </button>
+              <button class="btn btn-outline" onclick="showToast('Restore service is not configured.','warning','Restore Unavailable')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>Restore from Backup
+              </button>
+            </div>
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-bottom:12px">Recent Backups</div>
+            <div class="backup-item">No backup records are available.</div>
+            <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--surface)">
+              <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-bottom:12px">Backup Schedule</div>
+              <div class="form-grid" style="margin-bottom:0">
+                <div class="form-group">
+                  <label class="form-label">Frequency</label>
+                  <select class="form-select" onchange="markUnsaved()"><option selected>Daily at 3:00 AM</option><option>Every 12 hours</option><option>Weekly</option><option>Manual only</option></select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Retention Period</label>
+                  <select class="form-select" onchange="markUnsaved()"><option>7 days</option><option selected>30 days</option><option>90 days</option><option>1 year</option></select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Storage Location</label>
+                  <select class="form-select" onchange="markUnsaved()"><option selected>Local Server</option><option>AWS S3</option><option>Google Cloud</option><option>Azure Blob</option></select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Encryption</label>
+                  <select class="form-select" onchange="markUnsaved()"><option selected>AES-256</option><option>AES-128</option><option>None</option></select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADVANCED -->
+      <div class="settings-section" id="section-advanced">
+        <div class="settings-card">
+          <div class="settings-card-header">
+            <div class="settings-card-icon" style="background:rgba(13,43,94,.1);color:var(--navy)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 19.07a10 10 0 010-14.14M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+            </div>
+            <div><div class="settings-card-title">Advanced Settings</div><div class="settings-card-desc">System performance, APIs and developer options</div></div>
+          </div>
+          <div class="settings-card-body">
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Maintenance Mode</div><div class="toggle-desc">Temporarily disable citizen-facing portal while maintenance is performed. Admins retain access.</div></div><label class="toggle-switch"><input type="checkbox" onchange="toggleMaintenance(this);markUnsaved()"><span class="toggle-slider"></span></label></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Debug Logging</div><div class="toggle-desc">Log detailed system events to assist with troubleshooting. Disable in production.</div></div><label class="toggle-switch"><input type="checkbox" onchange="markUnsaved()"><span class="toggle-slider"></span></label></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">API Access</div><div class="toggle-desc">Allow third-party applications to connect via the REST API using API keys.</div></div><label class="toggle-switch"><input type="checkbox" checked onchange="markUnsaved()"><span class="toggle-slider"></span></label></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Rate Limiting</div><div class="toggle-desc">Restrict API calls to 1000 requests per minute per key to prevent abuse.</div></div><label class="toggle-switch"><input type="checkbox" checked onchange="markUnsaved()"><span class="toggle-slider"></span></label></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">CORS Policy</div><div class="toggle-desc">Enforce Cross-Origin Resource Sharing policy on all API endpoints.</div></div><label class="toggle-switch"><input type="checkbox" checked onchange="markUnsaved()"><span class="toggle-slider"></span></label></div>
+          </div>
+        </div>
+
+        <div class="settings-card">
+          <div class="settings-card-header">
+            <div class="settings-card-icon" style="background:var(--gold-pale);color:var(--gold-dark)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </div>
+            <div><div class="settings-card-title">System Information</div><div class="settings-card-desc">Current platform and version details</div></div>
+          </div>
+          <div class="settings-card-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+              <div style="padding:14px;background:var(--off-white);border-radius:var(--radius);border:1px solid var(--surface2)"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text3);margin-bottom:5px">Version</div><div style="font-size:14px;font-weight:600;color:var(--text)">SenateLink v2.4.1</div></div>
+              <div style="padding:14px;background:var(--off-white);border-radius:var(--radius);border:1px solid var(--surface2)"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text3);margin-bottom:5px">Environment</div><div style="font-size:14px;font-weight:600;color:var(--success)">Production</div></div>
+              <div style="padding:14px;background:var(--off-white);border-radius:var(--radius);border:1px solid var(--surface2)"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text3);margin-bottom:5px">Last Updated</div><div style="font-size:14px;font-weight:600;color:var(--text)">Not tracked</div></div>
+              <div style="padding:14px;background:var(--off-white);border-radius:var(--radius);border:1px solid var(--surface2)"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text3);margin-bottom:5px">Uptime</div><div style="font-size:14px;font-weight:600;color:var(--success)">99.8% (30 days)</div></div>
+              <div style="padding:14px;background:var(--off-white);border-radius:var(--radius);border:1px solid var(--surface2)"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text3);margin-bottom:5px">Database</div><div style="font-size:14px;font-weight:600;color:var(--text)">Marsabit-DB-01</div></div>
+              <div style="padding:14px;background:var(--off-white);border-radius:var(--radius);border:1px solid var(--surface2)"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text3);margin-bottom:5px">License</div><div style="font-size:14px;font-weight:600;color:var(--navy)">Government Edition</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<!-- SAVE BAR -->
+<div class="save-bar" id="saveBar">
+  <div class="save-bar-msg">
+    <span class="unsaved-dot" id="unsavedDot" style="display:none"></span>
+    <span id="saveBarMsg" style="font-size:13px;color:var(--warn)">Settings storage is not configured</span>
+  </div>
+  <div style="display:flex;gap:10px">
+    <button class="btn btn-outline" onclick="resetSettings()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>Reset
+    </button>
+    <button class="btn btn-gold" onclick="saveSettings()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>Save Changes
+    </button>
+  </div>
+</div>
+
+<!-- ── MODAL: PASSWORD POLICY ── -->
+<div class="modal-overlay" id="passwordPolicyModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Password Policy</span>
+      <button class="modal-close" onclick="closeModal('passwordPolicyModal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Minimum Password Length</label>
+        <select class="form-select"><option>6 characters</option><option>8 characters</option><option selected>10 characters</option><option>12 characters</option></select>
+      </div>
+      <div style="margin-top:4px;display:flex;flex-direction:column;gap:10px">
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;color:var(--text2)"><input type="checkbox" checked style="accent-color:var(--navy);width:15px;height:15px">Require uppercase letters (A–Z)</label>
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;color:var(--text2)"><input type="checkbox" checked style="accent-color:var(--navy);width:15px;height:15px">Require lowercase letters (a–z)</label>
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;color:var(--text2)"><input type="checkbox" checked style="accent-color:var(--navy);width:15px;height:15px">Require numbers (0–9)</label>
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;color:var(--text2)"><input type="checkbox" checked style="accent-color:var(--navy);width:15px;height:15px">Require special characters (@, #, !, etc.)</label>
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;color:var(--text2)"><input type="checkbox" style="accent-color:var(--navy);width:15px;height:15px">Prevent reuse of last 5 passwords</label>
+      </div>
+      <div class="form-group" style="margin-top:16px"><label class="form-label">Password Expiry</label>
+        <select class="form-select"><option>Never</option><option>30 days</option><option selected>90 days</option><option>180 days</option><option>1 year</option></select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('passwordPolicyModal')">Cancel</button>
+      <button class="btn btn-navy" onclick="closeModal('passwordPolicyModal');showToast('Password policy saved.','success','Policy Saved')">Save Policy</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+<div class="sidebar-overlay" id="sidebarOverlaySettings" style="display:none"></div>
+
+<script>
+// ── HELPERS ──
+function go(url){window.location.href=url}
+let unsavedChanges=false;
+
+// ── SECTION NAV ──
+function showSection(id,el){
+  document.querySelectorAll('.settings-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.settings-nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('section-'+id).classList.add('active');
+  el.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── UNSAVED ──
+function markUnsaved(){
+  unsavedChanges=true;
+  document.getElementById('unsavedDot').style.display='inline-block';
+  document.getElementById('saveBarMsg').textContent='You have unsaved changes';
+  document.getElementById('saveBarMsg').style.color='var(--warn)';
+}
+
+// ── SAVE ──
+function saveSettings(){
+  showToast('Settings storage is not configured. Your changes have not been saved.','warning','Save Unavailable');
+}
+
+// ── RESET ──
+function resetSettings(){
+  showToast('There are no saved settings to restore.','info','Reset Unavailable');
+}
+
+// ── THEME ──
+function updateThemePreview(color,type){
+  if(type==='navy'){
+    document.getElementById('themePreviewBar').style.background=color;
+    document.getElementById('themeBtn1').style.background=color;
+  }
+  if(type==='gold'){
+    document.getElementById('themePreviewDot').style.background=color;
+    document.getElementById('themeBtn2').style.background=color+'20';
+    document.getElementById('themeBtn2').style.color=color;
+  }
+  showToast('Theme preview updated.','info','Preview');
+}
+
+function applyPreset(name,el){
+  document.querySelectorAll('[onclick^="applyPreset"]').forEach(e=>{
+    e.style.border='1.5px solid var(--surface2)';
+    e.style.color='var(--text2)';
+    e.style.background='transparent';
+  });
+  el.style.border='2px solid var(--navy)';
+  el.style.color='var(--navy)';
+  el.style.background='rgba(13,43,94,.05)';
+  const presets={marsabit:'Default Marsabit theme applied.',nairobi:'Nairobi Green theme applied.',mombasa:'Coastal Blue theme applied.',savanna:'Savanna Earth theme applied.'};
+  showToast(presets[name]||'Theme applied.','success','Theme Applied');
+  markUnsaved();
+}
+
+function selectSidebarStyle(style,el){
+  document.querySelectorAll('[onclick^="selectSidebarStyle"]').forEach(e=>{
+    e.style.border='1.5px solid var(--surface2)';
+    e.style.color='var(--text2)';
+    e.style.background='transparent';
+  });
+  el.style.border='2px solid var(--navy)';
+  el.style.color='var(--navy)';
+  el.style.background='rgba(13,43,94,.05)';
+  showToast(`Sidebar style set to "${style}".`,'info','Style Updated');
+  markUnsaved();
+}
+
+// ── BACKUP ──
+function runBackup(){
+  showToast('Backup storage is not configured. Use your MongoDB provider backups.','warning','Backup Unavailable');
+}
+
+// ── MAINTENANCE ──
+function toggleMaintenance(cb){
+  cb.checked=false;
+  showToast('Maintenance mode is not configured and was not changed.','warning','Unavailable');
+}
+
+// ── DANGER ZONE ──
+function confirmReset(){
+  if(confirm('Are you sure you want to factory reset the system? This cannot be undone.')){
+    showToast('Factory reset initiated. System will restart.','error','Resetting…');
+  }
+}
+
+// ── MODAL ──
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open')}));
+
+// ── TOAST ──
+function showToast(msg,type='info',title=''){
+  const icons={success:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',warning:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>',error:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'};
+  const t=document.createElement('div');t.className=`toast ${type}`;
+  t.innerHTML=`<div class="toast-icon">${icons[type]||icons.info}</div><div class="toast-body"><div class="toast-title">${title}</div><div class="toast-msg">${msg}</div></div><button class="toast-x" onclick="removeToast(this.parentElement)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
+  document.getElementById('toastContainer').appendChild(t);
+  setTimeout(()=>removeToast(t),4500);
+}
+function removeToast(el){if(!el||!el.parentElement)return;el.style.animation='toastOut .35s ease forwards';setTimeout(()=>el.remove(),340)}
+
+// ── SIDEBAR ──
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('open')}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('open')}
+
+// ── UNSAVED WARN ──
+window.addEventListener('beforeunload',e=>{if(unsavedChanges){e.preventDefault();e.returnValue=''}});
+</script>
+</body>
+</html>

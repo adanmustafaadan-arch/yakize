@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SenateLink Admin — Complaints</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0d2b5e;--navy-dark:#091e45;--navy-mid:#1a3d78;--navy-light:#2a5298;
+  --gold:#c9a227;--gold-light:#e8b93a;--gold-pale:#f5e8c0;--gold-dark:#a07c15;
+  --white:#ffffff;--off-white:#f7f8fc;--surface:#eef1f8;--surface2:#e4e9f4;
+  --text:#1a1d2e;--text2:#4a5270;--text3:#8892b0;
+  --success:#1a7a4a;--success-bg:#e6f4ec;
+  --warn:#b35c00;--warn-bg:#fff3e0;
+  --danger:#c0392b;--danger-bg:#fdecea;
+  --info:#1565c0;--info-bg:#e3f0ff;
+  --radius:10px;--radius-lg:16px;--radius-xl:22px;
+  --shadow:0 2px 12px rgba(13,43,94,.10);
+  --shadow-lg:0 6px 28px rgba(13,43,94,.16);
+  --sidebar-w:260px;--topbar-h:64px;
+  --transition:all .22s cubic-bezier(.4,0,.2,1);
+}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--text);font-size:15px}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:99px}
+
+/* ── SIDEBAR ── */
+.sidebar{position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;background:var(--navy);z-index:200;display:flex;flex-direction:column;transition:var(--transition);overflow:hidden}
+.sidebar-brand{padding:0 20px;height:var(--topbar-h);display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.brand-icon{width:38px;height:38px;border-radius:10px;background:var(--gold);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.brand-icon svg{width:22px;height:22px;fill:var(--navy)}
+.brand-text{display:flex;flex-direction:column;line-height:1.2}
+.brand-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--white);letter-spacing:.3px}
+.brand-sub{font-size:10px;color:rgba(201,162,39,.85);font-weight:500;text-transform:uppercase;letter-spacing:1px}
+.sidebar-scroll{flex:1;overflow-y:auto;padding:16px 0 24px}
+.nav-section-label{font-size:10px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:rgba(255,255,255,.35);padding:16px 20px 6px}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 20px;margin:1px 10px;border-radius:var(--radius);color:rgba(255,255,255,.7);font-size:14px;font-weight:400;cursor:pointer;transition:var(--transition);position:relative}
+.nav-item:hover{background:rgba(255,255,255,.07);color:var(--white)}
+.nav-item.active{background:linear-gradient(90deg,var(--gold) 0%,var(--gold-light) 100%);color:var(--navy);font-weight:600}
+.nav-icon{width:18px;height:18px;flex-shrink:0;opacity:.7}
+.nav-item.active .nav-icon{opacity:1}
+.nav-badge{margin-left:auto;background:var(--danger);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px}
+.nav-item.active .nav-badge{background:var(--navy)}
+.sidebar-footer{padding:16px;border-top:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.user-card{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--radius);background:rgba(255,255,255,.06);cursor:pointer;transition:var(--transition)}
+.user-card:hover{background:rgba(255,255,255,.10)}
+.user-avatar{width:34px;height:34px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--navy);flex-shrink:0}
+.user-info{flex:1;overflow:hidden}
+.user-name{font-size:13px;font-weight:600;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-role{font-size:11px;color:rgba(255,255,255,.45)}
+.logout-btn{margin-top:8px;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:9px;border-radius:var(--radius);color:rgba(255,100,100,.8);font-size:13px;font-weight:500;transition:var(--transition)}
+.logout-btn:hover{background:rgba(255,100,100,.1);color:#ff6b6b}
+
+/* ── TOPBAR ── */
+.topbar{position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--topbar-h);background:var(--white);border-bottom:1px solid var(--surface2);display:flex;align-items:center;padding:0 28px;gap:16px;z-index:100;transition:var(--transition)}
+.topbar-hamburger{display:none;width:36px;height:36px;border-radius:8px;align-items:center;justify-content:center;background:var(--surface);cursor:pointer;transition:var(--transition)}
+.topbar-hamburger:hover{background:var(--surface2)}
+.topbar-title{flex:1}
+.topbar-title h1{font-size:18px;font-weight:600;color:var(--text)}
+.topbar-title p{font-size:12px;color:var(--text3)}
+.topbar-actions{display:flex;align-items:center;gap:8px}
+.icon-btn{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:var(--surface);color:var(--text2);transition:var(--transition);position:relative;cursor:pointer}
+.icon-btn:hover{background:var(--navy);color:var(--white)}
+.notif-dot{position:absolute;top:7px;right:7px;width:8px;height:8px;background:var(--danger);border-radius:50%;border:2px solid var(--white)}
+.topbar-divider{width:1px;height:28px;background:var(--surface2);margin:0 4px}
+.topbar-user{display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 8px;border-radius:9px;transition:var(--transition)}
+.topbar-user:hover{background:var(--surface)}
+.topbar-user-avatar{width:34px;height:34px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--gold)}
+.topbar-user-name{font-size:13px;font-weight:600;color:var(--text)}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar-w);margin-top:var(--topbar-h);padding:28px;min-height:calc(100vh - var(--topbar-h));transition:var(--transition)}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px}
+.page-header-left h2{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--navy)}
+.page-header-left p{font-size:13px;color:var(--text3);margin-top:2px}
+
+/* ── STATS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px;margin-bottom:28px}
+.stat-card{background:var(--white);border-radius:var(--radius-lg);padding:18px 20px;box-shadow:var(--shadow);border:1px solid var(--surface2);position:relative;overflow:hidden;transition:var(--transition);cursor:default}
+.stat-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent,var(--navy))}
+.stat-card[data-color="warn"]::before{background:var(--warn)}
+.stat-card[data-color="success"]::before{background:var(--success)}
+.stat-card[data-color="info"]::before{background:var(--info)}
+.stat-card[data-color="danger"]::before{background:var(--danger)}
+.stat-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-bottom:8px}
+.stat-value{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:var(--text);line-height:1}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:6px}
+
+/* ── CARD ── */
+.card{background:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow);border:1px solid var(--surface2);overflow:hidden;margin-bottom:22px}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--surface);flex-wrap:wrap;gap:10px}
+.card-title{font-size:15px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px}
+.card-title-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0}
+
+/* ── FILTERS ── */
+.filters-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.filter-search{position:relative}
+.filter-search input{background:var(--surface);border:1.5px solid transparent;border-radius:9px;padding:8px 14px 8px 36px;font-size:13px;color:var(--text);width:220px;transition:var(--transition);font-family:inherit;outline:none}
+.filter-search input:focus{border-color:var(--gold);background:var(--white)}
+.search-ico{position:absolute;left:11px;top:50%;transform:translateY(-50%);opacity:.4}
+.filter-select{font-size:12px;padding:8px 12px;border:1.5px solid var(--surface2);border-radius:9px;background:var(--surface);color:var(--text);font-family:inherit;cursor:pointer;outline:none;transition:var(--transition)}
+.filter-select:focus{border-color:var(--gold)}
+.filter-tab{padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--surface2);background:var(--white);color:var(--text2);transition:var(--transition)}
+.filter-tab:hover{border-color:var(--navy);color:var(--navy)}
+.filter-tab.active{background:var(--navy);color:var(--white);border-color:var(--navy)}
+
+/* ── TABLE ── */
+.table-wrap{overflow-x:auto}
+.data-table{width:100%;border-collapse:collapse}
+.data-table th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);padding:12px 18px;background:var(--surface);text-align:left;white-space:nowrap}
+.data-table th:last-child{text-align:right}
+.data-table td{padding:14px 18px;border-bottom:1px solid var(--surface);font-size:13px;color:var(--text2);vertical-align:middle}
+.data-table td:last-child{text-align:right}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover td{background:var(--off-white)}
+.sortable{cursor:pointer;user-select:none}
+.sortable:hover{color:var(--navy)}
+
+/* ── CITIZEN CELL ── */
+.citizen-cell{display:flex;align-items:center;gap:10px}
+.c-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.c-name{font-weight:500;color:var(--text);font-size:13px}
+.c-ward{font-size:11px;color:var(--text3)}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
+.badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.7}
+.badge-pending{background:var(--warn-bg);color:var(--warn)}
+.badge-resolved{background:var(--success-bg);color:var(--success)}
+.badge-progress{background:var(--info-bg);color:var(--info)}
+.badge-review{background:var(--gold-pale);color:var(--gold-dark)}
+.badge-rejected{background:var(--danger-bg);color:var(--danger)}
+.cat-badge{display:inline-block;font-size:10px;font-weight:600;padding:2px 9px;border-radius:99px;background:var(--surface);color:var(--text2)}
+
+/* ── ACTION BUTTONS ── */
+.action-group{display:flex;gap:5px;justify-content:flex-end;flex-wrap:wrap}
+.act-btn{font-size:11px;font-weight:600;padding:5px 10px;border-radius:6px;cursor:pointer;border:none;font-family:inherit;transition:var(--transition);white-space:nowrap}
+.act-btn-view{background:var(--info-bg);color:var(--info)}
+.act-btn-view:hover{background:var(--info);color:#fff}
+.act-btn-resolve{background:var(--success-bg);color:var(--success)}
+.act-btn-resolve:hover{background:var(--success);color:#fff}
+.act-btn-assign{background:var(--gold-pale);color:var(--gold-dark)}
+.act-btn-assign:hover{background:var(--gold);color:var(--navy)}
+.act-btn-delete{background:var(--danger-bg);color:var(--danger)}
+.act-btn-delete:hover{background:var(--danger);color:#fff}
+
+/* ── PAGINATION ── */
+.pagination-row{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-top:1px solid var(--surface);flex-wrap:wrap;gap:10px}
+.pagin-info{font-size:12px;color:var(--text3)}
+.pagin-btns{display:flex;gap:5px}
+.pagin-btn{font-size:12px;font-weight:600;padding:5px 11px;border-radius:6px;cursor:pointer;border:1.5px solid var(--surface2);background:var(--white);color:var(--text2);font-family:inherit;transition:var(--transition)}
+.pagin-btn:hover{border-color:var(--navy);color:var(--navy)}
+.pagin-btn.active{background:var(--navy);color:var(--white);border-color:var(--navy)}
+
+/* ── BUTTONS ── */
+.btn{padding:9px 20px;border-radius:9px;font-size:13px;font-weight:600;transition:var(--transition);cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:7px}
+.btn-navy{background:var(--navy);color:var(--white);border:none}
+.btn-navy:hover{background:var(--navy-mid)}
+.btn-gold{background:var(--gold);color:var(--navy);border:none}
+.btn-gold:hover{background:var(--gold-light)}
+.btn-outline{background:transparent;color:var(--text2);border:1.5px solid var(--surface2)}
+.btn-outline:hover{border-color:var(--navy);color:var(--navy)}
+.btn-danger{background:var(--danger);color:#fff;border:none}
+.btn-danger:hover{background:#a93226}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(13,43,94,.55);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(3px);padding:20px}
+.modal-overlay.open{display:flex;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:var(--white);border-radius:var(--radius-xl);width:100%;max-width:560px;box-shadow:0 20px 60px rgba(13,43,94,.3);animation:slideUp .3s cubic-bezier(.4,0,.2,1);max-height:90vh;overflow-y:auto}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:22px 26px;border-bottom:1px solid var(--surface);position:sticky;top:0;background:var(--white);z-index:1}
+.modal-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--navy)}
+.modal-close{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--surface);color:var(--text3);cursor:pointer;transition:var(--transition);border:none}
+.modal-close:hover{background:var(--danger-bg);color:var(--danger)}
+.modal-body{padding:26px}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;padding:18px 26px;border-top:1px solid var(--surface)}
+.detail-row{display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.detail-field{flex:1;min-width:140px}
+.detail-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text3);margin-bottom:4px}
+.detail-value{font-size:14px;color:var(--text);font-weight:500}
+.detail-divider{height:1px;background:var(--surface);margin:16px 0}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:6px}
+.form-input,.form-select,.form-textarea{width:100%;padding:10px 14px;border:1.5px solid var(--surface2);border-radius:var(--radius);font-size:14px;color:var(--text);font-family:inherit;transition:var(--transition);background:var(--off-white);outline:none}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--gold);background:var(--white)}
+.form-textarea{resize:vertical}
+
+/* ── TOAST ── */
+.toast-container{position:fixed;bottom:28px;right:28px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none}
+.toast{background:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);border:1px solid var(--surface2);padding:14px 18px;display:flex;align-items:flex-start;gap:12px;min-width:300px;max-width:360px;pointer-events:all;animation:toastIn .4s cubic-bezier(.4,0,.2,1) forwards}
+.toast.success{border-left:4px solid var(--success)}
+.toast.warning{border-left:4px solid var(--gold)}
+.toast.error{border-left:4px solid var(--danger)}
+.toast.info{border-left:4px solid var(--navy)}
+@keyframes toastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+@keyframes toastOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(40px)}}
+.toast-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.toast-icon svg{width:16px;height:16px}
+.toast.success .toast-icon{background:var(--success-bg);color:var(--success)}
+.toast.warning .toast-icon{background:var(--warn-bg);color:var(--warn)}
+.toast.error .toast-icon{background:var(--danger-bg);color:var(--danger)}
+.toast.info .toast-icon{background:var(--info-bg);color:var(--info)}
+.toast-body{flex:1}
+.toast-title{font-size:13px;font-weight:700;color:var(--text)}
+.toast-msg{font-size:12px;color:var(--text3);margin-top:2px}
+.toast-x{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);background:none;border:none;transition:var(--transition)}
+.toast-x:hover{background:var(--surface);color:var(--text)}
+
+/* ── SIDEBAR OVERLAY ── */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:190}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-overlay.open{display:block}
+  .topbar{left:0;padding:0 16px;gap:10px}
+  .topbar-hamburger{display:flex}
+  .main{margin-left:0;padding:16px}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .topbar-user-name{display:none}
+  .filter-search input{width:160px}
+}
+@media(max-width:480px){
+  .stats-grid{grid-template-columns:1fr}
+  .filters-row{flex-direction:column;align-items:stretch}
+  .filter-search input{width:100%}
+}
+</style>
+</head>
+<body>
+<script src="/admin/admin-auth.js"></script>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><polyline points="9 22 9 12 15 12 15 22" fill="none" stroke="#0d2b5e" stroke-width="2"/></svg>
+    </div>
+    <div class="brand-text">
+      <span class="brand-title">SenateLink</span>
+      <span class="brand-sub">Marsabit County</span>
+    </div>
+  </div>
+  <div class="sidebar-scroll">
+    <div class="nav-section-label">Main Menu</div>
+    <div class="nav-item" onclick="go('admin-dashboard.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard
+    </div>
+    <div class="nav-item active">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Complaints
+      <span class="nav-badge" id="sidebarPendingComplaints">0</span>
+    </div>
+    <div class="nav-item" onclick="go('admin-bursaries.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>Bursaries
+      <span class="nav-badge" id="sidebarPendingBursaries">0</span>
+    </div>
+    <div class="nav-item" onclick="go('admin-proposals.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Proposals
+    </div>
+    <div class="nav-item" onclick="go('admin-projects.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Projects
+    </div>
+    <div class="nav-section-label">Content</div>
+    <div class="nav-item" onclick="go('admin-news.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2v-9c0-1.1.9-2 2-2h2"/></svg>News
+    </div>
+    <div class="nav-section-label">Administration</div>
+    <div class="nav-item" onclick="go('admin-users.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Users
+    </div>
+    <div class="nav-item" onclick="go('admin-reports.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Reports
+    </div>
+    <div class="nav-item" onclick="go('admin-settings.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 19.07a10 10 0 010-14.14"/></svg>Settings
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">JM</div>
+      <div class="user-info">
+        <div class="user-name">James Mureithi</div>
+        <div class="user-role">Super Admin</div>
+      </div>
+    </div>
+    <button class="logout-btn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout
+    </button>
+  </div>
+</aside>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-hamburger" onclick="toggleSidebar()">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </div>
+  <div class="topbar-title">
+    <h1>Complaints Management</h1>
+    <p>Dashboard › Complaints</p>
+  </div>
+  <div class="topbar-actions">
+    <div class="icon-btn" title="Notifications">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <span class="notif-dot"></span>
+    </div>
+    <div class="topbar-divider"></div>
+    <div class="topbar-user">
+      <div class="topbar-user-avatar">JM</div>
+      <span class="topbar-user-name">James Mureithi</span>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="page-header-left">
+      <h2>Complaints Management</h2>
+      <p>Track, assign and resolve citizen complaints across all wards</p>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-outline" onclick="exportCSV()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export CSV
+      </button>
+      <button class="btn btn-gold" onclick="openModal('newComplaintModal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New Complaint
+      </button>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card" data-color="navy">
+      <div class="stat-label">Total Complaints</div>
+      <div class="stat-value">0</div>
+      <div class="stat-sub">All time records</div>
+    </div>
+    <div class="stat-card" data-color="warn">
+      <div class="stat-label">Pending</div>
+      <div class="stat-value" id="pendingCount">0</div>
+      <div class="stat-sub">Awaiting action</div>
+    </div>
+    <div class="stat-card" data-color="info">
+      <div class="stat-label">In Progress</div>
+      <div class="stat-value">0</div>
+      <div class="stat-sub">Being handled</div>
+    </div>
+    <div class="stat-card" data-color="success">
+      <div class="stat-label">Resolved</div>
+      <div class="stat-value">0</div>
+      <div class="stat-sub">Successfully closed</div>
+    </div>
+    <div class="stat-card" data-color="danger">
+      <div class="stat-label">Escalated</div>
+      <div class="stat-value">0</div>
+      <div class="stat-sub">Needs senior review</div>
+    </div>
+  </div>
+
+  <!-- TABLE CARD -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title"><span class="card-title-dot"></span>All Complaints</span>
+      <div class="filters-row">
+        <div class="filter-search">
+          <svg class="search-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input type="text" placeholder="Search complaints…" oninput="applyFilters()" id="searchInput">
+        </div>
+        <select class="filter-select" id="statusFilter" onchange="applyFilters()">
+          <option value="">All Status</option>
+          <option value="Pending">Pending</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Resolved">Resolved</option>
+          <option value="Under Review">Under Review</option>
+          <option value="Escalated">Escalated</option>
+        </select>
+        <select class="filter-select" id="categoryFilter" onchange="applyFilters()">
+          <option value="">All Categories</option>
+          <option value="Infrastructure">Infrastructure</option>
+          <option value="Healthcare">Healthcare</option>
+          <option value="Education">Education</option>
+          <option value="Security">Security</option>
+          <option value="Water">Water</option>
+          <option value="Roads">Roads</option>
+        </select>
+        <select class="filter-select" id="wardFilter" onchange="applyFilters()">
+          <option value="">All Wards</option>
+          <option value="Marsabit Central">Marsabit Central</option>
+          <option value="Saku Ward">Saku Ward</option>
+          <option value="North Horr">North Horr</option>
+          <option value="Laisamis">Laisamis</option>
+          <option value="Moyale">Moyale</option>
+          <option value="Sololo">Sololo</option>
+        </select>
+        <div style="display:flex;gap:5px">
+          <button class="filter-tab active" id="tab-all" onclick="setTab('all',this)">All</button>
+          <button class="filter-tab" id="tab-pending" onclick="setTab('Pending',this)">Pending</button>
+          <button class="filter-tab" id="tab-progress" onclick="setTab('In Progress',this)">In Progress</button>
+          <button class="filter-tab" id="tab-resolved" onclick="setTab('Resolved',this)">Resolved</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="sortable" onclick="sortTable('id')">ID ↕</th>
+            <th>Citizen</th>
+            <th class="sortable" onclick="sortTable('ward')">Ward ↕</th>
+            <th class="sortable" onclick="sortTable('category')">Category ↕</th>
+            <th class="sortable" onclick="sortTable('date')">Date Filed ↕</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="complaintsTbody"></tbody>
+      </table>
+    </div>
+
+    <div class="pagination-row">
+      <span class="pagin-info" id="paginInfo">Showing 1–10 of 32</span>
+      <div class="pagin-btns" id="paginBtns"></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ── MODAL: VIEW COMPLAINT ── -->
+<div class="modal-overlay" id="viewModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="viewModalTitle">Complaint Details</span>
+      <button class="modal-close" onclick="closeModal('viewModal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="viewModalBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('viewModal')">Close</button>
+      <button class="btn btn-gold" id="viewResolveBtn">Mark Resolved</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL: ASSIGN OFFICER ── -->
+<div class="modal-overlay" id="assignModal">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-header">
+      <span class="modal-title">Assign Officer</span>
+      <button class="modal-close" onclick="closeModal('assignModal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--text3);margin-bottom:18px">Assign this complaint to a field officer for follow-up and resolution.</p>
+      <div class="form-group">
+        <label class="form-label">Select Officer</label>
+        <select class="form-select" id="assignOfficer">
+          <option value="">— Choose Officer —</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Priority Level</label>
+        <select class="form-select" id="assignPriority">
+          <option value="low">Low</option>
+          <option selected value="medium">Medium</option>
+          <option value="high">High</option>
+          <option value="critical">Critical</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Due Date</label>
+        <input type="date" class="form-input" id="assignDueDate">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Instructions</label>
+        <textarea class="form-textarea" rows="3" id="assignmentNotes" placeholder="Additional instructions for the officer…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('assignModal')">Cancel</button>
+      <button class="btn btn-navy" onclick="submitAssign()">Assign Officer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL: NEW COMPLAINT ── -->
+<div class="modal-overlay" id="newComplaintModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Log New Complaint</span>
+      <button class="modal-close" onclick="closeModal('newComplaintModal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="form-group">
+          <label class="form-label">Citizen Name</label>
+          <input type="text" class="form-input" placeholder="Full name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone</label>
+          <input type="tel" class="form-input" placeholder="07XX XXX XXX">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="form-group">
+          <label class="form-label">Ward</label>
+          <select class="form-select">
+            <option>Marsabit Central</option>
+            <option>Saku Ward</option>
+            <option>North Horr</option>
+            <option>Laisamis</option>
+            <option>Moyale</option>
+            <option>Sololo</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-select">
+            <option>Infrastructure</option>
+            <option>Healthcare</option>
+            <option>Education</option>
+            <option>Security</option>
+            <option>Water</option>
+            <option>Roads</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Subject</label>
+        <input type="text" class="form-input" placeholder="Brief subject of complaint">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Complaint Details</label>
+        <textarea class="form-textarea" rows="4" placeholder="Describe the complaint in detail…"></textarea>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="form-group">
+          <label class="form-label">Priority</label>
+          <select class="form-select">
+            <option>Low</option>
+            <option selected>Medium</option>
+            <option>High</option>
+            <option>Critical</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date Filed</label>
+          <input type="date" class="form-input" id="newDate">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('newComplaintModal')">Cancel</button>
+      <button class="btn btn-gold" onclick="submitNewComplaint()">Log Complaint</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL: DELETE CONFIRM ── -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-header">
+      <span class="modal-title">Confirm Delete</span>
+      <button class="modal-close" onclick="closeModal('deleteModal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" style="text-align:center;padding:30px 26px">
+      <div style="width:56px;height:56px;background:var(--danger-bg);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+      </div>
+      <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px">Delete Complaint?</div>
+      <div style="font-size:13px;color:var(--text3);line-height:1.6" id="deleteConfirmText">This action cannot be undone.</div>
+    </div>
+    <div class="modal-footer" style="justify-content:center">
+      <button class="btn btn-outline" onclick="closeModal('deleteModal')">Cancel</button>
+      <button class="btn btn-danger" onclick="confirmDelete()">Yes, Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ── DATA ──
+let COMPLAINTS=[];
+let hasLoadedComplaints=false;
+let complaintRefreshErrorShown=false;
+
+let filtered=[...COMPLAINTS];
+let currentPage=1;
+const PER_PAGE=10;
+let activeTab='all';
+let deleteTarget=null;
+let assignmentTarget=null;
+let sortCol='';let sortDir=1;
+
+// ── HELPERS ──
+function getInitials(n){return n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}
+function getAvatarBg(n){
+  const c=['rgba(13,43,94,.12)','rgba(201,162,39,.15)','rgba(26,122,74,.12)','rgba(21,101,192,.12)','rgba(179,92,0,.12)'];
+  let h=0;for(let i=0;i<n.length;i++)h=(h*31+n.charCodeAt(i))%c.length;return c[h];
+}
+function getAvatarColor(n){
+  const c=['var(--navy)','var(--gold-dark)','var(--success)','var(--info)','var(--warn)'];
+  let h=0;for(let i=0;i<n.length;i++)h=(h*31+n.charCodeAt(i))%c.length;return c[h];
+}
+function getBadge(s){
+  const m={Pending:'badge-pending','In Progress':'badge-progress',Resolved:'badge-resolved','Under Review':'badge-review',Escalated:'badge-rejected'};
+  return `<span class="badge ${m[s]||''}">${s}</span>`;
+}
+function escapeHTML(value){return String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]))}
+async function loadComplaints(){
+  const response=await adminFetch('/api/complaints');
+  const records=await response.json();
+  if(!response.ok)throw new Error(records.error||'Unable to load complaints');
+  if(!Array.isArray(records))throw new Error('Unexpected response while loading complaints');
+  const previousIds=new Set(COMPLAINTS.map(item=>item.dbId));
+  const statusLabels={pending:'Pending',submitted:'Pending',in_review:'Under Review',assigned:'In Progress',resolved:'Resolved',escalated:'Escalated'};
+  const priorityLabels={low:'Low',medium:'Medium',normal:'Medium',high:'High',urgent:'Critical',critical:'Critical'};
+  const updatedComplaints=records.map(record=>({
+    dbId:record._id,
+    id:escapeHTML(record.trackingId),
+    name:escapeHTML(record.fullName),
+    phone:escapeHTML(record.phone),
+    ward:escapeHTML(record.ward),
+    category:escapeHTML(record.category),
+    date:escapeHTML(record.createdAt?.slice(0,10)),
+    status:statusLabels[record.status]||'Pending',
+    priority:priorityLabels[record.priority]||'Medium',
+    subject:escapeHTML(record.title),
+    details:escapeHTML(record.description),
+  }));
+  const newComplaintCount=hasLoadedComplaints?updatedComplaints.filter(item=>!previousIds.has(item.dbId)).length:0;
+  COMPLAINTS=updatedComplaints;
+  hasLoadedComplaints=true;
+  const stats=[COMPLAINTS.length,COMPLAINTS.filter(item=>item.status==='Pending').length,COMPLAINTS.filter(item=>item.status==='Under Review'||item.status==='In Progress').length,COMPLAINTS.filter(item=>item.status==='Resolved').length,COMPLAINTS.filter(item=>item.status==='Escalated').length];
+  document.querySelectorAll('.stats-grid .stat-value').forEach((element,index)=>{element.textContent=stats[index]??'0';});
+  applyFilters();
+  if(newComplaintCount)showToast(`${newComplaintCount} new public complaint${newComplaintCount===1?'':'s'} received.`,'success','New Complaint');
+}
+async function refreshComplaintsPeriodically(){
+  try{
+    await loadComplaints();
+    if(complaintRefreshErrorShown)showToast('Complaint updates are working again.','success','Live Updates Restored');
+    complaintRefreshErrorShown=false;
+  }catch(error){
+    if(!complaintRefreshErrorShown)showToast(error.message||'Unable to refresh complaints.','error','Live Update Failed');
+    complaintRefreshErrorShown=true;
+  }finally{
+    window.setTimeout(refreshComplaintsPeriodically,5000);
+  }
+}
+function getPriorityBadge(p){
+  const m={Low:'background:var(--surface);color:var(--text3)',Medium:'background:var(--info-bg);color:var(--info)',High:'background:var(--warn-bg);color:var(--warn)',Critical:'background:var(--danger-bg);color:var(--danger)'};
+  return `<span style="font-size:10px;font-weight:700;padding:2px 9px;border-radius:99px;${m[p]||''}">${p}</span>`;
+}
+function go(url){window.location.href=url}
+
+// ── FILTER / SORT ──
+function applyFilters(){
+  const search=document.getElementById('searchInput').value.toLowerCase();
+  const status=document.getElementById('statusFilter').value;
+  const cat=document.getElementById('categoryFilter').value;
+  const ward=document.getElementById('wardFilter').value;
+  filtered=COMPLAINTS.filter(r=>{
+    const matchTab=activeTab==='all'||r.status===activeTab;
+    const matchSearch=!search||r.name.toLowerCase().includes(search)||r.id.toLowerCase().includes(search)||r.subject.toLowerCase().includes(search)||r.ward.toLowerCase().includes(search);
+    const matchStatus=!status||r.status===status;
+    const matchCat=!cat||r.category===cat;
+    const matchWard=!ward||r.ward===ward;
+    return matchTab&&matchSearch&&matchStatus&&matchCat&&matchWard;
+  });
+  if(sortCol)filtered.sort((a,b)=>(a[sortCol]>b[sortCol]?1:-1)*sortDir);
+  currentPage=1;renderTable();
+}
+function setTab(val,el){
+  activeTab=val;
+  document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  if(val!=='all'){document.getElementById('statusFilter').value=val}else{document.getElementById('statusFilter').value=''}
+  applyFilters();
+}
+function sortTable(col){
+  if(sortCol===col)sortDir*=-1;else{sortCol=col;sortDir=1;}
+  applyFilters();
+}
+
+// ── RENDER TABLE ──
+function renderTable(){
+  const tbody=document.getElementById('complaintsTbody');
+  const start=(currentPage-1)*PER_PAGE;
+  const slice=filtered.slice(start,start+PER_PAGE);
+  if(slice.length===0){
+    tbody.innerHTML=`<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text3);font-size:13px">No complaints match your filters.</td></tr>`;
+    document.getElementById('paginInfo').textContent='No results';
+    document.getElementById('paginBtns').innerHTML='';
+    return;
+  }
+  tbody.innerHTML=slice.map(r=>`
+    <tr>
+      <td><span style="font-size:11px;font-weight:700;color:var(--text3);font-family:monospace">${r.id}</span></td>
+      <td>
+        <div class="citizen-cell">
+          <div class="c-avatar" style="background:${getAvatarBg(r.name)};color:${getAvatarColor(r.name)}">${getInitials(r.name)}</div>
+          <div><div class="c-name">${r.name}</div><div class="c-ward">${r.phone}</div></div>
+        </div>
+      </td>
+      <td><span style="font-size:12px">${r.ward}</span></td>
+      <td><span class="cat-badge">${r.category}</span></td>
+      <td><span style="font-size:12px;color:var(--text3)">${r.date}</span></td>
+      <td>${getPriorityBadge(r.priority)}</td>
+      <td>${getBadge(r.status)}</td>
+      <td>
+        <div class="action-group">
+          <button class="act-btn act-btn-view" onclick="viewComplaint('${r.id}')">View</button>
+          <button class="act-btn act-btn-resolve" onclick="resolveComplaint('${r.id}')">Resolve</button>
+          <button class="act-btn act-btn-assign" onclick="openAssignModal('${r.id}')">Assign</button>
+          <button class="act-btn act-btn-delete" onclick="promptDelete('${r.id}')">Delete</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+  renderPagination();
+  document.getElementById('paginInfo').textContent=`Showing ${start+1}–${Math.min(start+PER_PAGE,filtered.length)} of ${filtered.length} entries`;
+}
+function renderPagination(){
+  const totalPages=Math.ceil(filtered.length/PER_PAGE);
+  const container=document.getElementById('paginBtns');
+  container.innerHTML='';
+  const mkBtn=(label,page,active=false)=>{
+    const b=document.createElement('button');
+    b.className='pagin-btn'+(active?' active':'');
+    b.textContent=label;
+    b.onclick=()=>{currentPage=page;renderTable()};
+    return b;
+  };
+  container.appendChild(mkBtn('←',Math.max(1,currentPage-1)));
+  for(let i=1;i<=Math.min(totalPages,6);i++)container.appendChild(mkBtn(i,i,i===currentPage));
+  if(totalPages>6){
+    const dots=document.createElement('span');dots.textContent='…';dots.style.cssText='padding:5px 6px;font-size:12px;color:var(--text3)';
+    container.appendChild(dots);
+  }
+  container.appendChild(mkBtn('→',Math.min(totalPages,currentPage+1)));
+}
+
+// ── VIEW COMPLAINT ──
+function viewComplaint(id){
+  const r=COMPLAINTS.find(c=>c.id===id);if(!r)return;
+  document.getElementById('viewModalTitle').textContent=`${r.id} — ${r.subject}`;
+  document.getElementById('viewModalBody').innerHTML=`
+    <div class="detail-row">
+      <div class="detail-field"><div class="detail-label">Complaint ID</div><div class="detail-value" style="font-family:monospace;color:var(--navy)">${r.id}</div></div>
+      <div class="detail-field"><div class="detail-label">Status</div><div class="detail-value">${getBadge(r.status)}</div></div>
+      <div class="detail-field"><div class="detail-label">Priority</div><div class="detail-value">${getPriorityBadge(r.priority)}</div></div>
+    </div>
+    <div class="detail-divider"></div>
+    <div class="detail-row">
+      <div class="detail-field"><div class="detail-label">Citizen Name</div><div class="detail-value">${r.name}</div></div>
+      <div class="detail-field"><div class="detail-label">Phone</div><div class="detail-value">${r.phone}</div></div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-field"><div class="detail-label">Ward</div><div class="detail-value">${r.ward}</div></div>
+      <div class="detail-field"><div class="detail-label">Category</div><div class="detail-value"><span class="cat-badge">${r.category}</span></div></div>
+      <div class="detail-field"><div class="detail-label">Date Filed</div><div class="detail-value">${r.date}</div></div>
+    </div>
+    <div class="detail-divider"></div>
+    <div class="detail-field" style="margin-bottom:10px"><div class="detail-label">Subject</div><div class="detail-value">${r.subject}</div></div>
+    <div class="detail-field"><div class="detail-label">Full Details</div><div style="font-size:13px;color:var(--text2);line-height:1.7;margin-top:6px;padding:14px;background:var(--off-white);border-radius:var(--radius);border:1px solid var(--surface2)">${r.details}</div></div>
+  `;
+  document.getElementById('viewResolveBtn').onclick=()=>{resolveComplaint(id);closeModal('viewModal')};
+  openModal('viewModal');
+}
+
+// ── RESOLVE ──
+async function resolveComplaint(id){
+  const r=COMPLAINTS.find(c=>c.id===id);
+  if(!r)return;
+  if(r.status==='Resolved'){showToast('Complaint is already resolved.','warning','Info');return;}
+  try{
+    const response=await adminFetch(`/api/complaints/${r.dbId}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:'resolved'})});
+    if(!response.ok)throw new Error('Unable to update complaint');
+    await loadComplaints();showToast(`Complaint ${id} marked as resolved.`,'success','Resolved');
+  }catch(error){showToast(error.message,'error','Update Failed')}
+}
+
+// ── DELETE ──
+function promptDelete(id){
+  deleteTarget=id;
+  const r=COMPLAINTS.find(c=>c.id===id);
+  document.getElementById('deleteConfirmText').textContent=`You are about to permanently delete complaint ${id} filed by ${r?r.name:''}. This cannot be undone.`;
+  openModal('deleteModal');
+}
+async function confirmDelete(){
+  if(!deleteTarget)return;
+  const record=COMPLAINTS.find(c=>c.id===deleteTarget);
+  if(!record)return;
+  try{
+    const response=await adminFetch(`/api/complaints/${record.dbId}`,{method:'DELETE'});
+    if(!response.ok)throw new Error('Unable to delete complaint');
+    closeModal('deleteModal');await loadComplaints();showToast(`Complaint ${deleteTarget} has been deleted.`,'warning','Deleted');deleteTarget=null;
+  }catch(error){showToast(error.message,'error','Delete Failed')}
+}
+
+// ── ASSIGN ──
+async function openAssignModal(id){
+  const complaint=COMPLAINTS.find(item=>item.id===id);if(!complaint)return;
+  assignmentTarget=complaint;
+  const selector=document.getElementById('assignOfficer');
+  selector.innerHTML='<option value="">— Choose Officer —</option>';
+  try{
+    const response=await adminFetch('/api/staff?status=active');
+    const staff=await response.json();
+    staff.forEach(person=>{const option=document.createElement('option');option.value=person.fullName;option.textContent=`${person.fullName} — ${person.department||'Staff'}`;selector.appendChild(option);});
+    openModal('assignModal');
+  }catch(error){showToast(error.message,'error','Could Not Load Staff')}
+}
+async function submitAssign(){
+  const assignedTo=document.getElementById('assignOfficer').value;
+  if(!assignmentTarget||!assignedTo){showToast('Select an active staff member first.','warning','Officer Required');return;}
+  try{
+    const response=await adminFetch(`/api/complaints/${assignmentTarget.dbId}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({assignedTo,status:'assigned',priority:document.getElementById('assignPriority').value,dueDate:document.getElementById('assignDueDate').value,assignmentNotes:document.getElementById('assignmentNotes').value})});
+    if(!response.ok)throw new Error('Unable to assign complaint');
+    closeModal('assignModal');await loadComplaints();showToast('Officer assigned successfully.','success','Officer Assigned');assignmentTarget=null;
+  }catch(error){showToast(error.message,'error','Assignment Failed')}
+}
+
+// ── NEW COMPLAINT ──
+function submitNewComplaint(){
+  closeModal('newComplaintModal');
+  showToast('Complaints must be submitted with the citizen’s verified report details.','info','No Record Created');
+}
+
+// ── EXPORT ──
+function exportCSV(){
+  const rows=[['ID','Name','Ward','Category','Date','Priority','Status'],...filtered.map(r=>[r.id,r.name,r.ward,r.category,r.date,r.priority,r.status])];
+  const csv=rows.map(r=>r.join(',')).join('\n');
+  const a=document.createElement('a');a.href='data:text/csv,'+encodeURIComponent(csv);a.download='complaints.csv';a.click();
+  showToast('CSV exported successfully.','success','Export Complete');
+}
+
+// ── MODAL ──
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open')}));
+
+// ── TOAST ──
+function showToast(msg,type='info',title=''){
+  const icons={success:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',warning:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',error:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'};
+  const t=document.createElement('div');t.className=`toast ${type}`;
+  t.innerHTML=`<div class="toast-icon">${icons[type]||icons.info}</div><div class="toast-body"><div class="toast-title">${title}</div><div class="toast-msg">${msg}</div></div><button class="toast-x" onclick="removeToast(this.parentElement)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
+  document.getElementById('toastContainer').appendChild(t);
+  setTimeout(()=>removeToast(t),4500);
+}
+function removeToast(el){if(!el||!el.parentElement)return;el.style.animation='toastOut .35s ease forwards';setTimeout(()=>el.remove(),340)}
+
+// ── SIDEBAR ──
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('open')}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('open')}
+
+// ── INIT ──
+window.addEventListener('load',()=>{
+  document.getElementById('newDate').value=new Date().toISOString().slice(0,10);
+  refreshComplaintsPeriodically();
+});
+</script>
+</body>
+</html>

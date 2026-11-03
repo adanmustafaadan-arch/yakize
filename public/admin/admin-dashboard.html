@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SenateLink Admin — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--navy:#0d2b5e;--navy-dark:#091e45;--navy-mid:#1a3d78;--navy-light:#2a5298;
+--gold:#c9a227;--gold-light:#e8b93a;--gold-pale:#f5e8c0;--gold-dark:#a07c15;
+--white:#ffffff;--off-white:#f7f8fc;--surface:#eef1f8;--surface2:#e4e9f4;
+--text:#1a1d2e;--text2:#4a5270;--text3:#8892b0;
+--success:#1a7a4a;--success-bg:#e6f4ec;
+--warn:#b35c00;--warn-bg:#fff3e0;
+--danger:#c0392b;--danger-bg:#fdecea;
+--info:#1565c0;--info-bg:#e3f0ff;
+--radius:10px;--radius-lg:16px;--radius-xl:22px;
+--shadow:0 2px 12px rgba(13,43,94,.10);
+--shadow-lg:0 6px 28px rgba(13,43,94,.16);
+--sidebar-w:260px;--topbar-h:64px;
+--transition:all .22s cubic-bezier(.4,0,.2,1);
+}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--text);font-size:15px}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:99px}
+.sidebar{position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;background:var(--navy);z-index:200;display:flex;flex-direction:column;transition:var(--transition);overflow:hidden}
+.sidebar-brand{padding:0 20px;height:var(--topbar-h);display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.brand-icon{width:38px;height:38px;border-radius:10px;background:var(--gold);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.brand-icon svg{width:22px;height:22px;fill:var(--navy)}
+.brand-text{display:flex;flex-direction:column;line-height:1.2}
+.brand-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--white);letter-spacing:.3px}
+.brand-sub{font-size:10px;color:rgba(201,162,39,.85);font-weight:500;text-transform:uppercase;letter-spacing:1px}
+.sidebar-scroll{flex:1;overflow-y:auto;padding:16px 0 24px}
+.nav-section-label{font-size:10px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:rgba(255,255,255,.35);padding:16px 20px 6px}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 20px;margin:1px 10px;border-radius:var(--radius);color:rgba(255,255,255,.7);font-size:14px;font-weight:400;cursor:pointer;transition:var(--transition);position:relative}
+.nav-item:hover{background:rgba(255,255,255,.07);color:var(--white)}
+.nav-item.active{background:linear-gradient(90deg,var(--gold) 0%,var(--gold-light) 100%);color:var(--navy);font-weight:600}
+.nav-item.active .nav-icon{opacity:1}
+.nav-icon{width:18px;height:18px;flex-shrink:0;opacity:.7}
+.nav-badge{margin-left:auto;background:var(--danger);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px}
+.nav-item.active .nav-badge{background:var(--navy)}
+.sidebar-footer{padding:16px;border-top:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.user-card{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--radius);background:rgba(255,255,255,.06);cursor:pointer;transition:var(--transition)}
+.user-card:hover{background:rgba(255,255,255,.10)}
+.user-avatar{width:34px;height:34px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--navy);flex-shrink:0}
+.user-info{flex:1;overflow:hidden}
+.user-name{font-size:13px;font-weight:600;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-role{font-size:11px;color:rgba(255,255,255,.45)}
+.logout-btn{margin-top:8px;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:9px;border-radius:var(--radius);color:rgba(255,100,100,.8);font-size:13px;font-weight:500;transition:var(--transition)}
+.logout-btn:hover{background:rgba(255,100,100,.1);color:#ff6b6b}
+.topbar{position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--topbar-h);background:var(--white);border-bottom:1px solid var(--surface2);display:flex;align-items:center;padding:0 28px;gap:16px;z-index:100;transition:var(--transition)}
+.topbar-hamburger{display:none;width:36px;height:36px;border-radius:8px;align-items:center;justify-content:center;background:var(--surface);cursor:pointer;transition:var(--transition)}
+.topbar-hamburger:hover{background:var(--surface2)}
+.topbar-title{flex:1}
+.topbar-title h1{font-size:18px;font-weight:600;color:var(--text)}
+.topbar-title p{font-size:12px;color:var(--text3)}
+.topbar-search{position:relative}
+.topbar-search input{background:var(--surface);border:1.5px solid transparent;border-radius:10px;padding:8px 14px 8px 36px;font-size:13px;color:var(--text);width:220px;transition:var(--transition);font-family:inherit;outline:none}
+.topbar-search input:focus{border-color:var(--gold);background:var(--white);width:260px}
+.search-ico{position:absolute;left:11px;top:50%;transform:translateY(-50%);opacity:.45}
+.topbar-actions{display:flex;align-items:center;gap:8px}
+.icon-btn{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:var(--surface);color:var(--text2);transition:var(--transition);position:relative;cursor:pointer}
+.icon-btn:hover{background:var(--navy);color:var(--white)}
+.notif-dot{position:absolute;top:7px;right:7px;width:8px;height:8px;background:var(--danger);border-radius:50%;border:2px solid var(--white)}
+.topbar-divider{width:1px;height:28px;background:var(--surface2);margin:0 4px}
+.topbar-user{display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 8px;border-radius:9px;transition:var(--transition)}
+.topbar-user:hover{background:var(--surface)}
+.topbar-user-avatar{width:34px;height:34px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--gold)}
+.topbar-user-name{font-size:13px;font-weight:600;color:var(--text)}
+.main{margin-left:var(--sidebar-w);margin-top:var(--topbar-h);padding:28px;min-height:calc(100vh - var(--topbar-h));transition:var(--transition)}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px}
+.page-header-left h2{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--navy)}
+.page-header-left p{font-size:13px;color:var(--text3);margin-top:2px}
+.date-badge{background:var(--navy);color:var(--gold);font-size:12px;font-weight:600;padding:6px 14px;border-radius:8px;display:flex;align-items:center;gap:6px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin-bottom:28px}
+.stat-card{background:var(--white);border-radius:var(--radius-lg);padding:20px 22px;box-shadow:var(--shadow);border:1px solid var(--surface2);position:relative;overflow:hidden;transition:var(--transition);cursor:default}
+.stat-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--navy)}
+.stat-card[data-color="gold"]::before{background:var(--gold)}
+.stat-card[data-color="success"]::before{background:var(--success)}
+.stat-card[data-color="warn"]::before{background:var(--warn)}
+.stat-card[data-color="danger"]::before{background:var(--danger)}
+.stat-card[data-color="info"]::before{background:var(--info)}
+.stat-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
+.stat-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text3)}
+.stat-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.stat-icon svg{width:20px;height:20px}
+.stat-card[data-color="navy"] .stat-icon{background:rgba(13,43,94,.1);color:var(--navy)}
+.stat-card[data-color="gold"] .stat-icon{background:var(--gold-pale);color:var(--gold-dark)}
+.stat-card[data-color="success"] .stat-icon{background:var(--success-bg);color:var(--success)}
+.stat-card[data-color="warn"] .stat-icon{background:var(--warn-bg);color:var(--warn)}
+.stat-card[data-color="danger"] .stat-icon{background:var(--danger-bg);color:var(--danger)}
+.stat-card[data-color="info"] .stat-icon{background:var(--info-bg);color:var(--info)}
+.stat-value{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:var(--text);line-height:1}
+.stat-footer{display:flex;align-items:center;gap:6px;margin-top:8px}
+.stat-trend{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;padding:2px 7px;border-radius:6px}
+.stat-trend.up{background:var(--success-bg);color:var(--success)}
+.stat-trend.down{background:var(--danger-bg);color:var(--danger)}
+.stat-footer-text{font-size:12px;color:var(--text3)}
+.content-grid{display:grid;grid-template-columns:1fr 340px;gap:22px;margin-bottom:22px}
+.content-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-bottom:22px}
+@media(max-width:1200px){.content-grid{grid-template-columns:1fr}.content-grid-2{grid-template-columns:1fr}}
+.card{background:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow);border:1px solid var(--surface2);overflow:hidden}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--surface)}
+.card-title{font-size:15px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px}
+.card-title-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0}
+.card-body{padding:22px}
+.card-action{font-size:12px;font-weight:600;color:var(--navy);padding:5px 12px;border-radius:7px;background:var(--surface);transition:var(--transition);cursor:pointer;border:none;font-family:inherit}
+.card-action:hover{background:var(--navy);color:var(--white)}
+.chart-wrap{padding:0 22px 22px}
+.chart-legend{display:flex;gap:18px;padding:14px 22px 0;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)}
+.legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.bar-chart{display:flex;align-items:flex-end;gap:10px;height:160px;padding-top:10px}
+.bar-group{flex:1;display:flex;align-items:flex-end;gap:3px;position:relative}
+.bar{flex:1;border-radius:5px 5px 0 0;transition:height .7s cubic-bezier(.4,0,.2,1);cursor:pointer;position:relative;min-width:12px}
+.bar:hover::after{content:attr(data-val);position:absolute;top:-24px;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--white);font-size:10px;font-weight:600;padding:2px 6px;border-radius:5px;white-space:nowrap}
+.bar.complaints{background:var(--navy)}
+.bar.resolved{background:var(--gold)}
+.bar.bursaries{background:var(--success)}
+.chart-labels{display:flex;gap:10px;padding:6px 22px 0;border-top:1px dashed var(--surface2)}
+.chart-label{flex:1;text-align:center;font-size:10px;color:var(--text3);font-weight:500}
+.donut-wrap{display:flex;align-items:center;justify-content:space-around;padding:22px}
+.donut-container{position:relative;width:130px;height:130px;flex-shrink:0}
+.donut-container svg{transform:rotate(-90deg)}
+.donut-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.donut-label-num{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--navy);line-height:1}
+.donut-label-txt{font-size:10px;color:var(--text3);margin-top:2px}
+.donut-legend{display:flex;flex-direction:column;gap:10px}
+.donut-legend-item{display:flex;align-items:center;gap:10px}
+.donut-legend-color{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.donut-legend-name{font-size:12px;color:var(--text2);flex:1}
+.donut-legend-val{font-size:12px;font-weight:600;color:var(--text)}
+.activity-table{width:100%;border-collapse:collapse}
+.activity-table th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);padding:12px 22px;background:var(--surface);text-align:left}
+.activity-table th:last-child{text-align:right;padding-right:22px}
+.activity-table td{padding:13px 22px;border-bottom:1px solid var(--surface);font-size:13px;color:var(--text2)}
+.activity-table td:last-child{text-align:right}
+.activity-table tr:last-child td{border-bottom:none}
+.activity-table tr:hover td{background:var(--off-white)}
+.citizen-cell{display:flex;align-items:center;gap:10px}
+.citizen-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;background:rgba(13,43,94,.1);color:var(--navy)}
+.citizen-name{font-weight:500;color:var(--text)}
+.citizen-ward{font-size:11px;color:var(--text3)}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
+.badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.7}
+.badge-pending{background:var(--warn-bg);color:var(--warn)}
+.badge-resolved{background:var(--success-bg);color:var(--success)}
+.badge-progress{background:var(--info-bg);color:var(--info)}
+.badge-review{background:var(--gold-pale);color:var(--gold-dark)}
+.badge-rejected{background:var(--danger-bg);color:var(--danger)}
+.quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:18px 22px}
+.qa-btn{display:flex;align-items:center;gap:10px;padding:13px 16px;border-radius:var(--radius);transition:var(--transition);cursor:pointer;border:1.5px solid var(--surface2);background:var(--white)}
+.qa-btn:hover{border-color:var(--navy);background:rgba(13,43,94,.03)}
+.qa-btn-icon{width:36px;height:36px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.qa-btn-icon svg{width:18px;height:18px}
+.qa-btn-text{font-size:12px;font-weight:600;color:var(--text2)}
+.qa-btn-sub{font-size:10px;color:var(--text3);margin-top:1px}
+.qa-navy .qa-btn-icon{background:rgba(13,43,94,.08);color:var(--navy)}
+.qa-gold .qa-btn-icon{background:var(--gold-pale);color:var(--gold-dark)}
+.qa-success .qa-btn-icon{background:var(--success-bg);color:var(--success)}
+.qa-info .qa-btn-icon{background:var(--info-bg);color:var(--info)}
+.alert-list{display:flex;flex-direction:column;gap:1px}
+.alert-item{display:flex;align-items:flex-start;gap:12px;padding:14px 22px;transition:var(--transition);cursor:pointer}
+.alert-item:hover{background:var(--off-white)}
+.alert-icon-wrap{width:34px;height:34px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.alert-icon-wrap svg{width:16px;height:16px}
+.alert-info .alert-icon-wrap{background:var(--info-bg);color:var(--info)}
+.alert-warn .alert-icon-wrap{background:var(--warn-bg);color:var(--warn)}
+.alert-success .alert-icon-wrap{background:var(--success-bg);color:var(--success)}
+.alert-danger .alert-icon-wrap{background:var(--danger-bg);color:var(--danger)}
+.alert-text{font-size:13px;color:var(--text2);line-height:1.4}
+.alert-text strong{color:var(--text);font-weight:600}
+.alert-time{font-size:10px;color:var(--text3);margin-top:3px}
+.alert-divider{height:1px;background:var(--surface);margin:0 22px}
+.progress-list{display:flex;flex-direction:column;gap:16px;padding:18px 22px}
+.progress-item-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.progress-label{font-size:13px;color:var(--text2);font-weight:500}
+.progress-val{font-size:12px;font-weight:600;color:var(--text)}
+.progress-track{height:7px;background:var(--surface);border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;border-radius:99px;transition:width 1s cubic-bezier(.4,0,.2,1)}
+.fill-navy{background:var(--navy)}
+.fill-gold{background:var(--gold)}
+.fill-success{background:var(--success)}
+.fill-info{background:var(--info)}
+.fill-warn{background:var(--warn)}
+.toast-container{position:fixed;bottom:28px;right:28px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none}
+.toast{background:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);border:1px solid var(--surface2);padding:14px 18px;display:flex;align-items:flex-start;gap:12px;min-width:300px;max-width:360px;pointer-events:all;animation:toastIn .4s cubic-bezier(.4,0,.2,1) forwards;border-left:4px solid var(--navy)}
+.toast.success{border-left-color:var(--success)}
+.toast.warning{border-left-color:var(--gold)}
+.toast.error{border-left-color:var(--danger)}
+@keyframes toastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+@keyframes toastOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(40px)}}
+.toast-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.toast-icon svg{width:16px;height:16px}
+.toast.success .toast-icon{background:var(--success-bg);color:var(--success)}
+.toast.warning .toast-icon{background:var(--warn-bg);color:var(--warn)}
+.toast.error .toast-icon{background:var(--danger-bg);color:var(--danger)}
+.toast-body{flex:1}
+.toast-title{font-size:13px;font-weight:600;color:var(--text)}
+.toast-msg{font-size:12px;color:var(--text3);margin-top:2px}
+.toast-close{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);transition:var(--transition)}
+.toast-close:hover{background:var(--surface);color:var(--text)}
+.modal-overlay{position:fixed;inset:0;background:rgba(13,43,94,.55);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+.modal-overlay.open{display:flex;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:var(--white);border-radius:var(--radius-xl);width:92%;max-width:520px;box-shadow:0 20px 60px rgba(13,43,94,.3);animation:slideUp .3s cubic-bezier(.4,0,.2,1)}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:22px 26px;border-bottom:1px solid var(--surface)}
+.modal-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--navy)}
+.modal-close{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--surface);color:var(--text3);cursor:pointer;transition:var(--transition)}
+.modal-close:hover{background:var(--danger-bg);color:var(--danger)}
+.modal-body{padding:26px}
+.modal-form-group{margin-bottom:18px}
+.modal-form-group label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.modal-form-group input,.modal-form-group select,.modal-form-group textarea{width:100%;padding:10px 14px;border:1.5px solid var(--surface2);border-radius:var(--radius);font-size:14px;color:var(--text);font-family:inherit;transition:var(--transition);background:var(--off-white);outline:none}
+.modal-form-group input:focus,.modal-form-group select:focus,.modal-form-group textarea:focus{border-color:var(--gold);background:var(--white)}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;padding:18px 26px;border-top:1px solid var(--surface)}
+.btn{padding:9px 22px;border-radius:9px;font-size:14px;font-weight:600;transition:var(--transition);cursor:pointer;font-family:inherit}
+.btn-primary{background:var(--navy);color:var(--white);border:none}
+.btn-primary:hover{background:var(--navy-mid)}
+.btn-gold{background:var(--gold);color:var(--navy);border:none}
+.btn-gold:hover{background:var(--gold-light)}
+.btn-outline{background:transparent;color:var(--text2);border:1.5px solid var(--surface2)}
+.btn-outline:hover{border-color:var(--navy);color:var(--navy)}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:190}
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-overlay.open{display:block}
+  .topbar{left:0;padding:0 16px;gap:10px}
+  .topbar-hamburger{display:flex}
+  .topbar-search input{width:160px}
+  .topbar-search input:focus{width:180px}
+  .main{margin-left:0;padding:16px}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .content-grid,.content-grid-2{grid-template-columns:1fr}
+  .quick-actions{grid-template-columns:1fr}
+  .topbar-user-name{display:none}
+  .date-badge{display:none}
+}
+@media(max-width:480px){
+  .stats-grid{grid-template-columns:1fr}
+  .topbar-search{display:none}
+}
+</style>
+</head>
+<body>
+<script src="/admin/admin-auth.js"></script>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+        <polyline points="9 22 9 12 15 12 15 22" fill="none" stroke="#0d2b5e" stroke-width="2"/>
+      </svg>
+    </div>
+    <div class="brand-text">
+      <span class="brand-title">SenateLink</span>
+      <span class="brand-sub">Marsabit County</span>
+    </div>
+  </div>
+
+  <div class="sidebar-scroll">
+    <div class="nav-section-label">Main Menu</div>
+    <div class="nav-item active" onclick="go('admin-dashboard.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item" onclick="go('admin-complaints.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      Complaints
+      <span class="nav-badge" id="sidebarPendingComplaints">0</span>
+    </div>
+    <div class="nav-item" onclick="go('admin-bursaries.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      Bursaries
+      <span class="nav-badge" id="sidebarPendingBursaries">0</span>
+    </div>
+    <div class="nav-item" onclick="go('admin-proposals.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Proposals
+    </div>
+    <div class="nav-item" onclick="go('admin-projects.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Projects
+    </div>
+    <div class="nav-section-label">Content</div>
+    <div class="nav-item" onclick="go('admin-news.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2v-9c0-1.1.9-2 2-2h2"/></svg>
+      News
+    </div>
+    <div class="nav-section-label">Administration</div>
+    <div class="nav-item" onclick="go('admin-users.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      Users
+    </div>
+    <div class="nav-item" onclick="go('admin-reports.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Reports
+    </div>
+    <div class="nav-item" onclick="go('admin-settings.html')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 19.07a10 10 0 010-14.14M12 2v2M12 20v2M2 12H4M20 12h2"/></svg>
+      Settings
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">AD</div>
+      <div class="user-info">
+        <div class="user-name">James Mureithi</div>
+        <div class="user-role">Super Admin</div>
+      </div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+    </div>
+    <button class="logout-btn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Logout
+    </button>
+  </div>
+</aside>
+
+<header class="topbar" id="topbar">
+  <div class="topbar-hamburger" onclick="toggleSidebar()">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </div>
+  <div class="topbar-title">
+    <h1>Dashboard</h1>
+    <p>Overview &rsaquo; Main Dashboard</p>
+  </div>
+  <div class="topbar-search">
+    <svg class="search-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+    <input type="text" placeholder="Search anything…" oninput="filterTable(this.value)">
+  </div>
+  <div class="topbar-actions">
+    <div class="icon-btn" onclick="document.getElementById('alertList').scrollIntoView({behavior:'smooth'})" title="Notifications">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <span class="notif-dot"></span>
+    </div>
+    <div class="topbar-divider"></div>
+    <div class="topbar-user">
+      <div class="topbar-user-avatar">JM</div>
+      <span class="topbar-user-name">James Mureithi</span>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="date-badge">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span id="currentDate"></span>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+  <div class="page-header">
+    <div class="page-header-left">
+      <h2>Overview Dashboard</h2>
+      <p>Current service activity and citizen submissions.</p>
+    </div>
+    <button class="btn btn-gold" onclick="openModal('addProjectModal')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline;vertical-align:-2px;margin-right:6px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Project
+    </button>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card" data-color="navy">
+      <div class="stat-header"><span class="stat-label">Total Complaints</span><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div></div>
+      <div class="stat-value" id="val-complaints">0</div>
+      <div class="stat-footer">Live database count</div>
+    </div>
+    <div class="stat-card" data-color="warn">
+      <div class="stat-header"><span class="stat-label">Pending Complaints</span><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div></div>
+      <div class="stat-value" id="val-pending">0</div>
+      <div class="stat-footer">Live database count</div>
+    </div>
+    <div class="stat-card" data-color="success">
+      <div class="stat-header"><span class="stat-label">Approved Bursaries</span><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div></div>
+      <div class="stat-value" id="val-bursaries">0</div>
+      <div class="stat-footer">Live database count</div>
+    </div>
+    <div class="stat-card" data-color="gold">
+      <div class="stat-header"><span class="stat-label">Active Projects</span><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div></div>
+      <div class="stat-value" id="val-projects">0</div>
+      <div class="stat-footer">Live database count</div>
+    </div>
+    <div class="stat-card" data-color="info">
+      <div class="stat-header"><span class="stat-label">Registered Users</span><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div></div>
+      <div class="stat-value" id="val-users">0</div>
+      <div class="stat-footer">Live database count</div>
+    </div>
+    <div class="stat-card" data-color="danger">
+      <div class="stat-header"><span class="stat-label">News Articles</span><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2v-9c0-1.1.9-2 2-2h2"/></svg></div></div>
+      <div class="stat-value" id="val-news">0</div>
+      <div class="stat-footer">Live database count</div>
+    </div>
+  </div>
+
+  <div class="content-grid">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title"><span class="card-title-dot"></span>Monthly Activity Overview</span>
+        <span style="font-size:11px;color:var(--text3)">Historical trend data unavailable</span>
+      </div>
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--navy)"></div>Complaints</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div>Resolved</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--success)"></div>Bursaries</div>
+      </div>
+      <div class="chart-wrap">
+        <div class="bar-chart" id="barChart"></div>
+        <div class="chart-labels" id="chartLabels"></div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:22px">
+      <div class="card">
+        <div class="card-header"><span class="card-title"><span class="card-title-dot"></span>Quick Actions</span></div>
+        <div class="quick-actions">
+          <div class="qa-btn qa-navy" onclick="openModal('addProjectModal')">
+            <div class="qa-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+            <div><div class="qa-btn-text">Add Project</div><div class="qa-btn-sub">Create new</div></div>
+          </div>
+          <div class="qa-btn qa-gold" onclick="go('admin-news.html')">
+            <div class="qa-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+            <div><div class="qa-btn-text">Publish News</div><div class="qa-btn-sub">Write article</div></div>
+          </div>
+          <div class="qa-btn qa-success" onclick="go('admin-complaints.html')">
+            <div class="qa-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
+            <div><div class="qa-btn-text">Review Complaint</div><div class="qa-btn-sub" id="quickPendingComplaints">0 pending</div></div>
+          </div>
+          <div class="qa-btn qa-info" onclick="go('admin-bursaries.html')">
+            <div class="qa-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
+            <div><div class="qa-btn-text">Approve Bursary</div><div class="qa-btn-sub" id="quickPendingBursaries">0 awaiting</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><span class="card-title-dot"></span>Live Alerts</span>
+          <button class="card-action" onclick="clearNotifications()">Mark all read</button>
+        </div>
+        <div class="alert-list" id="alertList">No notifications.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-grid-2">
+    <div class="card">
+      <div class="card-header"><span class="card-title"><span class="card-title-dot"></span>Complaints by Category</span><button class="card-action" onclick="go('admin-complaints.html')">View all</button></div>
+      <div class="donut-wrap">
+        <div class="donut-container">
+          <svg width="130" height="130" viewBox="0 0 130 130">
+            <circle cx="65" cy="65" r="50" fill="none" stroke="var(--surface)" stroke-width="22"/>
+            <circle id="donut1" cx="65" cy="65" r="50" fill="none" stroke="#0d2b5e" stroke-width="22" stroke-dasharray="314" stroke-dashoffset="314"/>
+            <circle id="donut2" cx="65" cy="65" r="50" fill="none" stroke="#c9a227" stroke-width="22" stroke-dasharray="314" stroke-dashoffset="314"/>
+            <circle id="donut3" cx="65" cy="65" r="50" fill="none" stroke="#1a7a4a" stroke-width="22" stroke-dasharray="314" stroke-dashoffset="314"/>
+            <circle id="donut4" cx="65" cy="65" r="50" fill="none" stroke="#1565c0" stroke-width="22" stroke-dasharray="314" stroke-dashoffset="314"/>
+          </svg>
+          <div class="donut-label"><div class="donut-label-num" id="donutTotal">0</div><div class="donut-label-txt">Total</div></div>
+        </div>
+        <div class="donut-legend" id="donutLegend"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title"><span class="card-title-dot"></span>Ward Engagement</span><button class="card-action" onclick="go('admin-reports.html')">Full report</button></div>
+      <div class="progress-list" id="wardEngagement">Ward engagement data is not available.</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:22px">
+    <div class="card-header">
+      <span class="card-title"><span class="card-title-dot"></span>Recent Complaints Activity</span>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="text" placeholder="Search table…" style="font-size:12px;padding:6px 12px;border:1.5px solid var(--surface2);border-radius:7px;background:var(--surface);font-family:inherit;outline:none;width:170px;transition:all .2s" oninput="filterTable(this.value)" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--surface2)'">
+        <select style="font-size:12px;padding:6px 10px;border:1.5px solid var(--surface2);border-radius:7px;background:var(--surface);color:var(--text);font-family:inherit;cursor:pointer;outline:none" onchange="filterByStatus(this.value)">
+          <option value="">All Status</option>
+          <option value="Pending">Pending</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Resolved">Resolved</option>
+          <option value="Review">Under Review</option>
+        </select>
+        <button class="card-action" onclick="exportTable()">Export CSV</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="activity-table">
+        <thead>
+          <tr>
+            <th>ID</th><th>Citizen</th><th>Ward</th><th>Category</th><th>Date Filed</th><th>Status</th><th style="text-align:right">Action</th>
+          </tr>
+        </thead>
+        <tbody id="activityTbody"></tbody>
+      </table>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-top:1px solid var(--surface)">
+      <span style="font-size:12px;color:var(--text3)" id="paginInfo">Showing 1–8 of 16 entries</span>
+      <div style="display:flex;gap:6px" id="paginBtns"></div>
+    </div>
+  </div>
+</main>
+
+<div class="modal-overlay" id="addProjectModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Add New Project</span>
+      <div class="modal-close" onclick="closeModal('addProjectModal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-form-group"><label>Project Name</label><input type="text" id="dashboardProjectName" required></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="modal-form-group"><label>Ward</label><select id="dashboardProjectWard"><option>Marsabit Central</option><option>Saku Ward</option><option>North Horr</option><option>Laisamis</option><option>Moyale</option><option>Sololo</option></select></div>
+        <div class="modal-form-group"><label>Category</label><select id="dashboardProjectCategory"><option>Infrastructure</option><option>Water</option><option>Education</option><option>Health</option><option>Energy</option><option>Agriculture</option></select></div>
+        <div class="modal-form-group"><label>Budget (KES)</label><input type="number" id="dashboardProjectBudget" min="1" required></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="modal-form-group"><label>Start Date</label><input type="date" id="dashboardProjectStart"></div>
+        <div class="modal-form-group"><label>End Date</label><input type="date" id="dashboardProjectEnd"></div>
+      </div>
+      <div class="modal-form-group"><label>Description</label><textarea rows="3" id="dashboardProjectDescription" required style="resize:vertical"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('addProjectModal')">Cancel</button>
+      <button class="btn btn-gold" onclick="submitProject()">Create Project</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+function go(page){window.location.href=page}
+
+let COMPLAINTS=[];
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const CHART_DATA=[];
+let filteredData=[...COMPLAINTS];
+let currentPage=1;
+const PER_PAGE=8;
+let searchTerm='';
+let statusFilter='';
+
+function setDate(){
+  const d=new Date();
+  document.getElementById('currentDate').textContent=d.toLocaleDateString('en-KE',{weekday:'short',year:'numeric',month:'short',day:'numeric'});
+}
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('open');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('open');
+}
+function showToast(msg,type='info',title=''){
+  const icons={info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',success:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',warning:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>',error:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>'};
+  const titles={info:'Information',success:'Success!',warning:'Warning',error:'Error'};
+  const t=document.createElement('div');
+  t.className='toast '+(type==='info'?'':type);
+  t.innerHTML=`<div class="toast-icon">${icons[type]||icons.info}</div><div class="toast-body"><div class="toast-title">${title||titles[type]||'Notice'}</div><div class="toast-msg">${msg}</div></div><div class="toast-close" onclick="removeToast(this.parentElement)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>`;
+  document.getElementById('toastContainer').appendChild(t);
+  setTimeout(()=>removeToast(t),4200);
+}
+function removeToast(el){if(!el||!el.parentElement)return;el.style.animation='toastOut .35s ease forwards';setTimeout(()=>el.remove(),340)}
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open')}));
+async function submitProject(){
+  const payload={name:document.getElementById('dashboardProjectName').value.trim(),ward:document.getElementById('dashboardProjectWard').value,category:document.getElementById('dashboardProjectCategory').value,department:document.getElementById('dashboardProjectCategory').value,budget:Number(document.getElementById('dashboardProjectBudget').value),description:document.getElementById('dashboardProjectDescription').value.trim(),status:'planned',progress:0};
+  if(!payload.name||!payload.description||payload.budget<=0){showToast('Enter a name, description, and positive budget.','warning','Required Fields');return;}
+  try{
+    const response=await adminFetch('/api/projects',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if(!response.ok)throw new Error('Unable to create project');
+    closeModal('addProjectModal');await loadDashboard();showToast('Project created and saved.','success','Project Created');
+  }catch(error){showToast(error.message,'error','Create Failed')}
+}
+function buildChart(){
+  const chart=document.getElementById('barChart');
+  const labels=document.getElementById('chartLabels');
+  const maxVal=65;
+  chart.innerHTML='';labels.innerHTML='';
+  if(!CHART_DATA.length){chart.textContent='Monthly trend data is not available yet.';return;}
+  CHART_DATA.forEach((d,i)=>{
+    const g=document.createElement('div');g.className='bar-group';
+    ['complaints','resolved','bursaries'].forEach((cls,ci)=>{
+      const val=ci===0?d.c:ci===1?d.r:d.b;
+      const h=Math.round((val/maxVal)*140);
+      const b=document.createElement('div');
+      b.className='bar '+cls;b.style.height='0px';b.dataset.val=val;
+      g.appendChild(b);
+      setTimeout(()=>{b.style.height=h+'px'},80+i*40+ci*15);
+    });
+    chart.appendChild(g);
+    const lbl=document.createElement('div');lbl.className='chart-label';lbl.textContent=MONTHS[i];
+    labels.appendChild(lbl);
+  });
+}
+function buildDonut(categories=[],total=0){
+  const colors=['#0d2b5e','#c9a227','#1a7a4a','#1565c0'];
+  const r=50,circ=2*Math.PI*r;
+  let offset=0;
+  const legend=document.getElementById('donutLegend');
+  document.getElementById('donutTotal').textContent=total.toLocaleString();
+  legend.innerHTML='';
+  ['donut1','donut2','donut3','donut4'].forEach((id,index)=>{
+    const entry=categories[index];
+    const el=document.getElementById(id);
+    if(!entry||!total){el.style.strokeDasharray=`0 ${circ}`;return;}
+    const arc=(entry.count/total)*circ;
+    el.style.stroke=colors[index];
+    el.style.strokeDasharray=`${arc} ${circ-arc}`;
+    el.style.strokeDashoffset=(-offset)+'';
+    offset+=arc;
+    const item=document.createElement('div');item.className='donut-legend-item';
+    item.innerHTML=`<div class="donut-legend-color" style="background:${colors[index]}"></div><div class="donut-legend-name"></div><div class="donut-legend-val"></div>`;
+    item.querySelector('.donut-legend-name').textContent=entry._id||'Uncategorized';
+    item.querySelector('.donut-legend-val').textContent=entry.count.toLocaleString();
+    legend.appendChild(item);
+  });
+}
+function animateProgress(){
+  document.querySelectorAll('.progress-fill').forEach(el=>{
+    setTimeout(()=>{el.style.width=el.dataset.width+'%'},200);
+  });
+}
+function getStatusBadge(s){
+  const map={'Pending':'badge-pending','Resolved':'badge-resolved','In Progress':'badge-progress','Review':'badge-review','Rejected':'badge-rejected'};
+  return `<span class="badge ${map[s]||''}">${s}</span>`;
+}
+function escapeHTML(value){return String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]))}
+function getInitials(n){return n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}
+function getAvatarColor(n){const c=['#1a3d78','#a07c15','#0f6e56','#1565c0','#993556','#3b6d11'];let h=0;for(let i=0;i<n.length;i++)h=(h*31+n.charCodeAt(i))%c.length;return c[h]}
+function buildTable(){
+  const tbody=document.getElementById('activityTbody');
+  const start=(currentPage-1)*PER_PAGE;
+  const slice=filteredData.slice(start,start+PER_PAGE);
+  if(!slice.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--text3)">No complaint records found.</td></tr>';document.getElementById('paginInfo').textContent='No results';document.getElementById('paginBtns').innerHTML='';return;}
+  tbody.innerHTML=slice.map(r=>`
+    <tr>
+      <td><span style="font-size:11px;font-weight:700;color:var(--text3);font-family:monospace">${r.id}</span></td>
+      <td><div class="citizen-cell"><div class="citizen-avatar" style="background:${getAvatarColor(r.name)}20;color:${getAvatarColor(r.name)}">${getInitials(r.name)}</div><div><div class="citizen-name">${r.name}</div><div class="citizen-ward">${r.ward}</div></div></div></td>
+      <td style="font-size:12px">${r.ward}</td>
+      <td style="font-size:12px">${r.category}</td>
+      <td style="font-size:12px;color:var(--text3)">${r.date}</td>
+      <td>${getStatusBadge(r.status)}</td>
+      <td style="text-align:right">
+        <div style="display:flex;gap:6px;justify-content:flex-end">
+          <button onclick="showToast('Viewing complaint ${r.id}','info','View')" style="font-size:11px;font-weight:600;padding:5px 10px;border-radius:6px;background:var(--info-bg);color:var(--info);cursor:pointer;border:none;font-family:inherit">View</button>
+          <button onclick="resolveItem('${r.id}')" style="font-size:11px;font-weight:600;padding:5px 10px;border-radius:6px;background:var(--success-bg);color:var(--success);cursor:pointer;border:none;font-family:inherit">Resolve</button>
+          <button onclick="deleteItem('${r.id}')" style="font-size:11px;font-weight:600;padding:5px 10px;border-radius:6px;background:var(--danger-bg);color:var(--danger);cursor:pointer;border:none;font-family:inherit">Delete</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+  buildPagination();
+  document.getElementById('paginInfo').textContent=`Showing ${start+1}–${Math.min(start+PER_PAGE,filteredData.length)} of ${filteredData.length} entries`;
+}
+function buildPagination(){
+  const totalPages=Math.ceil(filteredData.length/PER_PAGE);
+  const container=document.getElementById('paginBtns');
+  container.innerHTML='';
+  const s=(active)=>`font-size:12px;font-weight:600;padding:5px 11px;border-radius:6px;cursor:pointer;border:1.5px solid ${active?'var(--navy)':'var(--surface2)'};background:${active?'var(--navy)':'var(--white)'};color:${active?'var(--white)':'var(--text2)'};font-family:inherit`;
+  const prev=document.createElement('button');prev.textContent='←';prev.style.cssText=s(false);prev.onclick=()=>{if(currentPage>1){currentPage--;buildTable()}};container.appendChild(prev);
+  for(let i=1;i<=Math.min(totalPages,5);i++){const btn=document.createElement('button');btn.textContent=i;btn.style.cssText=s(i===currentPage);btn.onclick=(()=>{const p=i;return()=>{currentPage=p;buildTable()}})();container.appendChild(btn)}
+  const next=document.createElement('button');next.textContent='→';next.style.cssText=s(false);next.onclick=()=>{if(currentPage<totalPages){currentPage++;buildTable()}};container.appendChild(next);
+}
+
+function applyFilters(){
+  filteredData=COMPLAINTS.filter(r=>{
+    const ms=!searchTerm||r.name.toLowerCase().includes(searchTerm)||r.id.toLowerCase().includes(searchTerm)||r.ward.toLowerCase().includes(searchTerm)||r.category.toLowerCase().includes(searchTerm);
+    const mst=!statusFilter||r.status===statusFilter;
+    return ms&&mst;
+  });
+  currentPage=1;buildTable();
+}
+function filterTable(v){searchTerm=v.toLowerCase();applyFilters()}
+function filterByStatus(v){statusFilter=v;applyFilters()}
+async function resolveItem(id){
+  const item=COMPLAINTS.find(complaint=>complaint.id===id);if(!item)return;
+  try{const response=await adminFetch(`/api/complaints/${item.dbId}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:'resolved'})});if(!response.ok)throw new Error('Unable to resolve complaint');await loadDashboard();showToast(`Complaint ${id} marked resolved.`,'success')}
+  catch(error){showToast(error.message,'error','Update Failed')}
+}
+async function deleteItem(id){
+  const item=COMPLAINTS.find(complaint=>complaint.id===id);if(!item||!confirm(`Delete complaint ${id}? This cannot be undone.`))return;
+  try{const response=await adminFetch(`/api/complaints/${item.dbId}`,{method:'DELETE'});if(!response.ok)throw new Error('Unable to delete complaint');await loadDashboard();showToast(`Complaint ${id} deleted.`,'warning')}
+  catch(error){showToast(error.message,'error','Delete Failed')}
+}
+function exportTable(){
+  const rows=[['Tracking ID','Name','Ward','Category','Date','Status'],...filteredData.map(item=>[item.id,item.name,item.ward,item.category,item.date,item.status])];
+  const link=document.createElement('a');link.href='data:text/csv;charset=utf-8,'+encodeURIComponent(rows.map(row=>row.map(value=>`"${String(value).replaceAll('"','""')}"`).join(',')).join('\n'));link.download='complaints.csv';link.click();
+}
+function animateCounter(id,target){
+  const el=document.getElementById(id);if(!el)return;
+  const steps=40;const inc=target/steps;let cur=0;let s=0;
+  const t=setInterval(()=>{s++;cur=Math.min(Math.round(inc*s),target);el.textContent=cur.toLocaleString();if(s>=steps)clearInterval(t)},25);
+}
+async function loadDashboard(){
+  const [statsResponse,complaintsResponse,notificationsResponse,bursariesResponse]=await Promise.all([adminFetch('/api/stats'),adminFetch('/api/complaints'),adminFetch('/api/notifications'),adminFetch('/api/bursary')]);
+  if(!statsResponse.ok||!complaintsResponse.ok||!notificationsResponse.ok||!bursariesResponse.ok)throw new Error('Dashboard data is unavailable');
+  const stats=await statsResponse.json();
+  const complaints=await complaintsResponse.json();
+  const notifications=await notificationsResponse.json();
+  const bursaries=await bursariesResponse.json();
+  const labels={pending:'Pending',submitted:'Pending',in_review:'Review',assigned:'In Progress',resolved:'Resolved',escalated:'Escalated'};
+  COMPLAINTS=complaints.map(item=>({dbId:item._id,id:escapeHTML(item.trackingId),name:escapeHTML(item.fullName),ward:escapeHTML(item.ward),category:escapeHTML(item.category),date:escapeHTML(item.createdAt?.slice(0,10)||''),status:labels[item.status]||'Pending'}));
+  filteredData=[...COMPLAINTS];
+  animateCounter('val-complaints',stats.totalComplaints||0);
+  animateCounter('val-pending',stats.pendingComplaints||0);
+  animateCounter('val-bursaries',stats.totalBursaries||0);
+  animateCounter('val-projects',stats.totalProjects||0);
+  animateCounter('val-users',stats.totalStaff||0);
+  animateCounter('val-news',stats.totalNews||0);
+  document.getElementById('quickPendingComplaints').textContent=`${stats.pendingComplaints||0} pending`;
+  const pendingBursaries=bursaries.filter(item=>item.status==='submitted'||item.status==='under_review').length;
+  document.getElementById('quickPendingBursaries').textContent=`${pendingBursaries} awaiting`;
+  document.getElementById('sidebarPendingComplaints').textContent=stats.pendingComplaints||0;
+  document.getElementById('sidebarPendingBursaries').textContent=pendingBursaries;
+  document.querySelector('.notif-dot').style.display=stats.unreadNotifications?'block':'none';
+  renderNotifications(notifications);
+  buildDonut(stats.complaintsByCategory||[],stats.totalComplaints||0);
+  buildChart();
+  buildTable();
+}
+function renderNotifications(notifications){
+  const list=document.getElementById('alertList');
+  list.replaceChildren();
+  if(!notifications.length){list.textContent='No notifications.';return;}
+  notifications.forEach((notification,index)=>{
+    if(index)list.appendChild(Object.assign(document.createElement('div'),{className:'alert-divider'}));
+    const item=document.createElement('div');item.className=`alert-item alert-${notification.read?'info':'warn'}`;
+    const text=document.createElement('div');text.className='alert-text';text.textContent=notification.message;
+    const time=document.createElement('div');time.className='alert-time';time.textContent=new Date(notification.createdAt).toLocaleString();
+    const body=document.createElement('div');body.append(text,time);item.appendChild(body);list.appendChild(item);
+  });
+}
+async function clearNotifications(){
+  try{
+    const response=await adminFetch('/api/notifications/read-all',{method:'PUT'});
+    if(!response.ok)throw new Error('Unable to update notifications');
+    await loadDashboard();
+  }catch(error){showToast(error.message,'error','Update Failed')}
+}
+window.addEventListener('load',()=>{
+  setDate();
+  loadDashboard().catch(error=>showToast(error.message,'error','Could Not Load Dashboard'));
+});
+</script>
+<script>
+function go(page){
+    window.location.href = page;
+}
+</script>
+</body>
+</html>
